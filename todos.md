@@ -6,8 +6,8 @@ We are building a **Headless, Modular, Cross-Platform Gamification Engine** that
 
 1. **Events ingestion**
 
-   * The engine consumes platform-specific user activity events (e.g., “USER\_COMMENTED”, “PRODUCT\_PURCHASED”) from any source via API/webhooks/SDK.
-   * Events can carry custom attributes (e.g., `"purchaseSource": "special_offers"`) for rules to evaluate.
+   * The engine consumes platform-specific user activity events (e.g., “USER_COMMENTED”, “PRODUCT_PURCHASED”) from any source via API/webhooks/SDK.
+   * Events can carry custom attributes (e.g., "purchaseSource": "special_offers") for rules to evaluate.
 
 2. **Rules engine**
 
@@ -60,19 +60,19 @@ Organized into **phases** with clear, testable boundaries so that AI coding tool
 
 ### **Phase 1 – Project Foundations**
 
-* [ ] **Set up repository structure** (monorepo or modular folders: `core`, `api`, `rules`, `storage`, `examples`).
-* [ ] **Decide on language, framework, and package management**.
-* [ ] **Implement configuration loader** (YAML/JSON parser with validation).
-* [ ] **Define domain model base classes**:
+* [x] **Set up repository structure** (monorepo or modular folders: `core`, `api`, `rules`, `storage`, `examples`).
+* [x] **Decide on language, framework, and package management**.
+* [x] **Implement configuration loader** (YAML/JSON parser with validation).
+* [x] **Define domain model base classes**:
 
   * Event
   * Condition
   * Reward
   * Rule
   * UserState (points, badges, etc.)
-* [ ] **Add pluggable storage interface** (abstract for DB; in-memory adapter for testing).
-* [ ] **Create base test harness** with automated test runner.
-* [ ] **Document coding conventions** and contribution guidelines.
+* [x] **Add pluggable storage interface** (abstract for DB; in-memory adapter for testing).
+* [x] **Create base test harness** with automated test runner.
+* [x] **Document coding conventions** and contribution guidelines.
 
 **Deliverable:** Barebones project that loads config files, passes schema validation, and runs a dummy test.
 
