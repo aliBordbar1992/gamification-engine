@@ -1,5 +1,6 @@
 using GamificationEngine.Application.Abstractions;
 using GamificationEngine.Infrastructure.Configuration;
+using Shouldly;
 using Xunit;
 
 namespace GamificationEngine.Infrastructure.Tests;
@@ -12,17 +13,17 @@ public class ConfigurationLoaderTests
         // arrange
         IConfigurationLoader loader = new YamlConfigurationLoader();
         var fullPath = FindUpwards("configuration-example.yml");
-        Assert.True(File.Exists(fullPath));
+        File.Exists(fullPath).ShouldBeTrue();
 
         // act
         var result = await loader.LoadFromFileAsync(fullPath);
 
         // assert
-        Assert.True(result.IsSuccess);
-        Assert.NotNull(result.Value);
-        Assert.Equal("default-gamification-engine", result.Value!.Engine.Id);
-        Assert.Contains(result.Value.Events, e => e.Id == "USER_COMMENTED");
-        Assert.Contains(result.Value.Badges, b => b.Id == "badge-commenter");
+        result.IsSuccess.ShouldBeTrue(result.Error);
+        result.Value.ShouldNotBeNull();
+        result.Value!.Engine.Id.ShouldBe("default-gamification-engine");
+        result.Value.Events.ShouldContain(e => e.Id == "USER_COMMENTED");
+        result.Value.Badges.ShouldContain(b => b.Id == "badge-commenter");
     }
 
     private static string FindUpwards(string fileName)
@@ -34,7 +35,6 @@ public class ConfigurationLoaderTests
             if (File.Exists(candidate)) return candidate;
             dir = dir.Parent;
         }
-        // fall back to repo root relative to test project if possible
         return Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", fileName));
     }
 }
