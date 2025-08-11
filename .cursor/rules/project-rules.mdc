@@ -1,0 +1,68 @@
+---
+description: Core Domain & Architecture Rules for Gamification Engine
+globs:
+  - src/**/*.cs
+  - tests/**/*.cs
+
+alwaysApply: true
+---
+
+# Workflow
+- After implementing or modifying any code, **you MUST run all automated tests** and verify that all tests pass before proceeding to the next task.
+- you MUST always refer to `todos.md` for the next task to work on.
+- you MUST work strictly **one task at a time**, completing it fully before moving to the next.
+- Upon completion of each task, you MUST mark the corresponding item as done in `todos.done.md`.
+- Summaries in `todos.done.md` MUST clearly reference the original `todos.md` item they relate to.
+- you MUST NOT skip or reorder tasks without explicit instruction.
+
+# Architecture and Module Boundaries
+- Follow Clean Architecture / Hexagonal pattern strictly.
+- Domain layer (src/domain) **MUST NOT** depend on infrastructure or API layers.
+- Only repository interfaces may be referenced from domain.
+- No IO, network, DB, or logging calls allowed inside domain entities or domain services.
+- All external dependencies must be injected via interfaces at application or infrastructure layers.
+
+# Coding Standards
+- Use strict SOLID principles.
+- All domain entities and aggregates **MUST** encapsulate business rules inside methods.
+- No public setters on entities except via explicit methods enforcing invariants.
+- Rules logic **MUST** be expressed declaratively in YAML/JSON loaded via factories.
+- No embedded scripting or inline code execution in rule definitions.
+- No mutable static or global state anywhere in the codebase.
+- No domain aggregates should have direct relation with other aggregates, only their own entities
+- Prefer using Value Objects as much as possible
+
+# Error Handling
+- Use domain-specific exception types for business rule violations.
+- Use Result<T, E> or Either pattern for operations that can fail gracefully.
+- Do not throw generic exceptions inside domain or application layers.
+- Catch and wrap infrastructure exceptions at boundaries with meaningful domain errors.
+- All async calls **MUST** be awaited and exceptions handled or propagated explicitly.
+
+# Logging
+- Use centralized structured logging (e.g., Serilog) only in infrastructure layers.
+- No logging calls inside domain logic.
+- Use middleware or decorators to implement logging of requests, responses, domain events, and errors.
+- Logs **MUST** include metadata: user ID, event ID, rule ID, timestamps.
+- Avoid logging sensitive data or raw event payloads without anonymization.
+
+# Module Interaction
+- Modules communicate strictly via interfaces; no direct class references across module boundaries.
+- Event ingestion module normalizes and validates events before passing to rules engine.
+- API controllers **MUST** call only application services; no direct DB or domain logic access.
+- Leaderboards and caching implemented as separate modules with their own bounded contexts.
+
+# LLM-Specific Rules
+- All rules-related code changes must maintain declarative YAML/JSON only.
+- No code-level logic or business rules added in API or infrastructure layers.
+- Naming conventions must be strictly followed for entities, events, and services.
+- Ensure all public interfaces and methods have clear, concise XML comments.
+- No side effects or IO in domain model constructors or property setters.
+- No mutable static/global variables or state.
+
+# Testing
+- TDD is mandatory for all domain and application code.
+- Write BDD-style acceptance tests for complex rule scenarios using Gherkin or similar.
+- Integration tests must cover full event ingestion → rules evaluation → reward issuance flows.
+- No production code merged without passing automated tests.
+

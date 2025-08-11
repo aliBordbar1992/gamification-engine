@@ -1,0 +1,405 @@
+# Gamification engine bootstrap configuration
+# - Apply this when creating a new tenant / platform instance.
+# - Engine must implement the condition vocabulary and reward processors referenced below.
+
+engine:
+  id: "default-gamification-engine"
+  version: "1.0.0"
+  timezone: "UTC"
+  retention:
+    events_days: 365 # keep raw events for replay / audit
+    rewards_days: 1825 # keep reward history for 5 years
+  processing:
+    mode: "hybrid" # "sync" | "async" | "hybrid" (fast rewards sync, heavy tasks async)
+    async_queue: "kafka://gamification-events"
+    workers:
+      points_processor: 4
+      badge_processor: 2
+      trophy_processor: 1
+      leaderboard_processor: 2
+    replay_enabled: true # allow replaying events to re-evaluate rules
+  security:
+    admin_api_keys:
+      - key_id: "admin-01"
+        name: "Platform Admin Key"
+    sdk_api_keys:
+      - key_id: "sdk-readonly"
+        name: "Platform SDK Key"
+    role_based_access:
+      admin: ["manage_rules", "manage_entities", "view_audit"]
+      operator: ["view_audit", "simulate"]
+  audit:
+    enable: true
+    audit_table: "reward_audit"
+    audit_retention_days: 3650
+
+# 1. Events catalog (platform-agnostic)
+events:
+  - id: "USER_COMMENTED"
+    description: "User posted a comment"
+    payload_schema:
+      commentId: "string"
+      postId: "string"
+      text: "string"
+  - id: "PROFILE_COMPLETED"
+    description: "User completed profile"
+    payload_schema:
+      completenessPercent: "number"
+  - id: "USER_VISITED_SPECIAL_OFFERS"
+    description: "User visited special offers page"
+    payload_schema:
+      sessionId: "string"
+  - id: "USER_PURCHASED_PRODUCT"
+    description: "User completed a product purchase"
+    payload_schema:
+      productId: "string"
+      source: "string" # e.g., 'special_offers'
+      amount: "number"
+      currency: "string"
+  - id: "USER_RECEIVED_DISLIKE"
+    description: "User received a dislike"
+    payload_schema:
+      postId: "string"
+  - id: "DISPUTE_CREATED"
+    description: "A dispute was created for the user"
+    payload_schema:
+      disputeId: "string"
+  - id: "BADGE_GRANTED" # events for internal processes may also exist
+    description: "Badge granted to user"
+    payload_schema:
+      badgeId: "string"
+
+# 2. Point categories
+point_categories:
+  - id: "xp"
+    name: "Experience"
+    description: "Used for leveling and progression"
+    aggregation: "sum" # how to aggregate multiple point awards
+  - id: "score"
+    name: "Score"
+    description: "Leaderboard and competitive score"
+    aggregation: "sum"
+  - id: "credits"
+    name: "Credits"
+    description: "Spendable in-app currency"
+    aggregation: "sum"
+
+# 3. Badges definitions
+badges:
+  - id: "badge-commenter"
+    name: "First Comment"
+    description: "Awarded when user posts their first comment"
+    image: "/assets/badges/commenter.png"
+    visible: true
+  - id: "badge-completed-profile"
+    name: "Profile Complete"
+    description: "Awarded when user completes their profile to configured threshold"
+    image: "/assets/badges/profile_complete.png"
+    visible: true
+  - id: "badge-special-offer-buyer"
+    name: "Special Offer Buyer"
+    description: "Bought at least one product from the special offers within 30 minutes of visiting"
+    image: "/assets/badges/special_buyer.png"
+    visible: true
+  - id: "badge-bookaholic"
+    name: "Bookaholic"
+    description: "Completed reading 100 distinct books"
+    image: "/assets/badges/bookaholic.png"
+    visible: true
+  - id: "badge-streak-crusher"
+    name: "Streak Crusher"
+    description: "Broke someone else's win streak"
+    image: "/assets/badges/streak_crusher.png"
+    visible: true
+
+# 4. Trophies definitions (higher-tier awards)
+trophies:
+  - id: "trophy-badge-collector"
+    name: "Badge Collector"
+    description: "Collect 10 different badges"
+    image: "/assets/trophies/badge_collector.png"
+    visible: true
+
+# 5. Levels
+levels:
+  - id: "bronze"
+    name: "Bronze"
+    criteria:
+      category: "xp"
+      min_points: 100
+  - id: "silver"
+    name: "Silver"
+    criteria:
+      category: "xp"
+      min_points: 500
+  - id: "gold"
+    name: "Gold"
+    criteria:
+      category: "xp"
+      min_points: 2000
+  - id: "legendary"
+    name: "Legendary"
+    criteria:
+      category: "xp"
+      min_points: 3509
+
+# 6. Penalties
+penalties:
+  - id: "penalty-dislikes-accumulated"
+    name: "Dislikes penalty"
+    description: "Lose points after receiving a threshold of dislikes"
+    trigger:
+      type: "eventCountNegative" # engine-defined condition type
+      eventType: "USER_RECEIVED_DISLIKE"
+      minCount: 100
+    action:
+      type: "points"
+      amount: -10
+      category: "xp"
+  - id: "penalty-pending-disputes"
+    name: "Pending disputes penalty"
+    description: "Penalty for unresolved disputes"
+    trigger:
+      type: "pendingDisputes"
+      minCount: 10
+    action:
+      type: "points"
+      amount: -100
+      category: "xp"
+
+# 7. Rules (connect events, conditions and rewards)
+rules:
+  # simple: comments
+  - id: "rule-comment-points"
+    name: "Comment gives XP"
+    triggers:
+      - event: "USER_COMMENTED"
+    conditions: []
+    rewards:
+      - type: "points"
+        category: "xp"
+        amount: 10
+    metadata:
+      notify_platform: true
+      notify_template: "toast_comment_xp"
+
+  # profile completion
+  - id: "rule-profile-complete-xp"
+    name: "Profile completion XP"
+    triggers:
+      - event: "PROFILE_COMPLETED"
+    conditions:
+      - type: "attributeGreaterThan"
+        field: "completenessPercent"
+        value: 80
+    rewards:
+      - type: "points"
+        category: "xp"
+        amount: 20
+      - type: "badge"
+        badgeId: "badge-completed-profile"
+    metadata:
+      one_time: true
+
+  # composite: visit then purchase
+  - id: "rule-special-offer-buyer"
+    name: "Special offer purchase sequence"
+    triggers:
+      - event: "USER_VISITED_SPECIAL_OFFERS"
+      - event: "USER_PURCHASED_PRODUCT"
+    conditions:
+      - type: "sequence"
+        withinMinutes: 30
+        allowOtherEvents: true
+      - type: "attributeEquals"
+        field: "source"
+        value: "special_offers"
+    rewards:
+      - type: "points"
+        category: "score"
+        amount: 100
+      - type: "badge"
+        badgeId: "badge-special-offer-buyer"
+    metadata:
+      notify_platform: true
+      webhook_on_award: true
+
+  # badge by aggregation: bought 10 products (eventCount)
+  - id: "rule-badge-buyer-10"
+    name: "Buyer 10 badge"
+    triggers:
+      - event: "USER_PURCHASED_PRODUCT"
+    conditions:
+      - type: "eventCount"
+        eventType: "USER_PURCHASED_PRODUCT"
+        minCount: 10
+        withinDays: 3650 # lifetime
+    rewards:
+      - type: "badge"
+        badgeId: "badge-bronze-medallion" # ensure defined in badges if used
+    metadata:
+      one_time: true
+
+  # badge by distinct attribute: read 100 distinct books
+  - id: "rule-bookaholic"
+    name: "Bookaholic badge"
+    triggers:
+      - event: "BOOK_COMPLETED" # ensure this event exists in events catalog if used
+    conditions:
+      - type: "distinctAttributeCount"
+        eventType: "BOOK_COMPLETED"
+        attribute: "bookId"
+        minCount: 100
+    rewards:
+      - type: "badge"
+        badgeId: "badge-bookaholic"
+    metadata:
+      one_time: true
+
+  # trophy: collect 10 different badges
+  - id: "rule-trophy-badge-collector"
+    name: "Badge Collector trophy"
+    triggers:
+      - event: "BADGE_GRANTED"
+    conditions:
+      - type: "badgeCount"
+        minCount: 10
+    rewards:
+      - type: "trophy"
+        trophyId: "trophy-badge-collector"
+    metadata:
+      one_time: true
+
+  # penalty examples invoked by penalty definitions (these could be rules or engine-level)
+  - id: "rule-apply-dislikes-penalty"
+    name: "Apply dislikes penalty"
+    triggers:
+      - event: "USER_RECEIVED_DISLIKE"
+    conditions:
+      - type: "eventCountNegative"
+        eventType: "USER_RECEIVED_DISLIKE"
+        minCount: 100
+    rewards:
+      - type: "points"
+        category: "xp"
+        amount: -10
+    metadata:
+      repeatable: false
+
+# 8. Leaderboards configuration
+leaderboards:
+  - id: "global-score"
+    name: "Global Score Leaderboard"
+    category: "score"
+    scope: "global" # or "country", "region", "friends"
+    update_strategy: "real_time" # "real_time" | "batch_hourly" | "daily"
+    top_n: 100
+    cache:
+      type: "redis"
+      key_prefix: "lb:global:score"
+  - id: "weekly-xp"
+    name: "Weekly XP"
+    category: "xp"
+    scope: "global"
+    update_strategy: "batch_hourly"
+    top_n: 50
+    time_window_days: 7
+
+# 9. Cooldowns & rate limits
+cooldowns:
+  - id: "daily-comment-xp"
+    rule_id: "rule-comment-points"
+    minMinutesBetweenAwards: 1440 # one award per day from this rule per user
+  - id: "profile-complete-once"
+    rule_id: "rule-profile-complete-xp"
+    one_time: true
+
+# 10. Notifications & webhooks
+notifications:
+  templates:
+    toast_comment_xp: "You earned {{amount}} XP for your comment."
+    toast_special_offer: "You earned {{amount}} points and a badge: {{badgeName}}"
+  webhook:
+    on_reward_award:
+      enabled: true
+      url: "https://platform.example.com/gamification-receive"
+      method: "POST"
+      auth:
+        type: "bearer"
+        token: "${PLATFORM_WEBHOOK_TOKEN}"
+      payload_template:
+        userId: "{{userId}}"
+        rewards: "{{rewards}}"
+        eventContext: "{{eventContext}}"
+
+# 11. Custom evaluators / extension points
+extensions:
+  custom_functions:
+    - id: "first_purchase_of_month"
+      description: "Returns true if event is user's first purchase in the current month"
+      runtime: "wasm" # engine can support multiple runtime types
+      entrypoint: "firstPurchaseOfMonth"
+    - id: "fraud_check"
+      description: "Calls external fraud service; returns true if safe"
+      runtime: "external_http"
+      url: "https://fraud-check.example.com/eval"
+  webhook_conditions:
+    - id: "external-fraud-approved"
+      url: "https://fraud-check.example.com/quick"
+      payload_template:
+        userId: "{{userId}}"
+        productId: "{{metadata.productId}}"
+
+# 12. Simulation environment (admin tools)
+simulation:
+  enabled: true
+  sandbox_user_id: "sim-user-01"
+  default_event_batch:
+    - event: "USER_VISITED_SPECIAL_OFFERS"
+      metadata: { sessionId: "sim-sess" }
+    - event: "USER_PURCHASED_PRODUCT"
+      metadata: { productId: "sim-prod", source: "special_offers", amount: 50 }
+
+# 13. UI / admin preferences
+admin_ui:
+  event_catalog_page: true
+  rule_editor:
+    allow_raw_json_edit: false
+    allowed_condition_types:
+      - sequence
+      - attributeEquals
+      - eventCount
+      - distinctAttributeCount
+      - and
+      - or
+      - not
+      - customFunction
+  export_formats: ["json", "yaml"]
+
+# 14. Monitoring & metrics
+monitoring:
+  metrics:
+    - name: "rewards_awarded_total"
+      type: "counter"
+    - name: "rules_evaluated_total"
+      type: "counter"
+    - name: "rule_evaluation_duration_seconds"
+      type: "histogram"
+  alerts:
+    - id: "high-rule-fail-rate"
+      condition: "rule_evaluation_error_rate > 0.05"
+      notify: ["ops@company.com"]
+
+# 15. Sample seeds for platform-specific customization
+platform_seeds:
+  - platform_id: "ecommerce-prod"
+    initial_events_enabled:
+      - USER_COMMENTED
+      - USER_PURCHASED_PRODUCT
+      - USER_VISITED_SPECIAL_OFFERS
+    initial_badges:
+      - badge-commenter
+      - badge-completed-profile
+      - badge-special-offer-buyer
+    default_leaderboards:
+      - global-score
