@@ -32,12 +32,12 @@ public class InMemoryEventQueue : IEventQueue
         }
     }
 
-    public async Task<Event?> DequeueAsync()
+    public async Task<Event?> DequeueAsync(CancellationToken cancellationToken = default)
     {
         try
         {
             // Wait for an event to be available
-            await _semaphore.WaitAsync();
+            await _semaphore.WaitAsync(cancellationToken);
 
             if (_queue.TryDequeue(out var @event))
             {

@@ -47,9 +47,10 @@ public class EventQueueTests
     {
         // Arrange
         IEventQueue queue = new InMemoryEventQueue();
+        using var cts = new CancellationTokenSource(TimeSpan.FromMilliseconds(100)); // 100ms timeout
 
         // Act
-        var @event = await queue.DequeueAsync();
+        var @event = await queue.DequeueAsync(cts.Token);
 
         // Assert
         @event.ShouldBeNull();
@@ -71,12 +72,12 @@ public class EventQueueTests
         // Act & Assert
         queue.GetQueueSize().ShouldBe(2);
 
-        var dequeuedEvent1 = await queue.DequeueAsync();
+        var dequeuedEvent1 = await queue.DequeueAsync(CancellationToken.None);
         dequeuedEvent1.ShouldNotBeNull();
         dequeuedEvent1!.EventId.ShouldBe("test-1");
         queue.GetQueueSize().ShouldBe(1);
 
-        var dequeuedEvent2 = await queue.DequeueAsync();
+        var dequeuedEvent2 = await queue.DequeueAsync(CancellationToken.None);
         dequeuedEvent2.ShouldNotBeNull();
         dequeuedEvent2!.EventId.ShouldBe("test-2");
         queue.GetQueueSize().ShouldBe(0);
@@ -105,7 +106,7 @@ public class EventQueueTests
         // Act - Dequeue all events
         for (int i = 0; i < 5; i++)
         {
-            var dequeuedEvent = await queue.DequeueAsync();
+            var dequeuedEvent = await queue.DequeueAsync(CancellationToken.None);
             dequeuedEvent.ShouldNotBeNull();
             dequeuedEvent!.EventId.ShouldBe($"test-{i + 1}");
         }

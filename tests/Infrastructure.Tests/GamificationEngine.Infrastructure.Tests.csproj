@@ -9,6 +9,8 @@
 
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.2" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.8" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.8" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
     <PackageReference Include="Moq" Version="4.20.72" />
     <PackageReference Include="Shouldly" Version="4.2.1" />
@@ -24,6 +26,7 @@
     <ProjectReference Include="..\..\src\Infrastructure\Configuration\GamificationEngine.Infrastructure.Configuration.csproj" />
     <ProjectReference Include="..\..\src\Infrastructure\Storage.InMemory\GamificationEngine.Infrastructure.Storage.InMemory.csproj" />
     <ProjectReference Include="..\..\src\Application\GamificationEngine.Application.csproj" />
+    <ProjectReference Include="..\..\src\GamificationEngine.Api\GamificationEngine.Api.csproj" />
   </ItemGroup>
 
 </Project>

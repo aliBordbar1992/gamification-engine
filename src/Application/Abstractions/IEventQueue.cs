@@ -19,8 +19,9 @@ public interface IEventQueue
     /// <summary>
     /// Dequeues the next event for processing
     /// </summary>
-    /// <returns>The next event if available, null if queue is empty</returns>
-    Task<Event?> DequeueAsync();
+    /// <param name="cancellationToken">Cancellation token to cancel the wait operation</param>
+    /// <returns>The next event if available, null if queue is empty or cancelled</returns>
+    Task<Event?> DequeueAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Gets the current queue size

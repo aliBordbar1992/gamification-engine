@@ -1,3 +1,4 @@
+using GamificationEngine.Api;
 using GamificationEngine.Application.Abstractions;
 using GamificationEngine.Domain.Repositories;
 using GamificationEngine.Infrastructure.Storage.InMemory;
@@ -16,13 +17,11 @@ builder.Services.AddScoped<IEventIngestionService, EventIngestionService>();
 // Register infrastructure services
 builder.Services.AddSingleton<IEventRepository, EventRepository>();
 builder.Services.AddSingleton<IEventQueue, InMemoryEventQueue>();
-builder.Services.AddSingleton<IEventQueueProcessor, EventQueueProcessor>();
+
+// Register background services
+builder.Services.AddHostedService<EventQueueBackgroundService>();
 
 var app = builder.Build();
-
-// Start the event queue processor
-var eventQueueProcessor = app.Services.GetRequiredService<IEventQueueProcessor>();
-await eventQueueProcessor.StartProcessingAsync();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
