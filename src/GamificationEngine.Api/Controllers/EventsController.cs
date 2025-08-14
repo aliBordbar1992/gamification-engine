@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using GamificationEngine.Application.Services;
 using GamificationEngine.Domain.Events;
 using GamificationEngine.Shared;
-
+using GamificationEngine.Application.Abstractions;
 namespace GamificationEngine.Api.Controllers;
 
 /// <summary>

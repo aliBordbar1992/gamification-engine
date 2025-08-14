@@ -2,7 +2,7 @@ using GamificationEngine.Domain.Events;
 using GamificationEngine.Domain.Errors;
 using GamificationEngine.Shared;
 
-namespace GamificationEngine.Application.Services;
+namespace GamificationEngine.Application.Abstractions;
 
 /// <summary>
 /// Service for ingesting and processing user activity events

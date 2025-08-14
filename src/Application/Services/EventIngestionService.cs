@@ -2,6 +2,7 @@ using GamificationEngine.Domain.Events;
 using GamificationEngine.Domain.Errors;
 using GamificationEngine.Shared;
 using GamificationEngine.Domain.Repositories;
+using GamificationEngine.Application.Abstractions;
 
 namespace GamificationEngine.Application.Services;
 
@@ -11,10 +12,12 @@ namespace GamificationEngine.Application.Services;
 public class EventIngestionService : IEventIngestionService
 {
     private readonly IEventRepository _eventRepository;
+    private readonly IEventQueue _eventQueue;
 
-    public EventIngestionService(IEventRepository eventRepository)
+    public EventIngestionService(IEventRepository eventRepository, IEventQueue eventQueue)
     {
         _eventRepository = eventRepository ?? throw new ArgumentNullException(nameof(eventRepository));
+        _eventQueue = eventQueue ?? throw new ArgumentNullException(nameof(eventQueue));
     }
 
     public async Task<Result<Event, DomainError>> IngestEventAsync(Event @event)
@@ -24,14 +27,18 @@ public class EventIngestionService : IEventIngestionService
             if (@event == null)
                 return Result<Event, DomainError>.Failure(new InvalidEventError("Event cannot be null"));
 
-            // Store the event
-            await _eventRepository.StoreAsync(@event);
+            // Enqueue the event for asynchronous processing
+            var enqueueResult = await _eventQueue.EnqueueAsync(@event);
+            if (!enqueueResult.IsSuccess)
+            {
+                return Result<Event, DomainError>.Failure(enqueueResult.Error!);
+            }
 
             return Result<Event, DomainError>.Success(@event);
         }
         catch (Exception ex)
         {
-            return Result<Event, DomainError>.Failure(new EventStorageError($"Failed to store event: {ex.Message}"));
+            return Result<Event, DomainError>.Failure(new EventStorageError($"Failed to enqueue event: {ex.Message}"));
         }
     }
 
