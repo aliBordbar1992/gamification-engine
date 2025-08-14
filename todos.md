@@ -80,11 +80,14 @@ Organized into **phases** with clear, testable boundaries so that AI coding tool
 
 ### **Phase 2 – Event System**
 
-* [ ] **Implement Event class** with metadata and attributes.
-* [ ] **Add event ingestion API** (REST endpoint: `POST /events`).
+* [x] **Implement Event class** with metadata and attributes.
+* [x] **Add event ingestion API** (REST endpoint: `POST /events`).
 * [ ] **Support event queue** (in-memory first, later pluggable for Kafka/RabbitMQ/etc.).
 * [ ] **Store events in DB** with retention policy.
 * [ ] **Test ingestion with multiple event types**.
+* [ ] **Write Unit Tests using Shouldly for Event related classes in Domain layer**
+* [ ] **Write integration tests for API and Application services**
+* [ ] **Create ".http" test files for API**
 
 **Deliverable:** Events can be sent to the engine and retrieved via API.
 

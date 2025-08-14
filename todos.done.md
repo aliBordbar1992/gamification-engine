@@ -16,3 +16,25 @@
   - Added `CODING-STANDARDS.md` and `CONTRIBUTING.md`
 
 Deliverable achieved: Barebones project loads config, passes validation, and runs tests successfully.
+
+---
+
+## Phase 2 – Event System (Partially Completed)
+
+- [x] Implement Event class with metadata and attributes
+  - Matches `todos.md` Phase 2 item: Event class implementation
+  - Event class already existed with proper validation, immutable properties, and ReadOnlyDictionary for attributes
+  - Follows Clean Architecture principles with no external dependencies
+- [x] Add event ingestion API (REST endpoint: `POST /events`)
+  - Matches `todos.md` Phase 2 item: event ingestion API
+  - Created `GamificationEngine.Api` project with proper project references
+  - Implemented `IEventIngestionService` and `EventIngestionService` in Application layer
+  - Created `IEventRepository` interface in Domain layer
+  - Implemented `EventRepository` (in-memory) in Infrastructure layer
+  - Added `EventsController` with POST `/api/events` endpoint
+  - Added additional endpoints: GET `/api/events/user/{userId}` and GET `/api/events/type/{eventType}`
+  - Configured dependency injection in Program.cs
+  - API successfully tested with event ingestion and retrieval
+  - All tests passing, build successful
+
+Deliverable achieved: Events can be sent to the engine via POST /api/events and retrieved via API endpoints.
