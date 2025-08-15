@@ -1,39 +1,24 @@
 namespace GamificationEngine.Domain.Users;
 
-public sealed class UserState
+/// <summary>
+/// Represents the current state of a user in the gamification system
+/// </summary>
+public class UserState
 {
-    public string UserId { get; }
-
-    private readonly Dictionary<string, long> _pointsByCategory = new();
-    private readonly HashSet<string> _badgeIds = new();
-    private readonly HashSet<string> _trophyIds = new();
-
-    public IReadOnlyDictionary<string, long> PointsByCategory => _pointsByCategory;
-    public IReadOnlyCollection<string> Badges => _badgeIds;
-    public IReadOnlyCollection<string> Trophies => _trophyIds;
+    // EF Core requires a parameterless constructor
+    protected UserState() { }
 
     public UserState(string userId)
     {
         if (string.IsNullOrWhiteSpace(userId)) throw new ArgumentException("userId cannot be empty", nameof(userId));
         UserId = userId;
+        PointsByCategory = new Dictionary<string, long>();
+        Badges = new HashSet<string>();
+        Trophies = new HashSet<string>();
     }
 
-    public void AddPoints(string category, long amount)
-    {
-        if (string.IsNullOrWhiteSpace(category)) throw new ArgumentException("category cannot be empty", nameof(category));
-        if (!_pointsByCategory.TryGetValue(category, out var current)) current = 0;
-        _pointsByCategory[category] = current + amount;
-    }
-
-    public bool GrantBadge(string badgeId)
-    {
-        if (string.IsNullOrWhiteSpace(badgeId)) throw new ArgumentException("badgeId cannot be empty", nameof(badgeId));
-        return _badgeIds.Add(badgeId);
-    }
-
-    public bool GrantTrophy(string trophyId)
-    {
-        if (string.IsNullOrWhiteSpace(trophyId)) throw new ArgumentException("trophyId cannot be empty", nameof(trophyId));
-        return _trophyIds.Add(trophyId);
-    }
+    public string UserId { get; set; } = string.Empty;
+    public IReadOnlyDictionary<string, long> PointsByCategory { get; set; } = new Dictionary<string, long>();
+    public IReadOnlyCollection<string> Badges { get; set; } = new HashSet<string>();
+    public IReadOnlyCollection<string> Trophies { get; set; } = new HashSet<string>();
 }

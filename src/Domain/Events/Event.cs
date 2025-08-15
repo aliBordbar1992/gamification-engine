@@ -1,17 +1,15 @@
 using System.Collections.ObjectModel;
+using System.Text.Json;
 
 namespace GamificationEngine.Domain.Events;
 
 /// <summary>
-/// Platform-agnostic user activity event normalized by ingestion layer.
+/// Represents an event that occurred in the system
 /// </summary>
-public sealed class Event
+public class Event
 {
-    public string EventId { get; }
-    public string EventType { get; }
-    public string UserId { get; }
-    public DateTimeOffset OccurredAt { get; }
-    public IReadOnlyDictionary<string, object> Attributes { get; }
+    // EF Core requires a parameterless constructor
+    protected Event() { }
 
     public Event(string eventId, string eventType, string userId, DateTimeOffset occurredAt, IDictionary<string, object>? attributes = null)
     {
@@ -23,6 +21,12 @@ public sealed class Event
         EventType = eventType;
         UserId = userId;
         OccurredAt = occurredAt;
-        Attributes = new ReadOnlyDictionary<string, object>(attributes ?? new Dictionary<string, object>());
+        Attributes = attributes?.ToDictionary(kvp => kvp.Key, kvp => kvp.Value) ?? new Dictionary<string, object>();
     }
+
+    public string EventId { get; set; } = string.Empty;
+    public string EventType { get; set; } = string.Empty;
+    public string UserId { get; set; } = string.Empty;
+    public DateTimeOffset OccurredAt { get; set; }
+    public IReadOnlyDictionary<string, object> Attributes { get; set; } = new Dictionary<string, object>();
 }

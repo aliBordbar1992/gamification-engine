@@ -67,3 +67,38 @@ Deliverable achieved: Events can be sent to the engine via POST /api/events and 
     - Updated tests to use new background service architecture
     - **All tests passing**: 31/31 tests successful after migration
     - **Clean Architecture maintained**: Background service properly integrated with dependency injection
+
+# Completed Tasks
+
+## Phase 2 – Event System
+
+### Store events in DB with retention policy ✅
+**Completed:** 2025-01-26  
+**Summary:** Successfully implemented Entity Framework Core with PostgreSQL driver for persistent storage of events and user states. The implementation includes:
+
+- **EF Core Infrastructure Project**: Created `GamificationEngine.Infrastructure.Storage.EntityFramework` with PostgreSQL dependencies
+- **DbContext Configuration**: Configured `GamificationEngineDbContext` with proper entity mappings for `Event` and `UserState` entities
+- **JSONB Support**: Implemented JSON serialization for complex properties like `Attributes`, `PointsByCategory`, `Badges`, and `Trophies` using PostgreSQL's JSONB column type
+- **Repository Implementations**: Created EF Core implementations of `IEventRepository` and `IUserStateRepository` with full CRUD operations
+- **Retention Policy Service**: Implemented `EventRetentionService` as a background service to automatically clean up old events based on configurable retention periods
+- **Database Indexes**: Added performance indexes on `UserId`, `EventType`, `OccurredAt`, and composite index on `UserId + EventType`
+- **Service Registration**: Provided extension methods for easy DI container setup and health checks
+- **Migration Support**: Added `DesignTimeDbContextFactory` for EF Core migrations
+- **Comprehensive Testing**: Created dedicated test project with 13 passing tests covering DbContext configuration, entity mapping, and repository functionality
+- **DDD Compliance**: Maintained domain model purity while enabling persistence through proper EF Core configuration
+
+**Files Created/Modified:**
+- `src/Infrastructure/Storage.EntityFramework/` (new project)
+- `tests/Infrastructure.EntityFramework.Tests/` (new test project)
+- Updated domain entities to support EF Core (added parameterless constructors and settable properties)
+- Updated solution file to include new projects
+- Added configuration examples and documentation
+
+**Technical Details:**
+- Uses EF Core 9.0.4 with Npgsql PostgreSQL driver
+- Implements JSONB columns for flexible attribute storage
+- Supports configurable event retention policies
+- Includes health checks and background services
+- Full test coverage with in-memory database for isolation
+
+**Next Steps:** The EF Core infrastructure is now ready for production use. The next task should be "Test ingestion with multiple event types" to validate the complete event flow through the new persistent storage layer.
