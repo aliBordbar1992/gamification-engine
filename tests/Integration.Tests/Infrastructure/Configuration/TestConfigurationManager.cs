@@ -184,6 +184,11 @@ public class TestConfigurationManager
                 ["TestSettings:DatabaseProvider"] = "InMemory",
                 ["TestSettings:EnableDetailedLogging"] = "true",
                 ["TestSettings:TestTimeoutSeconds"] = "30",
+                ["TestSettings:EnablePerformanceTesting"] = "true",
+                ["TestSettings:EnableLoadTesting"] = "true",
+                ["TestSettings:EnableStressTesting"] = "true",
+                ["TestSettings:EnableBaselineTesting"] = "true",
+                ["TestSettings:EnableTestExecutionMonitoring"] = "true",
                 ["EventQueue:ProcessingInterval"] = "00:00:01",
                 ["EventQueue:MaxConcurrentProcessing"] = "2",
                 ["EventRetention:RetentionDays"] = "30",
@@ -204,6 +209,11 @@ public class TestSettings
     public int TestTimeoutSeconds { get; set; } = 30;
     public bool EnableParallelExecution { get; set; } = false;
     public int MaxParallelTests { get; set; } = 1;
+    public bool EnablePerformanceTesting { get; set; } = true;
+    public bool EnableLoadTesting { get; set; } = true;
+    public bool EnableStressTesting { get; set; } = true;
+    public bool EnableBaselineTesting { get; set; } = true;
+    public bool EnableTestExecutionMonitoring { get; set; } = true;
 }
 
 /// <summary>
