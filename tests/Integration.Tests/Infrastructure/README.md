@@ -1,198 +1,205 @@
-# Test Database Infrastructure
+# Integration Test Infrastructure
 
-This directory contains the test database infrastructure for integration testing, supporting both InMemory and PostgreSQL database providers.
+This directory contains the infrastructure components for running integration tests against the Gamification Engine API.
 
 ## Overview
 
-The test database infrastructure provides:
-- **Multiple database providers**: InMemory (fast) and PostgreSQL (real database testing)
-- **Automatic setup/teardown**: Database initialization and cleanup for each test
-- **Data seeding utilities**: Common test data creation and management
-- **Factory pattern**: Easy creation of different database types
-- **Configuration-driven**: Database selection via configuration files
+The integration test infrastructure provides:
+- Test database management (InMemory and PostgreSQL)
+- Test configuration management
+- Test logging and monitoring
+- Test data builders and utilities
+- HTTP client factories for API testing
 
-## Components
+## Test Configuration Management
 
-### Core Interfaces and Classes
+### TestConfigurationManager
 
-- **`ITestDatabase`**: Interface defining the contract for test databases
-- **`TestDatabaseBase`**: Abstract base class with common functionality
-- **`InMemoryTestDatabase`**: Fast in-memory database for unit-style integration tests
-- **`PostgreSqlTestDatabase`**: Real PostgreSQL database for full integration testing
-- **`TestDatabaseFactory`**: Factory for creating database instances
-- **`TestDatabaseUtilities`**: Utilities for seeding, cleaning, and managing test data
+The `TestConfigurationManager` class provides centralized configuration management for tests:
 
-### Database Types
+- Loads test-specific configuration from `appsettings.Testing.json`
+- Supports environment variable overrides with `TEST_` prefix
+- Provides strongly-typed access to configuration sections
+- Validates configuration requirements
+- Supports runtime configuration overrides
 
-#### InMemory Database
-- **Use case**: Fast tests that don't require real database features
-- **Pros**: No external dependencies, instant startup, isolated per test
-- **Cons**: Limited SQL features, no real database behavior testing
+### TestLoggingConfiguration
 
-#### PostgreSQL Database
-- **Use case**: Full integration testing with real database behavior
-- **Pros**: Real SQL features, actual database constraints, production-like behavior
-- **Cons**: Requires PostgreSQL instance, slower startup, external dependency
+The `TestLoggingConfiguration` class configures test-specific logging:
 
-## Usage
+- Configurable log levels for different components
+- Structured logging support
+- Custom test logging provider that captures log entries
+- Console output with color-coded log levels
+- Debug logging for development
 
-### Basic Usage
+### TestMonitoringConfiguration
+
+The `TestMonitoringConfiguration` class provides test monitoring and metrics:
+
+- Metrics collection for test operations
+- Performance monitoring with timing statistics
+- Test execution tracking
+- Configurable monitoring options
+- Real-time metrics reporting
+
+### TestConfigurationUtilities
+
+The `TestConfigurationUtilities` class provides helper methods:
+
+- Test environment setup and cleanup
+- Configuration validation
+- Scenario-based configuration creation
+- Test service configuration
+- Host builder creation for testing
+
+## Configuration Files
+
+### appsettings.Testing.json
+
+Base test configuration file containing:
+- Test settings (database provider, logging, timeouts)
+- Database connection strings
+- Event queue configuration
+- Event retention settings
+- Logging configuration
+
+### Environment Variables
+
+Test configuration can be overridden using environment variables with the `TEST_` prefix:
+
+```bash
+TEST_DATABASE_PROVIDER=PostgreSQL
+TEST_ENABLE_DETAILED_LOGGING=true
+TEST_TIMEOUT_SECONDS=60
+```
+
+## Usage Examples
+
+### Basic Test Configuration
 
 ```csharp
-public class MyIntegrationTest : IntegrationTestBase, IAsyncDisposable
+public class MyIntegrationTest : IntegrationTestBase
 {
-    private ITestDatabase _testDatabase;
-
     public MyIntegrationTest()
     {
-        _testDatabase = TestDatabaseFactory.CreateFromConfiguration(Services);
+        // Configuration is automatically loaded and services are configured
     }
-
-    public async Task InitializeAsync()
-    {
-        await _testDatabase.InitializeAsync();
-        await _testDatabase.SeedAsync();
-    }
-
+    
     [Fact]
-    public async Task MyTest()
+    public async Task Should_Test_Something()
     {
-        // Arrange
-        var context = _testDatabase.Context;
+        // Use ConfigurationManager to access test settings
+        var dbProvider = ConfigurationManager.TestSettings.DatabaseProvider;
         
-        // Act & Assert
-        // Your test logic here
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        if (_testDatabase is IAsyncDisposable asyncDisposable)
+        // Use monitoring services if available
+        if (PerformanceMonitor != null)
         {
-            await asyncDisposable.DisposeAsync();
+            using var operation = PerformanceMonitor.StartOperation("test_operation");
+            // ... test logic ...
+            operation.MarkSuccess();
         }
     }
 }
 ```
 
-### Explicit Database Type Selection
+### Custom Configuration
 
 ```csharp
-// Create specific database type
-var inMemoryDb = TestDatabaseFactory.CreateInMemory(Services);
-var postgreSqlDb = TestDatabaseFactory.CreatePostgreSql(Services);
-
-// Or by string
-var database = TestDatabaseFactory.Create("PostgreSQL", Services);
-```
-
-### Data Seeding and Management
-
-```csharp
-// Seed common test data
-await TestDatabaseUtilities.SeedCommonTestDataAsync(context);
-
-// Seed specific test data
-await TestDatabaseUtilities.SeedEventTestDataAsync(context, "user-1", 5);
-
-// Clean up data
-await TestDatabaseUtilities.CleanupAllTestDataAsync(context);
-
-// Check database state
-var (eventCount, userStateCount) = await TestDatabaseUtilities.GetEntityCountsAsync(context);
-```
-
-## Configuration
-
-### Test Settings
-
-Configure database selection in `appsettings.Testing.json`:
-
-```json
+var config = TestConfigurationUtilities.CreateScenarioConfiguration("performance", new Dictionary<string, string>
 {
-  "TestSettings": {
-    "DatabaseProvider": "InMemory",
-    "UseInMemoryDatabase": true,
-    "EnableDetailedLogging": true
-  },
-  "ConnectionStrings": {
-    "TestPostgreSql": "Host=localhost;Port=5432;Database=gamification_test;Username=test_user;Password=test_password"
-  }
-}
+    ["TestSettings:EnableParallelExecution"] = "true",
+    ["EventQueue:MaxConcurrentProcessing"] = "4"
+});
 ```
 
-### Environment Variables
+### Test Service Configuration
 
-Override settings with environment variables:
-
-```bash
-# Use PostgreSQL for testing
-set TEST_DatabaseProvider=PostgreSQL
-set TEST_ConnectionStrings__TestPostgreSql="Host=localhost;Port=5432;Database=gamification_test;Username=test_user;Password=test_password"
-
-# Run tests
-dotnet test
+```csharp
+var services = new ServiceCollection();
+services.ConfigureTestServices(configuration);
+services.AddTestMonitoring(options =>
+{
+    options.EnableMetricsCollection = true;
+    options.EnablePerformanceMonitoring = true;
+});
 ```
+
+## Test Database Infrastructure
+
+### Supported Providers
+
+- **InMemory**: Fast, no external dependencies, suitable for unit tests
+- **PostgreSQL**: Full database testing, suitable for integration tests
+
+### Database Selection
+
+The database provider is configured via:
+1. `appsettings.Testing.json` - `TestSettings:DatabaseProvider`
+2. Environment variable - `TEST_DATABASE_PROVIDER`
+3. Runtime configuration override
+
+### Database Management
+
+```csharp
+// Get database from factory
+var database = TestDatabaseFactory.CreateFromConfiguration(Services);
+
+// Use specific provider
+var inMemoryDb = TestDatabaseFactory.CreateInMemory(Services);
+var postgresDb = TestDatabaseFactory.CreatePostgreSql(Services, connectionString);
+```
+
+## Test Data Management
+
+### TestDataBuilder
+
+The `TestDataBuilder` class provides utilities for creating test data:
+
+- Event creation with realistic data
+- User state generation
+- Configuration data setup
+- Random data generation for stress testing
+
+### Test Assertion Utilities
+
+The `TestAssertionUtilities` class provides common assertion patterns:
+
+- JSON response validation
+- Database state verification
+- Event sequence validation
+- Performance assertion helpers
 
 ## Best Practices
 
-### Test Isolation
-- Each test should use a fresh database instance
-- Clean up data after each test
-- Use unique database names for parallel execution
-
-### Performance
-- Use InMemory for fast feedback during development
-- Use PostgreSQL for CI/CD and pre-release testing
-- Consider test data size and cleanup strategies
-
-### Data Management
-- Seed only the data needed for each test
-- Use utilities for common data patterns
-- Avoid hardcoded test data in individual tests
-
-### Error Handling
-- Always dispose of database resources
-- Handle database connection failures gracefully
-- Provide meaningful error messages for configuration issues
+1. **Configuration**: Always use the `TestConfigurationManager` for accessing test settings
+2. **Database**: Use appropriate database provider for test type (InMemory for unit, PostgreSQL for integration)
+3. **Monitoring**: Enable monitoring for performance-critical tests
+4. **Cleanup**: Ensure proper cleanup in test teardown
+5. **Isolation**: Each test should have isolated data and state
+6. **Logging**: Use appropriate log levels to avoid noise in test output
 
 ## Troubleshooting
 
 ### Common Issues
 
-1. **Connection String Not Found**
-   - Ensure `TestPostgreSql` connection string is configured
-   - Check environment variable overrides
+1. **Configuration Not Loading**: Check file paths and environment variables
+2. **Database Connection Failures**: Verify connection strings and database availability
+3. **Service Resolution Errors**: Ensure required services are registered
+4. **Performance Issues**: Consider using InMemory database for faster tests
 
-2. **Database Already Exists**
-   - Use unique database names for parallel tests
-   - Ensure proper cleanup between tests
+### Debug Mode
 
-3. **Permission Denied**
-   - Verify PostgreSQL user has necessary permissions
-   - Check database creation rights
-
-4. **Test Data Persistence**
-   - Ensure `CleanupAsync()` is called
-   - Check for transaction rollback issues
-
-### Debugging
-
-Enable detailed logging in test configuration:
-
-```json
-{
-  "Logging": {
-    "LogLevel": {
-      "Microsoft.EntityFrameworkCore.Database.Command": "Information"
-    }
-  }
-}
+Enable detailed logging by setting:
+```bash
+TEST_ENABLE_DETAILED_LOGGING=true
+TEST_LOGGING_DEFAULT_LEVEL=Debug
 ```
 
 ## Future Enhancements
 
-- **SQLite support**: Lightweight alternative to PostgreSQL
-- **Docker integration**: Automatic PostgreSQL container management
-- **Migration testing**: Test EF Core migrations
-- **Performance benchmarking**: Database performance metrics
-- **Multi-tenant testing**: Support for multiple test databases 
+- Support for additional database providers (SQL Server, MySQL)
+- Advanced metrics collection and reporting
+- Test result aggregation and analysis
+- Performance benchmarking tools
+- Configuration validation rules engine 

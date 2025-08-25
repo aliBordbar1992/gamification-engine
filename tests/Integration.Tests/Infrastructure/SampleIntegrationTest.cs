@@ -1,9 +1,9 @@
-using GamificationEngine.Integration.Tests.Infrastructure;
+using GamificationEngine.Integration.Tests.Infrastructure.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Shouldly;
 
-namespace GamificationEngine.Integration.Tests;
+namespace GamificationEngine.Integration.Tests.Infrastructure;
 
 /// <summary>
 /// Sample integration test demonstrating the test infrastructure
@@ -29,7 +29,7 @@ public class SampleIntegrationTest : IntegrationTestBase
         var customClient = CreateClient(services =>
         {
             // Custom service configuration for this test
-            services.AddSingleton<string>("test-value");
+            services.AddSingleton("test-value");
         });
 
         // Act

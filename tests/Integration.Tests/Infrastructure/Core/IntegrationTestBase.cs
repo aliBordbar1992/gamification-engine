@@ -1,9 +1,11 @@
+using GamificationEngine.Integration.Tests.Infrastructure.Configuration;
+using GamificationEngine.Integration.Tests.Infrastructure.Http;
+using GamificationEngine.Integration.Tests.Infrastructure.Logging;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace GamificationEngine.Integration.Tests.Infrastructure;
+namespace GamificationEngine.Integration.Tests.Infrastructure.Core;
 
 /// <summary>
 /// Base class for all integration tests providing common setup and teardown functionality
@@ -13,31 +15,58 @@ public abstract class IntegrationTestBase : IAsyncDisposable
     protected WebApplicationFactory<Program> Factory { get; private set; }
     protected IServiceScope ServiceScope { get; private set; }
     protected IServiceProvider Services { get; private set; }
+    protected TestConfigurationManager ConfigurationManager { get; private set; }
+    protected ITestMetricsCollector? MetricsCollector { get; private set; }
+    protected ITestPerformanceMonitor? PerformanceMonitor { get; private set; }
 
     protected IntegrationTestBase()
     {
+        // Set up test environment
+        TestConfigurationUtilities.SetupTestEnvironment();
+
+        // Create configuration manager
+        ConfigurationManager = new TestConfigurationManager();
+
         Factory = new WebApplicationFactory<Program>()
             .WithWebHostBuilder(builder =>
             {
                 builder.ConfigureAppConfiguration((context, config) =>
-{
-    // Add test-specific configuration if available
-    var testConfigPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "tests", "Integration.Tests", "appsettings.Testing.json");
-    config.AddJsonFile(testConfigPath, optional: true);
+                {
+                    // Clear existing configuration sources
+                    config.Sources.Clear();
 
-    // Override with environment-specific settings
-    config.AddEnvironmentVariables("TEST_");
-});
+                    // Add test configuration
+                    config.AddConfiguration(ConfigurationManager.Configuration);
+
+                    // Add environment-specific overrides
+                    config.AddEnvironmentVariables("TEST_");
+                });
 
                 builder.ConfigureServices(services =>
                 {
-                    // Configure test-specific services here
+                    // Configure test-specific services
+                    services.ConfigureTestServices(ConfigurationManager.Configuration);
+
+                    // Allow derived classes to configure additional services
                     ConfigureTestServices(services);
                 });
             });
 
         ServiceScope = Factory.Services.CreateScope();
         Services = ServiceScope.ServiceProvider;
+
+        // Get monitoring services if available (these are optional and may not be configured)
+        try
+        {
+            MetricsCollector = Services.GetService<ITestMetricsCollector>();
+            PerformanceMonitor = Services.GetService<ITestPerformanceMonitor>();
+        }
+        catch
+        {
+            // Monitoring services are optional, ignore if not configured
+            MetricsCollector = null;
+            PerformanceMonitor = null;
+        }
     }
 
     /// <summary>
@@ -115,6 +144,9 @@ public abstract class IntegrationTestBase : IAsyncDisposable
 
         ServiceScope?.Dispose();
         Factory?.Dispose();
+
+        // Clean up test environment
+        TestConfigurationUtilities.CleanupTestEnvironment();
 
         await ValueTask.CompletedTask;
     }

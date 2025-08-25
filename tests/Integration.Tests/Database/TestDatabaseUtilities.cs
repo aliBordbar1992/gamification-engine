@@ -2,8 +2,10 @@ using Microsoft.EntityFrameworkCore;
 using GamificationEngine.Domain.Events;
 using GamificationEngine.Domain.Users;
 using GamificationEngine.Infrastructure.Storage.EntityFramework;
+using GamificationEngine.Integration.Tests.Infrastructure;
+using GamificationEngine.Integration.Tests.Infrastructure.Testing;
 
-namespace GamificationEngine.Integration.Tests.Infrastructure;
+namespace GamificationEngine.Integration.Tests.Database;
 
 /// <summary>
 /// Utilities for managing test database state, seeding, and cleanup

@@ -305,3 +305,81 @@ await database.CleanupAsync();
 ```
 
 **Next Steps:** The next task should be "Set up Test Configuration Management" to complete the configuration infrastructure for the testing environment.
+
+### Set up Test Configuration Management ✅
+**Completed:** 2025-01-26  
+**Summary:** Successfully implemented comprehensive test configuration management system providing centralized configuration, logging, monitoring, and utilities for the integration testing infrastructure. The implementation includes:
+
+- **TestConfigurationManager**: Centralized configuration management with environment variable overrides, validation, and strongly-typed access to configuration sections
+- **TestLoggingConfiguration**: Configurable test logging with structured logging support, custom test logging provider, and color-coded console output
+- **TestMonitoringConfiguration**: Test monitoring and metrics collection with performance tracking, operation monitoring, and configurable options
+- **TestConfigurationUtilities**: Helper methods for test environment setup, configuration validation, scenario-based configuration, and test service configuration
+- **Comprehensive Configuration**: Updated `appsettings.Testing.json` with detailed test settings, database configuration, event queue settings, and logging configuration
+- **Integration with Base Classes**: Updated `IntegrationTestBase` to use the new configuration management system
+- **Full Test Coverage**: Created `TestConfigurationManagementTests.cs` with 20 tests covering all configuration management functionality
+
+**Infrastructure Components Created:**
+- `tests/Integration.Tests/Infrastructure/TestConfigurationManager.cs` - Centralized configuration management
+- `tests/Integration.Tests/Infrastructure/TestLoggingConfiguration.cs` - Test logging configuration and custom providers
+- `tests/Integration.Tests/Infrastructure/TestMonitoringConfiguration.cs` - Test monitoring and metrics collection
+- `tests/Integration.Tests/Infrastructure/TestConfigurationUtilities.cs` - Configuration utilities and helpers
+- `tests/Integration.Tests/Infrastructure/TestConfigurationManagementTests.cs` - Comprehensive test suite
+- Updated `tests/Integration.Tests/appsettings.Testing.json` - Enhanced test configuration
+- Updated `tests/Integration.Tests/Infrastructure/IntegrationTestBase.cs` - Integration with new configuration system
+
+**Technical Implementation Details:**
+- **Configuration Management**: Loads from `appsettings.Testing.json`, supports environment variables with `TEST_` prefix, runtime overrides
+- **Logging System**: Configurable log levels, structured logging, custom test logging provider with log capture
+- **Monitoring System**: Metrics collection, performance monitoring, operation timing, configurable options
+- **Environment Management**: Automatic test environment setup/cleanup, configuration validation
+- **Service Configuration**: Automatic test service configuration with logging and monitoring
+- **Scenario Support**: Pre-configured scenarios for performance, integration, unit, and debug testing
+
+**Configuration Features:**
+- **Test Settings**: Database provider, logging levels, timeouts, parallel execution
+- **Database Configuration**: Connection strings for different providers
+- **Event Queue Settings**: Processing intervals, concurrency, retry policies
+- **Event Retention**: Retention periods, cleanup intervals, batch sizes
+- **Logging Configuration**: Log levels, structured logging, sensitive data handling
+
+**Test Results:**
+- **All Tests Passing**: 20/20 configuration management tests successful
+- **Integration Tests**: All 32 existing integration tests continue to pass
+- **Build Successful**: Project compiles without errors
+- **No Breaking Changes**: Existing functionality preserved and enhanced
+
+**Architecture Benefits:**
+- **Clean Architecture Compliance**: Configuration properly abstracted and injected
+- **Flexibility**: Environment-specific configuration, runtime overrides, scenario-based setup
+- **Maintainability**: Centralized configuration management with clear separation of concerns
+- **Extensibility**: Easy to add new configuration sections and monitoring capabilities
+- **Performance**: Configurable logging levels and monitoring options for different test scenarios
+
+**Usage Examples:**
+```csharp
+// Access configuration
+var dbProvider = ConfigurationManager.TestSettings.DatabaseProvider;
+var logLevel = ConfigurationManager.LoggingSettings.DefaultLevel;
+
+// Use monitoring services
+if (PerformanceMonitor != null)
+{
+    using var operation = PerformanceMonitor.StartOperation("test_operation");
+    // ... test logic ...
+    operation.MarkSuccess();
+}
+
+// Create scenario-based configuration
+var perfConfig = TestConfigurationUtilities.CreateScenarioConfiguration("performance");
+var debugConfig = TestConfigurationUtilities.CreateScenarioConfiguration("debug");
+```
+
+**Environment Variable Overrides:**
+```bash
+TEST_DATABASE_PROVIDER=PostgreSQL
+TEST_ENABLE_DETAILED_LOGGING=true
+TEST_TIMEOUT_SECONDS=60
+TEST_LOGGING_DEFAULT_LEVEL=Debug
+```
+
+**Next Steps:** The next task should be "Create Test Infrastructure Abstractions" to complete the remaining testing infrastructure components.

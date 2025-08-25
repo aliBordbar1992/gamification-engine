@@ -3,7 +3,7 @@ using Microsoft.Extensions.Configuration;
 using GamificationEngine.Infrastructure.Storage.EntityFramework;
 using Shouldly;
 
-namespace GamificationEngine.Integration.Tests.Infrastructure;
+namespace GamificationEngine.Integration.Tests.Database;
 
 /// <summary>
 /// Tests for the test database infrastructure to ensure it works correctly

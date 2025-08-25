@@ -1,7 +1,7 @@
 using GamificationEngine.Domain.Events;
 using GamificationEngine.Domain.Users;
 
-namespace GamificationEngine.Integration.Tests.Infrastructure;
+namespace GamificationEngine.Integration.Tests.Infrastructure.Testing;
 
 /// <summary>
 /// Builder class for creating test data entities used in integration tests

@@ -1,6 +1,6 @@
 using GamificationEngine.Infrastructure.Storage.EntityFramework;
 
-namespace GamificationEngine.Integration.Tests.Infrastructure;
+namespace GamificationEngine.Integration.Tests.Database;
 
 /// <summary>
 /// Interface for managing test database operations across different database providers

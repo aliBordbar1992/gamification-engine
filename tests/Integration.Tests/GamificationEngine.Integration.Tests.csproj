@@ -30,10 +30,8 @@
         <ProjectReference Include="..\..\src\GamificationEngine.Api\GamificationEngine.Api.csproj" />
         <ProjectReference Include="..\..\src\Application\GamificationEngine.Application.csproj" />
         <ProjectReference Include="..\..\src\Domain\GamificationEngine.Domain.csproj" />
-        <ProjectReference
-            Include="..\..\src\Infrastructure\Storage.EntityFramework\GamificationEngine.Infrastructure.Storage.EntityFramework.csproj" />
-        <ProjectReference
-            Include="..\..\src\Infrastructure\Storage.InMemory\GamificationEngine.Infrastructure.Storage.InMemory.csproj" />
+        <ProjectReference Include="..\..\src\Infrastructure\Storage.EntityFramework\GamificationEngine.Infrastructure.Storage.EntityFramework.csproj" />
+        <ProjectReference Include="..\..\src\Infrastructure\Storage.InMemory\GamificationEngine.Infrastructure.Storage.InMemory.csproj" />
     </ItemGroup>
 
     <ItemGroup>
