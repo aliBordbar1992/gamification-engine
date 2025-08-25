@@ -24,6 +24,11 @@
     <ProjectReference Include="..\..\src\Application\GamificationEngine.Application.csproj" />
     <ProjectReference Include="..\..\src\Domain\GamificationEngine.Domain.csproj" />
     <ProjectReference Include="..\..\src\Shared\GamificationEngine.Shared.csproj" />
+    <ProjectReference Include="..\..\src\GamificationEngine.Api\GamificationEngine.Api.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
 </Project>

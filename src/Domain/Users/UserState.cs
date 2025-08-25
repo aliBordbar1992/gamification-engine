@@ -12,13 +12,46 @@ public class UserState
     {
         if (string.IsNullOrWhiteSpace(userId)) throw new ArgumentException("userId cannot be empty", nameof(userId));
         UserId = userId;
-        PointsByCategory = new Dictionary<string, long>();
-        Badges = new HashSet<string>();
-        Trophies = new HashSet<string>();
+        _pointsByCategory = new Dictionary<string, long>(StringComparer.Ordinal);
+        _badges = new HashSet<string>(StringComparer.Ordinal);
+        _trophies = new HashSet<string>(StringComparer.Ordinal);
     }
 
+    private readonly Dictionary<string, long> _pointsByCategory = new(StringComparer.Ordinal);
+    private readonly HashSet<string> _badges = new(StringComparer.Ordinal);
+    private readonly HashSet<string> _trophies = new(StringComparer.Ordinal);
+
     public string UserId { get; set; } = string.Empty;
-    public IReadOnlyDictionary<string, long> PointsByCategory { get; set; } = new Dictionary<string, long>();
-    public IReadOnlyCollection<string> Badges { get; set; } = new HashSet<string>();
-    public IReadOnlyCollection<string> Trophies { get; set; } = new HashSet<string>();
+    public IReadOnlyDictionary<string, long> PointsByCategory => _pointsByCategory;
+    public IReadOnlyCollection<string> Badges => _badges;
+    public IReadOnlyCollection<string> Trophies => _trophies;
+
+    /// <summary>
+    /// Adds points to the specified category for the user.
+    /// </summary>
+    /// <param name="category">Point category identifier (e.g., "xp", "score").</param>
+    /// <param name="amount">Points to add (can be negative for penalties).</param>
+    public void AddPoints(string category, long amount)
+    {
+        if (string.IsNullOrWhiteSpace(category)) throw new ArgumentException("category cannot be empty", nameof(category));
+
+        if (_pointsByCategory.TryGetValue(category, out var current))
+        {
+            _pointsByCategory[category] = current + amount;
+        }
+        else
+        {
+            _pointsByCategory[category] = amount;
+        }
+    }
+
+    /// <summary>
+    /// Grants a badge to the user if not already present.
+    /// </summary>
+    /// <param name="badgeId">Badge identifier.</param>
+    public void GrantBadge(string badgeId)
+    {
+        if (string.IsNullOrWhiteSpace(badgeId)) throw new ArgumentException("badgeId cannot be empty", nameof(badgeId));
+        _badges.Add(badgeId);
+    }
 }
