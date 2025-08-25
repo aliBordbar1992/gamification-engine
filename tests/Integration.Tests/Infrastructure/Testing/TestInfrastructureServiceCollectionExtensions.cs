@@ -2,6 +2,7 @@ using GamificationEngine.Integration.Tests.Database;
 using GamificationEngine.Integration.Tests.Infrastructure.Abstractions;
 using GamificationEngine.Integration.Tests.Infrastructure.Configuration;
 using GamificationEngine.Integration.Tests.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -81,14 +82,47 @@ public static class TestInfrastructureServiceCollectionExtensions
         string databaseType = "InMemory",
         string? connectionString = null)
     {
-        // TestDatabaseFactory is static, no registration needed
-
         // Add database configuration
         services.Configure<TestDatabaseOptions>(options =>
         {
             options.DatabaseType = databaseType;
             options.ConnectionString = connectionString;
         });
+
+        // Register DbContext based on database type
+        if (databaseType.Equals("PostgreSQL", StringComparison.OrdinalIgnoreCase))
+        {
+            // Register PostgreSQL DbContext
+            services.AddDbContext<GamificationEngine.Infrastructure.Storage.EntityFramework.GamificationEngineDbContext>(options =>
+            {
+                if (string.IsNullOrEmpty(connectionString))
+                {
+                    throw new InvalidOperationException("Connection string is required for PostgreSQL database.");
+                }
+
+                options.UseNpgsql(connectionString, npgsqlOptions =>
+                {
+                    npgsqlOptions.EnableRetryOnFailure(
+                        maxRetryCount: 3,
+                        maxRetryDelay: TimeSpan.FromSeconds(5),
+                        errorCodesToAdd: null);
+                });
+
+                // Enable detailed logging for tests
+                options.EnableSensitiveDataLogging();
+                options.EnableDetailedErrors();
+            });
+        }
+        else
+        {
+            // Register InMemory DbContext
+            services.AddDbContext<GamificationEngine.Infrastructure.Storage.EntityFramework.GamificationEngineDbContext>(options =>
+            {
+                options.UseInMemoryDatabase($"test-db-{Guid.NewGuid()}");
+                options.EnableSensitiveDataLogging();
+                options.EnableDetailedErrors();
+            });
+        }
 
         return services;
     }

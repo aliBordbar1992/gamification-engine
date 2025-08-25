@@ -535,3 +535,80 @@ TEST_LOGGING_DEFAULT_LEVEL=Debug
 ```
 
 **Next Steps:** The next task should be "Create Test Infrastructure Abstractions" to complete the remaining testing infrastructure components.
+
+### Implement Test Assertion Utilities ✅
+**Completed:** 2025-01-26  
+**Summary:** Successfully implemented comprehensive test assertion utilities providing custom assertion helpers for domain entities, JSON response validation, database state assertions, and test result reporting. The implementation includes:
+
+- **DomainEntityAssertionUtilities**: Custom assertion helpers for Rule, Condition, and Reward domain entities with comprehensive property validation and collection assertions
+- **DatabaseStateAssertionUtilities**: Database state assertion helpers for verifying Event and UserState persistence, attributes, badges, trophies, and chronological ordering
+- **JsonResponseValidationUtilities**: JSON response validation utilities with schema validation, property path assertions, and type checking for HTTP responses
+- **TestResultReportingUtilities**: Test result reporting and debugging tools with execution context tracking, performance measurement, and system information capture
+- **Refactored TestAssertionUtilities**: Streamlined the original utility class to focus on general-purpose HTTP and collection assertions, removing overlapping functionality
+- **Comprehensive Testing**: Created `TestAssertionUtilitiesTests.cs` with 18 tests covering all assertion utility functionality
+- **Real Database Integration**: Configured test infrastructure to use PostgreSQL database for comprehensive testing with real database behavior
+
+**Infrastructure Components Created:**
+- `tests/Integration.Tests/Infrastructure/Utils/DomainEntityAssertionUtilities.cs` - Domain entity assertion helpers
+- `tests/Integration.Tests/Infrastructure/Utils/DatabaseStateAssertionUtilities.cs` - Database state assertion helpers
+- `tests/Integration.Tests/Infrastructure/Utils/JsonResponseValidationUtilities.cs` - JSON response validation utilities
+- `tests/Integration.Tests/Infrastructure/Utils/TestResultReportingUtilities.cs` - Test result reporting and debugging tools
+- `tests/Integration.Tests/Tests/TestAssertionUtilitiesTests.cs` - Comprehensive test suite
+- Updated `tests/Integration.Tests/Infrastructure/Testing/TestInfrastructureServiceCollectionExtensions.cs` - Database service registration
+- Updated `tests/Integration.Tests/appsettings.Testing.json` - PostgreSQL database configuration
+
+**Technical Implementation Details:**
+- **Domain Entity Assertions**: Rule, Condition, and Reward property validation with collection assertions
+- **Database State Assertions**: Event and UserState persistence verification, attribute validation, badge/trophy checking
+- **JSON Validation**: Schema validation, property path assertions, type checking, array/object validation
+- **Test Reporting**: Execution context tracking, performance measurement, time limit assertions, system info capture
+- **Database Integration**: Proper DbContext service registration for both InMemory and PostgreSQL providers
+- **Clean Architecture**: All utilities follow SOLID principles with proper separation of concerns
+
+**Assertion Utility Categories:**
+- **Domain Entities**: Rule properties, condition validation, reward verification, collection assertions
+- **Database State**: Event persistence, user state validation, attribute checking, chronological ordering
+- **JSON Responses**: Schema validation, property paths, type checking, array/object validation
+- **Test Reporting**: Context tracking, performance measurement, time limits, system information
+- **HTTP & Collections**: Status codes, headers, content validation, collection operations
+
+**Test Results:**
+- **All Tests Passing**: 18/18 assertion utility tests successful
+- **Real Database Testing**: Successfully using PostgreSQL database for comprehensive testing
+- **Build Successful**: All projects compile without errors
+- **No Breaking Changes**: Existing functionality preserved and enhanced
+
+**Architecture Benefits:**
+- **Clean Architecture Compliance**: Assertion utilities properly abstracted and focused on specific concerns
+- **Reusability**: Comprehensive assertion helpers can be used across all integration tests
+- **Maintainability**: Clear separation of concerns with specialized utility classes
+- **Extensibility**: Easy to add new assertion types for future domain entities
+- **Performance**: Efficient assertions with detailed error messages for debugging
+
+**Usage Examples:**
+```csharp
+// Domain entity assertions
+DomainEntityAssertionUtilities.AssertRuleProperties(rule, "rule1", "Test Rule", new[] { "EVENT1" });
+DomainEntityAssertionUtilities.AssertConditionProperties(condition, "cond1", "type1");
+
+// Database state assertions
+await DatabaseStateAssertionUtilities.AssertEventExistsInDatabase(dbContext, "event1", "user1", "EVENT1");
+await DatabaseStateAssertionUtilities.AssertUserStateExistsInDatabase(dbContext, "user1", new Dictionary<string, long> { ["XP"] = 100 });
+
+// JSON response validation
+JsonResponseValidationUtilities.AssertJsonSchema(response, JsonSchema.Object);
+JsonResponseValidationUtilities.AssertJsonPropertyPath<string>(response, "data.userId", "user1");
+
+// Test result reporting
+var context = TestResultReportingUtilities.CreateTestContext("test_name");
+context.AddStep("Step description");
+var result = await TestResultReportingUtilities.MeasureOperationAsync("operation", async () => await SomeOperation());
+```
+
+**Database Configuration:**
+- **PostgreSQL Integration**: Configured to use real PostgreSQL database for comprehensive testing
+- **Service Registration**: Proper DbContext registration in test infrastructure
+- **Connection Management**: Test-specific connection strings with proper cleanup
+- **Performance**: Real database behavior for accurate integration testing
+
+**Next Steps:** The next task should be "Create Performance Testing Infrastructure" to complete the testing infrastructure with performance monitoring and load testing capabilities.

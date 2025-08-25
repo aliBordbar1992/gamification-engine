@@ -1,4 +1,5 @@
 using GamificationEngine.Integration.Tests.Infrastructure.Configuration;
+using GamificationEngine.Integration.Tests.Infrastructure.Testing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -136,6 +137,11 @@ public static class TestConfigurationUtilities
 
         // Add test monitoring
         services.AddTestMonitoring(testSettings);
+
+        // Add test database configuration
+        var databaseProvider = testSettings.DatabaseProvider ?? "InMemory";
+        var connectionString = configuration.GetConnectionString("TestPostgreSql");
+        services.AddTestDatabase(databaseProvider, connectionString);
 
         // Add configuration
         services.AddSingleton(configuration);
