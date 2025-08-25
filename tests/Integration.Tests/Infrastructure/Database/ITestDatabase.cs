@@ -1,26 +1,27 @@
+using Microsoft.EntityFrameworkCore;
 using GamificationEngine.Infrastructure.Storage.EntityFramework;
 
 namespace GamificationEngine.Integration.Tests.Database;
 
 /// <summary>
-/// Interface for managing test database operations across different database providers
+/// Interface for test database implementations providing database management capabilities for integration tests
 /// </summary>
-public interface ITestDatabase
+public interface ITestDatabase : IAsyncDisposable
 {
     /// <summary>
-    /// Gets the database context for the current test
+    /// Gets the database context for the test database
     /// </summary>
     GamificationEngineDbContext Context { get; }
 
     /// <summary>
-    /// Initializes the database with test data
+    /// Initializes the test database
     /// </summary>
     Task InitializeAsync();
 
     /// <summary>
-    /// Cleans up the database after a test
+    /// Ensures the database is created and ready for use
     /// </summary>
-    Task CleanupAsync();
+    Task EnsureCreatedAsync();
 
     /// <summary>
     /// Seeds the database with test data
@@ -28,12 +29,12 @@ public interface ITestDatabase
     Task SeedAsync();
 
     /// <summary>
-    /// Ensures the database is created and ready for testing
+    /// Cleans up all data from the database
     /// </summary>
-    Task EnsureCreatedAsync();
+    Task CleanupAsync();
 
     /// <summary>
-    /// Gets a scoped service provider for dependency injection in tests
+    /// Gets the service provider for the test database scope
     /// </summary>
     IServiceProvider GetServiceProvider();
 }
