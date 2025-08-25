@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace GamificationEngine.Integration.Tests.Infrastructure.Utils;
+namespace GamificationEngine.Integration.Tests.Infrastructure.Models;
 
 /// <summary>
 /// Represents a JSON schema for validation

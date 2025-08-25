@@ -1,6 +1,7 @@
+using GamificationEngine.Integration.Tests.Infrastructure.Models;
 using Microsoft.Extensions.Logging;
 
-namespace GamificationEngine.Integration.Tests.Infrastructure.Models;
+namespace GamificationEngine.Integration.Tests.Infrastructure.Testing;
 
 /// <summary>
 /// Test logger implementation that captures log entries for testing

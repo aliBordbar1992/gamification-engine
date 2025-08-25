@@ -1,6 +1,7 @@
 using GamificationEngine.Integration.Tests.Infrastructure.Abstractions;
 using GamificationEngine.Integration.Tests.Infrastructure.Data;
 using GamificationEngine.Integration.Tests.Infrastructure.Models;
+using GamificationEngine.Integration.Tests.Infrastructure.Monitoring;
 using GamificationEngine.Integration.Tests.Infrastructure.Utils;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;

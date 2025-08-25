@@ -1,8 +1,9 @@
 using GamificationEngine.Integration.Tests.Infrastructure.Abstractions;
+using GamificationEngine.Integration.Tests.Infrastructure.Models;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 
-namespace GamificationEngine.Integration.Tests.Infrastructure.Models;
+namespace GamificationEngine.Integration.Tests.Infrastructure.Testing;
 
 /// <summary>
 /// Implementation of test metrics collector

@@ -1,3 +1,4 @@
+using GamificationEngine.Integration.Tests.Infrastructure.Models;
 using Shouldly;
 using System.Text.Json;
 

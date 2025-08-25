@@ -1,7 +1,7 @@
 using GamificationEngine.Integration.Tests.Infrastructure.Abstractions;
 using System.Diagnostics;
 
-namespace GamificationEngine.Integration.Tests.Infrastructure.Models;
+namespace GamificationEngine.Integration.Tests.Infrastructure.Monitoring;
 
 /// <summary>
 /// Implementation of test operation monitor

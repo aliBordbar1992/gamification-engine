@@ -1,7 +1,8 @@
 using GamificationEngine.Integration.Tests.Infrastructure.Abstractions;
+using GamificationEngine.Integration.Tests.Infrastructure.Models;
 using Microsoft.Extensions.Logging;
 
-namespace GamificationEngine.Integration.Tests.Infrastructure.Models;
+namespace GamificationEngine.Integration.Tests.Infrastructure.Monitoring;
 
 /// <summary>
 /// Implementation of test performance monitor

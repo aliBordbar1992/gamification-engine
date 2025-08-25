@@ -4,6 +4,7 @@ using GamificationEngine.Domain.Rules;
 using GamificationEngine.Domain.Users;
 using GamificationEngine.Infrastructure.Storage.EntityFramework;
 using GamificationEngine.Integration.Tests.Infrastructure;
+using GamificationEngine.Integration.Tests.Infrastructure.Models;
 using GamificationEngine.Integration.Tests.Infrastructure.Utils;
 using Microsoft.Extensions.Logging;
 using Shouldly;

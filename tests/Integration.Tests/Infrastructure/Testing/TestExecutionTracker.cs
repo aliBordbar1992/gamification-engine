@@ -1,4 +1,5 @@
 using GamificationEngine.Integration.Tests.Infrastructure.Abstractions;
+using GamificationEngine.Integration.Tests.Infrastructure.Monitoring;
 using System.Diagnostics;
 
 namespace GamificationEngine.Integration.Tests.Infrastructure.Testing;

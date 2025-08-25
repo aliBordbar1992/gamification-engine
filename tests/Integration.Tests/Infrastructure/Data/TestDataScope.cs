@@ -1,6 +1,4 @@
-using GamificationEngine.Integration.Tests.Infrastructure.Data;
-
-namespace GamificationEngine.Integration.Tests.Infrastructure.Models;
+namespace GamificationEngine.Integration.Tests.Infrastructure.Data;
 
 /// <summary>
 /// Represents an isolated test data scope for a single test
