@@ -86,8 +86,8 @@ Organized into **phases** with clear, testable boundaries so that AI coding tool
 * [x] **Store events in DB** with retention policy.
 * [x] **Test ingestion with multiple event types**.
 * [x] **Write Unit Tests using Shouldly for Event related classes in Domain layer**
-* [ ] **Write integration tests for API and Application services**
-* [ ] **Create ".http" test files for API**
+* [x] **Write integration tests for API and Application services**
+* [x] **Create ".http" test files for API**
 
 **Deliverable:** Events can be sent to the engine and retrieved via API.
 

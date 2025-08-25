@@ -1,5 +1,4 @@
 using System.Collections.ObjectModel;
-using System.Text.Json;
 
 namespace GamificationEngine.Domain.Events;
 

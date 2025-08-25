@@ -1,6 +1,204 @@
-@GamificationEngine.Api_HostAddress = http://localhost:5046
+### Gamification Engine API Tests
+### This file contains HTTP requests for testing the API endpoints
 
-GET {{GamificationEngine.Api_HostAddress}}/weatherforecast/
-Accept: application/json
+### Test Environment Variables
+@baseUrl = https://localhost:7001
+@apiVersion = v1
+@contentType = application/json
 
-###
+### 1. Event Ingestion Tests
+
+#### Ingest a simple user comment event
+POST {{baseUrl}}/api/events
+Content-Type: {{contentType}}
+
+{
+  "eventId": "test-comment-1",
+  "eventType": "USER_COMMENTED",
+  "userId": "user-123",
+  "occurredAt": "2024-01-15T10:30:00Z",
+  "attributes": {
+    "commentId": "comment-456",
+    "postId": "post-789",
+    "text": "Great post!"
+  }
+}
+
+#### Ingest an event without eventId (should generate one)
+POST {{baseUrl}}/api/events
+Content-Type: {{contentType}}
+
+{
+  "eventType": "PROFILE_COMPLETED",
+  "userId": "user-456",
+  "attributes": {
+    "completenessPercent": 95.0
+  }
+}
+
+#### Ingest an event without occurredAt (should use current time)
+POST {{baseUrl}}/api/events
+Content-Type: {{contentType}}
+
+{
+  "eventType": "USER_PURCHASED_PRODUCT",
+  "userId": "user-789",
+  "attributes": {
+    "productId": "prod-123",
+    "amount": 29.99
+  }
+}
+
+#### Ingest an event with complex attributes
+POST {{baseUrl}}/api/events
+Content-Type: {{contentType}}
+
+{
+  "eventId": "complex-event-1",
+  "eventType": "USER_PURCHASED_PRODUCT",
+  "userId": "complex-user-123",
+  "occurredAt": "2024-01-15T10:30:00Z",
+  "attributes": {
+    "productId": "prod-456",
+    "amount": 99.99,
+    "currency": "USD",
+    "tags": ["electronics", "gaming"],
+    "metadata": {
+      "source": "recommendation_engine",
+      "confidence": 0.95
+    },
+    "isFirstPurchase": true,
+    "discountApplied": 15.0
+  }
+}
+
+#### Test validation - missing required fields
+POST {{baseUrl}}/api/events
+Content-Type: {{contentType}}
+
+{
+  "eventId": "invalid-event-1"
+}
+
+#### Test validation - empty event type
+POST {{baseUrl}}/api/events
+Content-Type: {{contentType}}
+
+{
+  "eventType": "",
+  "userId": "user-123"
+}
+
+#### Test validation - empty user ID
+POST {{baseUrl}}/api/events
+Content-Type: {{contentType}}
+
+{
+  "eventType": "TEST_EVENT",
+  "userId": ""
+}
+
+### 2. Event Retrieval Tests
+
+#### Get events for a specific user
+GET {{baseUrl}}/api/events/user/user-123
+
+#### Get events for a specific user with pagination
+GET {{baseUrl}}/api/events/user/user-123?limit=5&offset=0
+
+#### Get events by type
+GET {{baseUrl}}/api/events/type/USER_COMMENTED
+
+#### Get events by type with pagination
+GET {{baseUrl}}/api/events/type/USER_COMMENTED?limit=10&offset=5
+
+#### Get a specific event by ID (not implemented yet)
+GET {{baseUrl}}/api/events/test-comment-1
+
+### 3. Error Handling Tests
+
+#### Test invalid user ID (empty string)
+GET {{baseUrl}}/api/events/user/
+
+#### Test invalid event type (empty string)
+GET {{baseUrl}}/api/events/type/
+
+#### Test non-existent event ID
+GET {{baseUrl}}/api/events/non-existent-id
+
+### 4. Performance Tests
+
+#### Test with large number of events
+GET {{baseUrl}}/api/events/user/user-123?limit=1000&offset=0
+
+#### Test with maximum pagination
+GET {{baseUrl}}/api/events/type/USER_COMMENTED?limit=1000&offset=999
+
+### 5. Edge Cases
+
+#### Test with very long event type
+POST {{baseUrl}}/api/events
+Content-Type: {{contentType}}
+
+{
+  "eventType": "VERY_LONG_EVENT_TYPE_NAME_THAT_MIGHT_CAUSE_ISSUES_WITH_VALIDATION_OR_DATABASE_STORAGE",
+  "userId": "user-edge-1"
+}
+
+#### Test with very long user ID
+POST {{baseUrl}}/api/events
+Content-Type: {{contentType}}
+
+{
+  "eventType": "TEST_EVENT",
+  "userId": "very-long-user-id-that-might-cause-issues-with-validation-or-database-storage-123456789012345678901234567890"
+}
+
+#### Test with special characters in attributes
+POST {{baseUrl}}/api/events
+Content-Type: {{contentType}}
+
+{
+  "eventType": "SPECIAL_CHARS_TEST",
+  "userId": "user-special-1",
+  "attributes": {
+    "text": "Special chars: !@#$%^&*()_+-=[]{}|;':\",./<>?",
+    "unicode": "Unicode: 🚀🎉💯",
+    "html": "<script>alert('test')</script>",
+    "json": "{\"nested\": \"value\"}"
+  }
+}
+
+### 6. Bulk Operations (Future Enhancement)
+# These endpoints don't exist yet but could be useful for performance testing
+
+#### Bulk event ingestion (future)
+# POST {{baseUrl}}/api/events/bulk
+# Content-Type: {{contentType}}
+# 
+# [
+#   {
+#     "eventType": "USER_COMMENTED",
+#     "userId": "user-1",
+#     "attributes": {"commentId": "comment-1"}
+#   },
+#   {
+#     "eventType": "USER_COMMENTED",
+#     "userId": "user-2",
+#     "attributes": {"commentId": "comment-2"}
+#   }
+# ]
+
+### 7. Health Check (Future Enhancement)
+# GET {{baseUrl}}/health
+
+### 8. Metrics (Future Enhancement)
+# GET {{baseUrl}}/metrics
+
+### Notes for Testing:
+# 1. Make sure the API is running before executing these tests
+# 2. Some endpoints may return different status codes based on implementation
+# 3. The baseUrl should be updated to match your local development environment
+# 4. Consider using environment variables for different test environments
+# 5. These tests can be run in VS Code with the REST Client extension
+# 6. For automated testing, consider using tools like Newman or similar HTTP testing tools

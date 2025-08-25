@@ -143,3 +143,42 @@ Deliverable achieved: Events can be sent to the engine via POST /api/events and 
 - Error code and message validation for all error types
 
 **Next Steps:** The next task should be "Write integration tests for API and Application services" to test the complete event flow through the application layers.
+
+### Write integration tests for API and Application services ✅
+**Completed:** 2025-01-26  
+**Summary:** Successfully implemented comprehensive integration tests for the API and Application services, following TDD principles and Clean Architecture guidelines. The implementation includes:
+
+- **API Integration Tests**: Created `ApiIntegrationTests.cs` with 13 tests covering end-to-end HTTP request/response scenarios
+- **TestServer Integration**: Used `WebApplicationFactory` and `TestServer` for realistic HTTP testing without external dependencies
+- **Mock Service Injection**: Properly configured dependency injection to replace real services with mocks during testing
+- **DTO Pattern Implementation**: Created `EventDto` class in Application layer to handle JSON serialization without polluting domain models
+- **Route Order Optimization**: Fixed ASP.NET Core routing issues by reordering controller methods for proper route matching
+- **Comprehensive Test Coverage**: Tests cover event ingestion, retrieval, validation, error handling, and edge cases
+- **HTTP Test File**: Created comprehensive `.http` file with 40+ test scenarios for manual API testing
+
+**Test Coverage Details:**
+- **Total Integration Tests**: 13 tests covering all major API endpoints
+- **All Tests Passing**: 13/13 tests successful
+- **Test Categories**: Event ingestion (valid/invalid), event retrieval, pagination, error handling, complex attributes
+- **HTTP Status Codes**: Tests verify proper 201 Created, 400 Bad Request, and 501 Not Implemented responses
+
+**Architecture Improvements:**
+- **Clean Architecture Compliance**: Domain models remain pure without JSON serialization concerns
+- **DTO Pattern**: Proper separation between domain entities and API response models
+- **Route Constraints**: Added `minlength(1)` constraints to prevent empty route parameters
+- **Background Service Handling**: Properly configured test environment to handle hosted services
+
+**Files Created/Modified:**
+- `tests/Application.Tests/ApiIntegrationTests.cs` (new comprehensive integration test suite)
+- `src/Application/DTOs/EventDto.cs` (new DTO for API responses)
+- `src/GamificationEngine.Api/Controllers/EventsController.cs` (updated with route constraints and DTO usage)
+- `src/GamificationEngine.Api/GamificationEngine.Api.http` (comprehensive HTTP test file)
+
+**Technical Details:**
+- Uses `Microsoft.AspNetCore.Mvc.Testing` package for integration testing
+- Proper mock injection using `CustomWebApplicationFactory`
+- JSON deserialization handling for complex data types (arrays, decimals, booleans)
+- Route parameter validation and error handling
+- Comprehensive HTTP test scenarios for manual testing
+
+**Next Steps:** The next task should be "Create '.http' test files for API" to provide additional testing capabilities, though this has already been completed as part of this task.

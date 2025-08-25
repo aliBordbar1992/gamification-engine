@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 using GamificationEngine.Domain.Events;
 using GamificationEngine.Shared;
 using GamificationEngine.Application.Abstractions;
+using GamificationEngine.Application.DTOs;
 namespace GamificationEngine.Api.Controllers;
 
 /// <summary>
@@ -29,18 +31,61 @@ public class EventsController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var @event = new Event(
-            request.EventId ?? Guid.NewGuid().ToString(),
-            request.EventType,
-            request.UserId,
-            request.OccurredAt ?? DateTimeOffset.UtcNow,
-            request.Attributes
-        );
+        try
+        {
+            var @event = new Event(
+                request.EventId ?? Guid.NewGuid().ToString(),
+                request.EventType,
+                request.UserId,
+                request.OccurredAt ?? DateTimeOffset.UtcNow,
+                request.Attributes
+            );
 
-        var result = await _eventIngestionService.IngestEventAsync(@event);
+            var result = await _eventIngestionService.IngestEventAsync(@event);
+
+            if (result.IsSuccess)
+                return CreatedAtAction(nameof(GetEvent), new { eventId = @event.EventId }, EventDto.FromDomain(@event));
+
+            return BadRequest(new { error = result.Error?.Message });
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+    }
+
+    /// <summary>
+    /// Retrieves events for a specific user
+    /// </summary>
+    /// <param name="userId">The user ID</param>
+    /// <param name="limit">Maximum number of events to return (default: 100, max: 1000)</param>
+    /// <param name="offset">Number of events to skip (default: 0)</param>
+    /// <returns>Collection of events for the user</returns>
+    [HttpGet("user/{userId:minlength(1)}")]
+    public async Task<IActionResult> GetUserEvents(string userId, [FromQuery] int limit = 100, [FromQuery] int offset = 0)
+    {
+        var result = await _eventIngestionService.GetUserEventsAsync(userId, limit, offset);
 
         if (result.IsSuccess)
-            return CreatedAtAction(nameof(GetEvent), new { eventId = @event.EventId }, @event);
+            return Ok(EventDto.FromDomain(result.Value));
+
+        return BadRequest(new { error = result.Error?.Message });
+    }
+
+    /// <summary>
+    /// Retrieves events by type
+    /// </summary>
+    /// <param name="eventType">The event type</param>
+    /// <param name="limit">Maximum number of events to return (default: 100, max: 1000)</param>
+    /// <param name="offset">Number of events to skip (default: 0)</param>
+    /// <returns>Collection of events of the specified type</returns>
+    [HttpGet("type/{eventType:minlength(1)}")]
+    public async Task<IActionResult> GetEventsByType(string eventType, [FromQuery] int limit = 100, [FromQuery] int offset = 0)
+    {
+        var result = await _eventIngestionService.GetEventsByTypeAsync(eventType, limit, offset);
+
+        if (result.IsSuccess)
+            return Ok(EventDto.FromDomain(result.Value));
 
         return BadRequest(new { error = result.Error?.Message });
     }
@@ -55,42 +100,6 @@ public class EventsController : ControllerBase
     {
         // This would require adding a method to the service, but for now we'll return not implemented
         return StatusCode(501, new { message = "Get event by ID not yet implemented" });
-    }
-
-    /// <summary>
-    /// Retrieves events for a specific user
-    /// </summary>
-    /// <param name="userId">The user ID</param>
-    /// <param name="limit">Maximum number of events to return (default: 100, max: 1000)</param>
-    /// <param name="offset">Number of events to skip (default: 0)</param>
-    /// <returns>Collection of events for the user</returns>
-    [HttpGet("user/{userId}")]
-    public async Task<IActionResult> GetUserEvents(string userId, [FromQuery] int limit = 100, [FromQuery] int offset = 0)
-    {
-        var result = await _eventIngestionService.GetUserEventsAsync(userId, limit, offset);
-
-        if (result.IsSuccess)
-            return Ok(result.Value);
-
-        return BadRequest(new { error = result.Error?.Message });
-    }
-
-    /// <summary>
-    /// Retrieves events by type
-    /// </summary>
-    /// <param name="eventType">The event type</param>
-    /// <param name="limit">Maximum number of events to return (default: 100, max: 1000)</param>
-    /// <param name="offset">Number of events to skip (default: 0)</param>
-    /// <returns>Collection of events of the specified type</returns>
-    [HttpGet("type/{eventType}")]
-    public async Task<IActionResult> GetEventsByType(string eventType, [FromQuery] int limit = 100, [FromQuery] int offset = 0)
-    {
-        var result = await _eventIngestionService.GetEventsByTypeAsync(eventType, limit, offset);
-
-        if (result.IsSuccess)
-            return Ok(result.Value);
-
-        return BadRequest(new { error = result.Error?.Message });
     }
 }
 
@@ -107,11 +116,15 @@ public class IngestEventRequest
     /// <summary>
     /// The type of event (e.g., "USER_COMMENTED", "PRODUCT_PURCHASED")
     /// </summary>
+    [Required]
+    [MinLength(1)]
     public string EventType { get; set; } = string.Empty;
 
     /// <summary>
     /// The ID of the user who performed the action
     /// </summary>
+    [Required]
+    [MinLength(1)]
     public string UserId { get; set; } = string.Empty;
 
     /// <summary>

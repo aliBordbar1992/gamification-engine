@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using GamificationEngine.Api.Controllers;
 using GamificationEngine.Application.Abstractions;
+using GamificationEngine.Application.DTOs;
 using GamificationEngine.Domain.Events;
 using GamificationEngine.Domain.Errors;
 using GamificationEngine.Shared;
@@ -24,8 +25,8 @@ public class EventsControllerMultipleEventTypesTests
     private static void AssertEventsEqual(Event expected, object? actual)
     {
         actual.ShouldNotBeNull();
-        actual.ShouldBeOfType<Event>();
-        var actualEvent = (Event)actual!;
+        actual.ShouldBeOfType<EventDto>();
+        var actualEvent = (EventDto)actual!;
         actualEvent.EventId.ShouldBe(expected.EventId);
         actualEvent.EventType.ShouldBe(expected.EventType);
         actualEvent.UserId.ShouldBe(expected.UserId);
