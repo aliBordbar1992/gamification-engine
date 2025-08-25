@@ -1,9 +1,10 @@
 using GamificationEngine.Domain.Events;
 using GamificationEngine.Domain.Users;
 using GamificationEngine.Integration.Tests.Database;
+using GamificationEngine.Integration.Tests.Infrastructure.Testing;
 using Microsoft.Extensions.Logging;
 
-namespace GamificationEngine.Integration.Tests.Infrastructure.Testing;
+namespace GamificationEngine.Integration.Tests.Testing.BusinessLogic;
 
 /// <summary>
 /// Manages test data creation, validation, and cleanup for integration tests
