@@ -2,7 +2,7 @@ using GamificationEngine.Integration.Tests.Infrastructure.Abstractions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace GamificationEngine.Integration.Tests.Database;
+namespace GamificationEngine.Integration.Tests.Infrastructure.Database;
 
 /// <summary>
 /// Factory for creating test database instances based on configuration or explicit requests

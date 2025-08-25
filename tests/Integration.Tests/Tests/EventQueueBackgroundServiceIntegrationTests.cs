@@ -1,12 +1,11 @@
+using GamificationEngine.Domain.Events;
 using GamificationEngine.Integration.Tests.Infrastructure;
-using GamificationEngine.Integration.Tests.Infrastructure.Abstractions;
+using GamificationEngine.Integration.Tests.Infrastructure.Models;
 using GamificationEngine.Integration.Tests.Infrastructure.Testing;
 using GamificationEngine.Integration.Tests.Infrastructure.Utils;
-using GamificationEngine.Domain.Events;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Shouldly;
-using Xunit;
 
 namespace GamificationEngine.Integration.Tests.Tests;
 

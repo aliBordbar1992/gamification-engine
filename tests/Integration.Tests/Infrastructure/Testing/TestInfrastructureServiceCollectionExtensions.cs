@@ -1,7 +1,7 @@
-using GamificationEngine.Integration.Tests.Database;
 using GamificationEngine.Integration.Tests.Infrastructure.Abstractions;
-using GamificationEngine.Integration.Tests.Infrastructure.Configuration;
 using GamificationEngine.Integration.Tests.Infrastructure.Data;
+using GamificationEngine.Integration.Tests.Infrastructure.Models;
+using GamificationEngine.Integration.Tests.Infrastructure.Utils;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -143,56 +143,4 @@ public static class TestInfrastructureServiceCollectionExtensions
 
         return services;
     }
-}
-
-/// <summary>
-/// Configuration options for test infrastructure
-/// </summary>
-public class TestInfrastructureOptions
-{
-    /// <summary>
-    /// Default timeout for test operations
-    /// </summary>
-    public TimeSpan DefaultTimeout { get; set; } = TimeSpan.FromSeconds(30);
-
-    /// <summary>
-    /// Default polling interval for wait operations
-    /// </summary>
-    public TimeSpan DefaultPollInterval { get; set; } = TimeSpan.FromMilliseconds(100);
-
-    /// <summary>
-    /// Whether to enable detailed logging
-    /// </summary>
-    public bool EnableDetailedLogging { get; set; } = true;
-
-    /// <summary>
-    /// Whether to enable performance monitoring
-    /// </summary>
-    public bool EnablePerformanceMonitoring { get; set; } = false;
-}
-
-/// <summary>
-/// Configuration options for test database
-/// </summary>
-public class TestDatabaseOptions
-{
-    /// <summary>
-    /// Type of database to use for testing
-    /// </summary>
-    public string DatabaseType { get; set; } = "InMemory";
-
-    /// <summary>
-    /// Connection string for the test database
-    /// </summary>
-    public string? ConnectionString { get; set; }
-
-    /// <summary>
-    /// Whether to enable database logging
-    /// </summary>
-    public bool EnableLogging { get; set; } = false;
-
-    /// <summary>
-    /// Whether to enable sensitive data logging
-    /// </summary>
-    public bool EnableSensitiveDataLogging { get; set; } = false;
 }

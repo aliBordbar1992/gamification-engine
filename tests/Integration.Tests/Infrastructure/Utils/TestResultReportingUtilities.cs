@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging;
+using Shouldly;
 using System.Diagnostics;
 using System.Text;
-using Shouldly;
 
 namespace GamificationEngine.Integration.Tests.Infrastructure.Utils;
 

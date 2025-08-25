@@ -1,8 +1,9 @@
+using GamificationEngine.Integration.Tests.Infrastructure.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace GamificationEngine.Integration.Tests.Infrastructure;
+namespace GamificationEngine.Integration.Tests.Infrastructure.Configuration;
 
 /// <summary>
 /// Manages test-specific configuration including environment overrides, test settings, and configuration validation
@@ -196,65 +197,4 @@ public class TestConfigurationManager
             })
             .Build();
     }
-}
-
-/// <summary>
-/// Test-specific configuration settings
-/// </summary>
-public class TestSettings
-{
-    public bool UseInMemoryDatabase { get; set; } = true;
-    public string DatabaseProvider { get; set; } = "InMemory";
-    public bool EnableDetailedLogging { get; set; } = true;
-    public int TestTimeoutSeconds { get; set; } = 30;
-    public bool EnableParallelExecution { get; set; } = false;
-    public int MaxParallelTests { get; set; } = 1;
-    public bool EnablePerformanceTesting { get; set; } = true;
-    public bool EnableLoadTesting { get; set; } = true;
-    public bool EnableStressTesting { get; set; } = true;
-    public bool EnableBaselineTesting { get; set; } = true;
-    public bool EnableTestExecutionMonitoring { get; set; } = true;
-}
-
-/// <summary>
-/// Database connection string settings
-/// </summary>
-public class DatabaseSettings
-{
-    public string DefaultConnection { get; set; } = string.Empty;
-    public string TestPostgreSql { get; set; } = string.Empty;
-}
-
-/// <summary>
-/// Event queue configuration settings
-/// </summary>
-public class EventQueueSettings
-{
-    public TimeSpan ProcessingInterval { get; set; } = TimeSpan.FromSeconds(1);
-    public int MaxConcurrentProcessing { get; set; } = 2;
-    public int MaxQueueSize { get; set; } = 1000;
-    public bool EnableRetryOnFailure { get; set; } = true;
-    public int MaxRetryAttempts { get; set; } = 3;
-}
-
-/// <summary>
-/// Event retention configuration settings
-/// </summary>
-public class EventRetentionSettings
-{
-    public int RetentionDays { get; set; } = 30;
-    public int BatchSize { get; set; } = 100;
-    public TimeSpan CleanupInterval { get; set; } = TimeSpan.FromHours(24);
-}
-
-/// <summary>
-/// Logging configuration settings
-/// </summary>
-public class LoggingSettings
-{
-    public string DefaultLevel { get; set; } = "Information";
-    public string MicrosoftAspNetCoreLevel { get; set; } = "Warning";
-    public string MicrosoftEntityFrameworkLevel { get; set; } = "Information";
-    public bool EnableSensitiveDataLogging { get; set; } = false;
-    public bool EnableStructuredLogging { get; set; } = true;
 }

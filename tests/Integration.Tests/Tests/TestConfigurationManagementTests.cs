@@ -1,7 +1,7 @@
-using GamificationEngine.Integration.Tests.Infrastructure;
+using GamificationEngine.Integration.Tests.Infrastructure.Abstractions;
 using GamificationEngine.Integration.Tests.Infrastructure.Configuration;
+using GamificationEngine.Integration.Tests.Infrastructure.Models;
 using GamificationEngine.Integration.Tests.Infrastructure.Utils;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Shouldly;

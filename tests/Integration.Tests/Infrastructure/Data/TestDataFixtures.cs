@@ -1,6 +1,6 @@
 using GamificationEngine.Domain.Events;
 using GamificationEngine.Domain.Users;
-using GamificationEngine.Integration.Tests.Infrastructure.Abstractions;
+using GamificationEngine.Integration.Tests.Infrastructure.Models;
 
 namespace GamificationEngine.Integration.Tests.Infrastructure.Data;
 

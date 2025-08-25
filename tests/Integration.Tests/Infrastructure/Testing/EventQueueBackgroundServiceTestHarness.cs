@@ -1,5 +1,5 @@
-using GamificationEngine.Application.Abstractions;
 using GamificationEngine.Api;
+using GamificationEngine.Application.Abstractions;
 using GamificationEngine.Domain.Events;
 using GamificationEngine.Domain.Repositories;
 using Microsoft.Extensions.DependencyInjection;

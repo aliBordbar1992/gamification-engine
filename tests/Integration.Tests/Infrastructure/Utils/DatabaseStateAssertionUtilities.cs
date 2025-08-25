@@ -1,5 +1,3 @@
-using GamificationEngine.Domain.Events;
-using GamificationEngine.Domain.Users;
 using GamificationEngine.Infrastructure.Storage.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 using Shouldly;

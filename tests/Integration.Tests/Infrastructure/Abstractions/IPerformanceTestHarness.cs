@@ -1,3 +1,4 @@
+using GamificationEngine.Integration.Tests.Infrastructure.Models;
 using GamificationEngine.Integration.Tests.Infrastructure.Testing;
 
 namespace GamificationEngine.Integration.Tests.Infrastructure.Abstractions;

@@ -1,6 +1,6 @@
-using GamificationEngine.Domain.Rules;
-using GamificationEngine.Domain.Rewards;
 using GamificationEngine.Domain.Events;
+using GamificationEngine.Domain.Rewards;
+using GamificationEngine.Domain.Rules;
 using GamificationEngine.Domain.Users;
 using Shouldly;
 

@@ -1,5 +1,5 @@
 using GamificationEngine.Integration.Tests.Infrastructure.Abstractions;
-using GamificationEngine.Integration.Tests.Infrastructure.Utils;
+using GamificationEngine.Integration.Tests.Infrastructure.Models;
 using Microsoft.Extensions.Logging;
 
 namespace GamificationEngine.Integration.Tests.Infrastructure.Testing;

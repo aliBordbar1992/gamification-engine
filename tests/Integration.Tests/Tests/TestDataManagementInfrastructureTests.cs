@@ -1,11 +1,10 @@
+using GamificationEngine.Integration.Tests.Infrastructure.Abstractions;
+using GamificationEngine.Integration.Tests.Infrastructure.Data;
+using GamificationEngine.Integration.Tests.Infrastructure.Models;
+using GamificationEngine.Integration.Tests.Infrastructure.Utils;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Shouldly;
-using Xunit;
-using GamificationEngine.Integration.Tests.Infrastructure.Testing;
-using GamificationEngine.Integration.Tests.Infrastructure.Utils;
-using GamificationEngine.Integration.Tests.Infrastructure.Abstractions;
-using GamificationEngine.Integration.Tests.Infrastructure.Data;
 
 namespace GamificationEngine.Integration.Tests.Tests;
 

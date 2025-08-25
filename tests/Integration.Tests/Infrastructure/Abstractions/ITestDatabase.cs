@@ -1,4 +1,3 @@
-using Microsoft.EntityFrameworkCore;
 using GamificationEngine.Infrastructure.Storage.EntityFramework;
 
 namespace GamificationEngine.Integration.Tests.Infrastructure.Abstractions;

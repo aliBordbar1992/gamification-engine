@@ -1,10 +1,9 @@
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Configuration;
-using GamificationEngine.Infrastructure.Storage.EntityFramework;
-using Shouldly;
-using GamificationEngine.Integration.Tests.Database;
-using GamificationEngine.Integration.Tests.Infrastructure.Utils;
 using GamificationEngine.Integration.Tests.Infrastructure.Abstractions;
+using GamificationEngine.Integration.Tests.Infrastructure.Database;
+using GamificationEngine.Integration.Tests.Infrastructure.Utils;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 
 namespace GamificationEngine.Integration.Tests.Tests;
 

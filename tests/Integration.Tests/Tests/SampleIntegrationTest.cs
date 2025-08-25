@@ -1,7 +1,7 @@
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Configuration;
-using Shouldly;
 using GamificationEngine.Integration.Tests.Infrastructure;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 
 namespace GamificationEngine.Integration.Tests.Tests;
 

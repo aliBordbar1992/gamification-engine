@@ -1,3 +1,4 @@
+using GamificationEngine.Integration.Tests.Infrastructure.Abstractions;
 using GamificationEngine.Integration.Tests.Infrastructure.Configuration;
 using GamificationEngine.Integration.Tests.Infrastructure.Http;
 using GamificationEngine.Integration.Tests.Infrastructure.Utils;

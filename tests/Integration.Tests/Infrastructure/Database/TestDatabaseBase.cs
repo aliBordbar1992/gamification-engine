@@ -1,9 +1,9 @@
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using GamificationEngine.Infrastructure.Storage.EntityFramework;
 using GamificationEngine.Integration.Tests.Infrastructure.Abstractions;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace GamificationEngine.Integration.Tests.Database;
+namespace GamificationEngine.Integration.Tests.Infrastructure.Database;
 
 /// <summary>
 /// Base abstract class for test database implementations providing common functionality

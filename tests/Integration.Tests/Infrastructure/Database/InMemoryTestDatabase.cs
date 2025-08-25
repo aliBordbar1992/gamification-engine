@@ -1,8 +1,7 @@
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using GamificationEngine.Infrastructure.Storage.EntityFramework;
+using Microsoft.EntityFrameworkCore;
 
-namespace GamificationEngine.Integration.Tests.Database;
+namespace GamificationEngine.Integration.Tests.Infrastructure.Database;
 
 /// <summary>
 /// In-memory test database implementation for fast, isolated testing

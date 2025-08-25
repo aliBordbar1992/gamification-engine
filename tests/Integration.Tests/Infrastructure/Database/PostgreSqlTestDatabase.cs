@@ -1,9 +1,9 @@
+using GamificationEngine.Infrastructure.Storage.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using GamificationEngine.Infrastructure.Storage.EntityFramework;
 
-namespace GamificationEngine.Integration.Tests.Database;
+namespace GamificationEngine.Integration.Tests.Infrastructure.Database;
 
 /// <summary>
 /// PostgreSQL test database implementation for integration testing with real database

@@ -1,10 +1,7 @@
-using Microsoft.EntityFrameworkCore;
-using GamificationEngine.Domain.Events;
 using GamificationEngine.Domain.Users;
 using GamificationEngine.Infrastructure.Storage.EntityFramework;
-using GamificationEngine.Integration.Tests.Infrastructure;
-using GamificationEngine.Integration.Tests.Infrastructure.Testing;
 using GamificationEngine.Integration.Tests.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace GamificationEngine.Integration.Tests.Infrastructure.Utils;
 

@@ -1,4 +1,5 @@
 using GamificationEngine.Integration.Tests.Infrastructure.Configuration;
+using GamificationEngine.Integration.Tests.Infrastructure.Models;
 using GamificationEngine.Integration.Tests.Infrastructure.Testing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

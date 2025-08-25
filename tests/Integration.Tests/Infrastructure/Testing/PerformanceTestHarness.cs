@@ -1,8 +1,7 @@
-using System.Diagnostics;
-using Microsoft.Extensions.Logging;
 using GamificationEngine.Integration.Tests.Infrastructure.Abstractions;
-using GamificationEngine.Integration.Tests.Infrastructure.Configuration;
-using GamificationEngine.Integration.Tests.Infrastructure.Testing;
+using GamificationEngine.Integration.Tests.Infrastructure.Models;
+using Microsoft.Extensions.Logging;
+using System.Diagnostics;
 
 namespace GamificationEngine.Integration.Tests.Infrastructure.Testing;
 
