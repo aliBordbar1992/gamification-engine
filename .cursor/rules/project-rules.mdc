@@ -31,6 +31,7 @@ alwaysApply: true
 - No mutable static or global state anywhere in the codebase.
 - No domain aggregates should have direct relation with other aggregates, only their own entities
 - Prefer using Value Objects as much as possible
+- Prefer using `const string` in **separate static classes** over magic strings throughout the codebase
 
 # Error Handling
 - Use domain-specific exception types for business rule violations.

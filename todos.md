@@ -85,7 +85,7 @@ Organized into **phases** with clear, testable boundaries so that AI coding tool
 * [x] **Support event queue** (in-memory first, later pluggable for Kafka/RabbitMQ/etc.).
 * [x] **Store events in DB** with retention policy.
 * [x] **Test ingestion with multiple event types**.
-* [ ] **Write Unit Tests using Shouldly for Event related classes in Domain layer**
+* [x] **Write Unit Tests using Shouldly for Event related classes in Domain layer**
 * [ ] **Write integration tests for API and Application services**
 * [ ] **Create ".http" test files for API**
 
