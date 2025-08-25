@@ -43,10 +43,10 @@ public class EventsController : ControllerBase
 
             var result = await _eventIngestionService.IngestEventAsync(@event);
 
-            if (result.IsSuccess)
-                return CreatedAtAction(nameof(GetEvent), new { eventId = @event.EventId }, EventDto.FromDomain(@event));
+            if (result.IsSuccess && result.Value != null)
+                return CreatedAtAction(nameof(GetEvent), new { eventId = @event.EventId }, EventDto.FromDomain(result.Value));
 
-            return BadRequest(new { error = result.Error?.Message });
+            return BadRequest(new { error = result.Error?.Message ?? "Failed to ingest event" });
         }
         catch (ArgumentException ex)
         {
@@ -66,10 +66,10 @@ public class EventsController : ControllerBase
     {
         var result = await _eventIngestionService.GetUserEventsAsync(userId, limit, offset);
 
-        if (result.IsSuccess)
+        if (result.IsSuccess && result.Value != null)
             return Ok(EventDto.FromDomain(result.Value));
 
-        return BadRequest(new { error = result.Error?.Message });
+        return BadRequest(new { error = result.Error?.Message ?? "Failed to retrieve user events" });
     }
 
     /// <summary>
@@ -84,10 +84,10 @@ public class EventsController : ControllerBase
     {
         var result = await _eventIngestionService.GetEventsByTypeAsync(eventType, limit, offset);
 
-        if (result.IsSuccess)
+        if (result.IsSuccess && result.Value != null)
             return Ok(EventDto.FromDomain(result.Value));
 
-        return BadRequest(new { error = result.Error?.Message });
+        return BadRequest(new { error = result.Error?.Message ?? "Failed to retrieve events by type" });
     }
 
     /// <summary>
