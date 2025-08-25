@@ -44,6 +44,24 @@ public interface ITestTimingUtilities
     /// Waits for any task to complete with a timeout
     /// </summary>
     Task<Task?> WaitForAnyTaskAsync(IEnumerable<Task> tasks, TimeSpan timeout);
+
+    /// <summary>
+    /// Waits for a background service to complete processing of a specific number of items
+    /// </summary>
+    Task<bool> WaitForProcessingCompletionAsync(
+        Func<long> getProcessedCount,
+        long expectedCount,
+        TimeSpan timeout,
+        TimeSpan? pollInterval = null);
+
+    /// <summary>
+    /// Waits for a background service to become idle (no processing for a specified duration)
+    /// </summary>
+    Task<bool> WaitForServiceIdleAsync(
+        Func<bool> isProcessing,
+        TimeSpan idleDuration,
+        TimeSpan timeout,
+        TimeSpan? pollInterval = null);
 }
 
 /// <summary>

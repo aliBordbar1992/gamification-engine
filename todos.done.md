@@ -99,6 +99,40 @@ Deliverable achieved: Events can be sent to the engine via POST /api/events and 
 - **Test Lifecycle Management**: Automatic setup/teardown with state tracking and isolation support
 - **Test Data Fixtures**: Pre-built scenarios (basic user, power user, event sequences) with extensible framework
 
+### Set up Background Service Testing Infrastructure ✅
+**Completed:** 2025-08-25  
+**Summary:** Successfully implemented comprehensive background service testing infrastructure that provides robust testing capabilities for `IHostedService` implementations. The implementation includes:
+
+- **ITestBackgroundService Interface**: Created abstraction interface for testing background services with status tracking and lifecycle management
+- **BackgroundServiceTestHarness<T>**: Implemented generic base class for creating test harnesses for any `IHostedService` implementation
+- **EventQueueBackgroundServiceTestHarness**: Created specific test harness for `EventQueueBackgroundService` with event processing capabilities
+- **BackgroundServiceTestTimingUtilities**: Enhanced timing utilities specifically for background service testing scenarios
+- **BackgroundServiceTestScenarios**: Implemented reusable test scenarios for common background service testing patterns
+- **Integration Tests**: Created comprehensive integration tests demonstrating the testing infrastructure capabilities
+- **Clean Architecture Compliance**: All components follow SOLID principles and maintain proper separation of concerns
+
+**Files Created:**
+- `tests/Integration.Tests/Infrastructure/Abstractions/ITestBackgroundService.cs` - Background service testing interface
+- `tests/Integration.Tests/Infrastructure/Testing/BackgroundServiceTestHarness.cs` - Generic test harness base class
+- `tests/Integration.Tests/Infrastructure/Testing/EventQueueBackgroundServiceTestHarness.cs` - Specific test harness for EventQueueBackgroundService
+- `tests/Integration.Tests/Infrastructure/Utils/BackgroundServiceTestTimingUtilities.cs` - Enhanced timing utilities for background services
+- `tests/Integration.Tests/Infrastructure/Testing/BackgroundServiceTestScenarios.cs` - Reusable test scenarios
+- `tests/Integration.Tests/Tests/EventQueueBackgroundServiceIntegrationTests.cs` - Integration tests demonstrating the infrastructure
+
+**Key Features:**
+- **Generic Test Harness**: Reusable base class for testing any `IHostedService` implementation
+- **Status Tracking**: Comprehensive status management (Stopped, Starting, Running, Stopping, Error)
+- **Event Processing Testing**: Specialized capabilities for testing event queue background services
+- **Timing Utilities**: Enhanced synchronization and waiting mechanisms for background service operations
+- **Test Scenarios**: Pre-built test patterns for lifecycle, performance, error handling, and concurrency testing
+- **Integration Testing**: Full integration with existing test infrastructure and WebApplicationFactory
+
+**Test Results:**
+- **All tests passing**: 8/8 background service integration tests successful
+- **Full integration test suite**: 81/81 tests passing
+- **Build successful**: All projects compile without errors
+- **Infrastructure validated**: Background service testing capabilities fully functional
+
 ### Implement Test Data Management ✅
 **Completed:** 2025-01-26  
 **Summary:** Successfully implemented comprehensive test data management infrastructure that provides robust, reusable, and validated test data for integration testing. The implementation includes:

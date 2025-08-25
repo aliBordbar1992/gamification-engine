@@ -2,6 +2,7 @@ using GamificationEngine.Infrastructure.Storage.EntityFramework;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Shouldly;
 using Xunit;
 using GamificationEngine.Integration.Tests.Infrastructure.Testing;
 using GamificationEngine.Integration.Tests.Infrastructure.Abstractions;
@@ -47,9 +48,9 @@ public class TestInfrastructureAbstractionsTests : IAsyncDisposable
     public void TestInfrastructureServices_ShouldBeRegistered()
     {
         // Assert
-        Assert.NotNull(_serviceProvider.GetService<ITestLifecycleManager>());
-        Assert.NotNull(_serviceProvider.GetService<ITestDataManager>());
-        Assert.NotNull(_serviceProvider.GetService<ITestTimingUtilities>());
+        _serviceProvider.GetService<ITestLifecycleManager>().ShouldNotBeNull();
+        _serviceProvider.GetService<ITestDataManager>().ShouldNotBeNull();
+        _serviceProvider.GetService<ITestTimingUtilities>().ShouldNotBeNull();
     }
 
     [Fact]
@@ -60,17 +61,17 @@ public class TestInfrastructureAbstractionsTests : IAsyncDisposable
         var state = _lifecycleManager.GetCurrentState();
 
         // Assert
-        Assert.NotNull(state);
-        Assert.NotEmpty(state.TestId);
-        Assert.Equal(TestExecutionPhase.Running, state.CurrentPhase);
-        Assert.True(state.TestStartTime > DateTime.MinValue);
+        state.ShouldNotBeNull();
+        state.TestId.ShouldNotBeEmpty();
+        state.CurrentPhase.ShouldBe(TestExecutionPhase.Running);
+        state.TestStartTime.ShouldBeGreaterThan(DateTime.MinValue);
 
         // Act
         await _lifecycleManager.TearDownAsync();
         state = _lifecycleManager.GetCurrentState();
 
         // Assert
-        Assert.Equal(TestExecutionPhase.Completed, state.CurrentPhase);
+        state.CurrentPhase.ShouldBe(TestExecutionPhase.Completed);
     }
 
     [Fact]
@@ -84,8 +85,8 @@ public class TestInfrastructureAbstractionsTests : IAsyncDisposable
         var state = _lifecycleManager.GetCurrentState();
 
         // Assert
-        Assert.Equal(testId, state.TestId);
-        Assert.True(state.IsIsolated);
+        state.TestId.ShouldBe(testId);
+        state.IsIsolated.ShouldBeTrue();
     }
 
     [Fact]
@@ -98,17 +99,17 @@ public class TestInfrastructureAbstractionsTests : IAsyncDisposable
             new Dictionary<string, int> { { "TYPE_A", 2 }, { "TYPE_B", 3 } });
 
         // Assert
-        Assert.NotNull(@event);
-        Assert.Equal("user-1", @event.UserId);
-        Assert.Equal("TEST_EVENT", @event.EventType);
+        @event.ShouldNotBeNull();
+        @event.UserId.ShouldBe("user-1");
+        @event.EventType.ShouldBe("TEST_EVENT");
 
-        Assert.Equal(3, events.Count);
-        Assert.All(events, e => Assert.Equal("user-2", e.UserId));
-        Assert.All(events, e => Assert.Equal("BATCH_EVENT", e.EventType));
+        events.Count.ShouldBe(3);
+        events.ShouldAllBe(e => e.UserId == "user-2");
+        events.ShouldAllBe(e => e.EventType == "BATCH_EVENT");
 
-        Assert.Equal(5, mixedEvents.Count);
-        Assert.Equal(2, mixedEvents.Count(e => e.EventType == "TYPE_A"));
-        Assert.Equal(3, mixedEvents.Count(e => e.EventType == "TYPE_B"));
+        mixedEvents.Count.ShouldBe(5);
+        mixedEvents.Count(e => e.EventType == "TYPE_A").ShouldBe(2);
+        mixedEvents.Count(e => e.EventType == "TYPE_B").ShouldBe(3);
     }
 
     [Fact]
@@ -120,12 +121,12 @@ public class TestInfrastructureAbstractionsTests : IAsyncDisposable
             new List<string> { "Badge1", "Badge2" });
 
         // Assert
-        Assert.NotNull(userState);
-        Assert.Equal("user-1", userState.UserId);
-        Assert.Equal(100, userState.PointsByCategory["XP"]);
-        Assert.Equal(50, userState.PointsByCategory["Coins"]);
-        Assert.Contains("Badge1", userState.Badges);
-        Assert.Contains("Badge2", userState.Badges);
+        userState.ShouldNotBeNull();
+        userState.UserId.ShouldBe("user-1");
+        userState.PointsByCategory["XP"].ShouldBe(100);
+        userState.PointsByCategory["Coins"].ShouldBe(50);
+        userState.Badges.ShouldContain("Badge1");
+        userState.Badges.ShouldContain("Badge2");
     }
 
     [Fact]
@@ -137,17 +138,17 @@ public class TestInfrastructureAbstractionsTests : IAsyncDisposable
         var customFixture = _dataManager.CreateFixture("custom_fixture");
 
         // Assert
-        Assert.NotNull(basicFixture);
-        Assert.Equal("Basic User", basicFixture.Name);
-        Assert.NotEmpty(basicFixture.Events);
-        Assert.NotEmpty(basicFixture.UserStates);
+        basicFixture.ShouldNotBeNull();
+        basicFixture.Name.ShouldBe("Basic User");
+        basicFixture.Events.ShouldNotBeEmpty();
+        basicFixture.UserStates.ShouldNotBeEmpty();
 
-        Assert.NotNull(powerFixture);
-        Assert.Equal("Power User", powerFixture.Name);
-        Assert.True(powerFixture.Events.Count > basicFixture.Events.Count);
+        powerFixture.ShouldNotBeNull();
+        powerFixture.Name.ShouldBe("Power User");
+        powerFixture.Events.Count.ShouldBeGreaterThan(basicFixture.Events.Count);
 
-        Assert.NotNull(customFixture);
-        Assert.Equal("custom_fixture", customFixture.Name);
+        customFixture.ShouldNotBeNull();
+        customFixture.Name.ShouldBe("custom_fixture");
     }
 
     [Fact]
@@ -157,8 +158,8 @@ public class TestInfrastructureAbstractionsTests : IAsyncDisposable
         var userState = _dataManager.CreateUserState("user-1");
 
         // Act & Assert
-        Assert.True(_dataManager.ValidateTestData(userState, u => u.UserId == "user-1"));
-        Assert.False(_dataManager.ValidateTestData(userState, u => u.UserId == "user-2"));
+        _dataManager.ValidateTestData(userState, u => u.UserId == "user-1").ShouldBeTrue();
+        _dataManager.ValidateTestData(userState, u => u.UserId == "user-2").ShouldBeFalse();
     }
 
     [Fact]
@@ -176,8 +177,8 @@ public class TestInfrastructureAbstractionsTests : IAsyncDisposable
         });
 
         // Assert
-        Assert.True(syncTime.TotalMilliseconds >= 100);
-        Assert.True(asyncTime.TotalMilliseconds >= 100);
+        syncTime.TotalMilliseconds.ShouldBeGreaterThanOrEqualTo(100);
+        asyncTime.TotalMilliseconds.ShouldBeGreaterThanOrEqualTo(100);
     }
 
     [Fact]
@@ -197,8 +198,8 @@ public class TestInfrastructureAbstractionsTests : IAsyncDisposable
             TimeSpan.FromSeconds(1));
 
         // Assert
-        Assert.True(result);
-        Assert.True(conditionMet);
+        result.ShouldBeTrue();
+        conditionMet.ShouldBeTrue();
     }
 
     [Fact]
@@ -208,15 +209,15 @@ public class TestInfrastructureAbstractionsTests : IAsyncDisposable
         var timer = _timingUtilities.CreateTimer(TimeSpan.FromMilliseconds(100));
 
         // Assert
-        Assert.False(timer.HasExpired);
-        Assert.True(timer.RemainingTime > TimeSpan.Zero);
+        timer.HasExpired.ShouldBeFalse();
+        timer.RemainingTime.ShouldBeGreaterThan(TimeSpan.Zero);
 
         // Act
         await Task.Delay(150);
 
         // Assert
-        Assert.True(timer.HasExpired);
-        Assert.Equal(TimeSpan.Zero, timer.RemainingTime);
+        timer.HasExpired.ShouldBeTrue();
+        timer.RemainingTime.ShouldBe(TimeSpan.Zero);
     }
 
     [Fact]
@@ -235,8 +236,8 @@ public class TestInfrastructureAbstractionsTests : IAsyncDisposable
         var anyCompleted = await _timingUtilities.WaitForAnyTaskAsync(tasks, TimeSpan.FromSeconds(1));
 
         // Assert
-        Assert.True(allCompleted);
-        Assert.NotNull(anyCompleted);
+        allCompleted.ShouldBeTrue();
+        anyCompleted.ShouldNotBeNull();
     }
 
     [Fact]
@@ -266,12 +267,12 @@ public class TestInfrastructureAbstractionsTests : IAsyncDisposable
 
         // Assert
         var state = _lifecycleManager.GetCurrentState();
-        Assert.Equal("IntegrationTest", state.TestName);
-        Assert.Equal("TestInfrastructureAbstractionsTests", state.TestClassName);
-        Assert.Equal("integration", state.Metadata["testType"]);
-        Assert.NotNull(state.TestData["events"]);
-        Assert.NotNull(state.TestData["userState"]);
-        Assert.True(executionTime.TotalMilliseconds >= 50);
+        state.TestName.ShouldBe("IntegrationTest");
+        state.TestClassName.ShouldBe("TestInfrastructureAbstractionsTests");
+        state.Metadata["testType"].ShouldBe("integration");
+        state.TestData["events"].ShouldNotBeNull();
+        state.TestData["userState"].ShouldNotBeNull();
+        executionTime.TotalMilliseconds.ShouldBeGreaterThanOrEqualTo(50);
 
         // Cleanup
         await _lifecycleManager.TearDownAsync();

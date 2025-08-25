@@ -124,11 +124,10 @@ Organized into **phases** with clear, testable boundaries so that AI coding tool
   * Set up test data isolation and parallel execution support
   * Create test data validation utilities
 
-* [ ] **Set up Background Service Testing Infrastructure**
-  * Create test harness for `EventQueueBackgroundService`
-  * Implement test event queue with configurable processing
-  * Set up test timing and synchronization utilities
-  * Create test scenarios for background processing
+* [x] **Set up Background Service Testing Infrastructure**
+  * [x] Create test harness base for background processing
+  * [x] Set up test timing and synchronization utilities
+  * [x] Create test scenarios for background processing
 
 * [ ] **Implement Test Assertion Utilities**
   * Create custom assertion helpers for domain entities
@@ -148,6 +147,8 @@ Organized into **phases** with clear, testable boundaries so that AI coding tool
   * Test event retrieval endpoints (`GET /api/events/user/{userId}`, `GET /api/events/type/{eventType}`)
   * Validate JSON response formats and HTTP status codes
   * Test error handling and validation scenarios
+  * Create test harness for `EventQueueBackgroundService`
+  * Implement test event queue with configurable processing
   * Verify background service event processing
 
 **Deliverable:** Complete E2E testing infrastructure that validates the entire stack from HTTP requests through database persistence, with reusable components for future development phases.

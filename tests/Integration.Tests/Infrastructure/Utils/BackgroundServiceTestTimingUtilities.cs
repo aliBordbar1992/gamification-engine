@@ -1,18 +1,141 @@
 using GamificationEngine.Integration.Tests.Infrastructure.Abstractions;
 using Microsoft.Extensions.Logging;
 
-namespace GamificationEngine.Integration.Tests.Infrastructure.Testing;
+namespace GamificationEngine.Integration.Tests.Infrastructure.Utils;
 
 /// <summary>
-/// Provides timing and synchronization utilities for integration tests
+/// Enhanced timing and synchronization utilities specifically for testing background services
 /// </summary>
-public class TestTimingUtilities : ITestTimingUtilities
+public class BackgroundServiceTestTimingUtilities : ITestTimingUtilities
 {
-    private readonly ILogger<TestTimingUtilities> _logger;
+    private readonly ILogger<BackgroundServiceTestTimingUtilities> _logger;
 
-    public TestTimingUtilities(ILogger<TestTimingUtilities> logger)
+    public BackgroundServiceTestTimingUtilities(ILogger<BackgroundServiceTestTimingUtilities> logger)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    }
+
+    /// <summary>
+    /// Waits for a background service to reach a specific status
+    /// </summary>
+    public async Task<bool> WaitForServiceStatusAsync(
+        Func<BackgroundServiceStatus> getStatus,
+        BackgroundServiceStatus expectedStatus,
+        TimeSpan timeout,
+        TimeSpan? pollInterval = null)
+    {
+        var interval = pollInterval ?? TimeSpan.FromMilliseconds(100);
+        var startTime = DateTime.UtcNow;
+        var endTime = startTime.Add(timeout);
+
+        while (DateTime.UtcNow < endTime)
+        {
+            var currentStatus = getStatus();
+            if (currentStatus == expectedStatus)
+            {
+                var elapsed = DateTime.UtcNow - startTime;
+                _logger.LogDebug("Service reached expected status {ExpectedStatus} after {Elapsed}ms",
+                    expectedStatus, elapsed.TotalMilliseconds);
+                return true;
+            }
+
+            await Task.Delay(interval);
+        }
+
+        var finalStatus = getStatus();
+        _logger.LogWarning("Service did not reach expected status {ExpectedStatus} within timeout {Timeout}. Final status: {FinalStatus}",
+            expectedStatus, timeout, finalStatus);
+        return false;
+    }
+
+    /// <summary>
+    /// Waits for a background service to start processing
+    /// </summary>
+    public async Task<bool> WaitForServiceToStartProcessingAsync(
+        Func<bool> isProcessing,
+        TimeSpan timeout,
+        TimeSpan? pollInterval = null)
+    {
+        return await WaitForConditionAsync(isProcessing, timeout, pollInterval);
+    }
+
+    /// <summary>
+    /// Waits for a background service to stop processing
+    /// </summary>
+    public async Task<bool> WaitForServiceToStopProcessingAsync(
+        Func<bool> isProcessing,
+        TimeSpan timeout,
+        TimeSpan? pollInterval = null)
+    {
+        return await WaitForConditionAsync(() => !isProcessing(), timeout, pollInterval);
+    }
+
+    /// <summary>
+    /// Waits for a background service to complete processing of a specific number of items
+    /// </summary>
+    public async Task<bool> WaitForProcessingCompletionAsync(
+        Func<long> getProcessedCount,
+        long expectedCount,
+        TimeSpan timeout,
+        TimeSpan? pollInterval = null)
+    {
+        var interval = pollInterval ?? TimeSpan.FromMilliseconds(100);
+        var startTime = DateTime.UtcNow;
+        var endTime = startTime.Add(timeout);
+
+        while (DateTime.UtcNow < endTime)
+        {
+            var currentCount = getProcessedCount();
+            if (currentCount >= expectedCount)
+            {
+                var elapsed = DateTime.UtcNow - startTime;
+                _logger.LogDebug("Service processed {ExpectedCount} items after {Elapsed}ms",
+                    expectedCount, elapsed.TotalMilliseconds);
+                return true;
+            }
+
+            await Task.Delay(interval);
+        }
+
+        var finalCount = getProcessedCount();
+        _logger.LogWarning("Service did not process {ExpectedCount} items within timeout {Timeout}. Final count: {FinalCount}",
+            expectedCount, timeout, finalCount);
+        return false;
+    }
+
+    /// <summary>
+    /// Waits for a background service to become idle (no processing for a specified duration)
+    /// </summary>
+    public async Task<bool> WaitForServiceIdleAsync(
+        Func<bool> isProcessing,
+        TimeSpan idleDuration,
+        TimeSpan timeout,
+        TimeSpan? pollInterval = null)
+    {
+        var interval = pollInterval ?? TimeSpan.FromMilliseconds(100);
+        var startTime = DateTime.UtcNow;
+        var endTime = startTime.Add(timeout);
+        var lastProcessingTime = DateTime.UtcNow;
+
+        while (DateTime.UtcNow < endTime)
+        {
+            if (isProcessing())
+            {
+                lastProcessingTime = DateTime.UtcNow;
+            }
+            else if (DateTime.UtcNow - lastProcessingTime >= idleDuration)
+            {
+                var elapsed = DateTime.UtcNow - startTime;
+                _logger.LogDebug("Service became idle after {Elapsed}ms (idle for {IdleDuration})",
+                    elapsed.TotalMilliseconds, idleDuration);
+                return true;
+            }
+
+            await Task.Delay(interval);
+        }
+
+        _logger.LogWarning("Service did not become idle within timeout {Timeout}", timeout);
+        return false;
     }
 
     /// <summary>
@@ -121,7 +244,8 @@ public class TestTimingUtilities : ITestTimingUtilities
     /// </summary>
     public ITestTimer CreateTimer(TimeSpan timeout)
     {
-        return new TestTimer(timeout, _logger);
+        // Create a simple timer implementation
+        return new SimpleTestTimer(timeout, _logger);
     }
 
     /// <summary>
@@ -161,85 +285,55 @@ public class TestTimingUtilities : ITestTimingUtilities
     }
 
     /// <summary>
-    /// Waits for a background service to complete processing of a specific number of items
+    /// Waits for a background service to stabilize (no state changes for a specified duration)
     /// </summary>
-    public async Task<bool> WaitForProcessingCompletionAsync(
-        Func<long> getProcessedCount,
-        long expectedCount,
+    public async Task<bool> WaitForServiceStabilizationAsync(
+        Func<object> getCurrentState,
+        TimeSpan stabilizationDuration,
         TimeSpan timeout,
         TimeSpan? pollInterval = null)
     {
         var interval = pollInterval ?? TimeSpan.FromMilliseconds(100);
         var startTime = DateTime.UtcNow;
         var endTime = startTime.Add(timeout);
+        var lastStateChangeTime = DateTime.UtcNow;
+        var lastState = getCurrentState();
 
         while (DateTime.UtcNow < endTime)
         {
-            var currentCount = getProcessedCount();
-            if (currentCount >= expectedCount)
+            var currentState = getCurrentState();
+            if (!currentState.Equals(lastState))
+            {
+                lastState = currentState;
+                lastStateChangeTime = DateTime.UtcNow;
+            }
+            else if (DateTime.UtcNow - lastStateChangeTime >= stabilizationDuration)
             {
                 var elapsed = DateTime.UtcNow - startTime;
-                _logger.LogDebug("Service processed {ExpectedCount} items after {Elapsed}ms",
-                    expectedCount, elapsed.TotalMilliseconds);
+                _logger.LogDebug("Service stabilized after {Elapsed}ms (stable for {StabilizationDuration})",
+                    elapsed.TotalMilliseconds, stabilizationDuration);
                 return true;
             }
 
             await Task.Delay(interval);
         }
 
-        var finalCount = getProcessedCount();
-        _logger.LogWarning("Service did not process {ExpectedCount} items within timeout {Timeout}. Final count: {FinalCount}",
-            expectedCount, timeout, finalCount);
-        return false;
-    }
-
-    /// <summary>
-    /// Waits for a background service to become idle (no processing for a specified duration)
-    /// </summary>
-    public async Task<bool> WaitForServiceIdleAsync(
-        Func<bool> isProcessing,
-        TimeSpan idleDuration,
-        TimeSpan timeout,
-        TimeSpan? pollInterval = null)
-    {
-        var interval = pollInterval ?? TimeSpan.FromMilliseconds(100);
-        var startTime = DateTime.UtcNow;
-        var endTime = startTime.Add(timeout);
-        var lastProcessingTime = DateTime.UtcNow;
-
-        while (DateTime.UtcNow < endTime)
-        {
-            if (isProcessing())
-            {
-                lastProcessingTime = DateTime.UtcNow;
-            }
-            else if (DateTime.UtcNow - lastProcessingTime >= idleDuration)
-            {
-                var elapsed = DateTime.UtcNow - startTime;
-                _logger.LogDebug("Service became idle after {Elapsed}ms (idle for {IdleDuration})",
-                    elapsed.TotalMilliseconds, idleDuration);
-                return true;
-            }
-
-            await Task.Delay(interval);
-        }
-
-        _logger.LogWarning("Service did not become idle within timeout {Timeout}", timeout);
+        _logger.LogWarning("Service did not stabilize within timeout {Timeout}", timeout);
         return false;
     }
 }
 
 /// <summary>
-/// Implementation of a test timer
+/// Simple implementation of a test timer for background service testing
 /// </summary>
-public class TestTimer : ITestTimer
+public class SimpleTestTimer : ITestTimer
 {
     private readonly TimeSpan _timeout;
     private readonly ILogger _logger;
     private DateTime _expirationTime;
     private bool _isExpired;
 
-    public TestTimer(TimeSpan timeout, ILogger logger)
+    public SimpleTestTimer(TimeSpan timeout, ILogger logger)
     {
         _timeout = timeout;
         _logger = logger;
