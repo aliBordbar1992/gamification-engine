@@ -93,6 +93,67 @@ Organized into **phases** with clear, testable boundaries so that AI coding tool
 
 ---
 
+### **Phase 2.1 – E2E Testing Infrastructure**
+
+* [ ] **Set up Integration Test Project Structure**
+  * Create `tests/Integration.Tests/` project with xUnit + TestServer
+  * Configure WebApplicationFactory for full application testing
+  * Set up test project references and dependencies
+
+* [ ] **Implement Test Database Infrastructure**
+  * Create `TestDbContext` with configurable database providers
+  * Support multiple test database types (InMemory, SQLite, SQL Server)
+  * Implement database seeding and cleanup utilities
+  * Create test data factories for events, users, and configurations
+
+* [ ] **Set up Test Configuration Management**
+  * Create test-specific `appsettings.Testing.json`
+  * Implement configuration overrides for test environment
+  * Set up test logging and monitoring
+  * Configure test-specific connection strings and settings
+
+* [ ] **Create Test Infrastructure Abstractions**
+  * Implement `ITestDatabase` interface for database management
+  * Create `TestDataBuilder` for generating test data
+  * Implement `TestHttpClientFactory` for HTTP testing
+  * Set up test lifecycle management (setup/teardown)
+
+* [ ] **Implement Test Data Management**
+  * Create test data fixtures for common scenarios
+  * Implement database state reset between tests
+  * Set up test data isolation and parallel execution support
+  * Create test data validation utilities
+
+* [ ] **Set up Background Service Testing Infrastructure**
+  * Create test harness for `EventQueueBackgroundService`
+  * Implement test event queue with configurable processing
+  * Set up test timing and synchronization utilities
+  * Create test scenarios for background processing
+
+* [ ] **Implement Test Assertion Utilities**
+  * Create custom assertion helpers for domain entities
+  * Implement JSON response validation utilities
+  * Create database state assertion helpers
+  * Set up test result reporting and debugging tools
+
+* [ ] **Create Performance Testing Infrastructure**
+  * Set up test metrics collection and reporting
+  * Implement load testing utilities for API endpoints
+  * Create performance baseline testing
+  * Set up test execution time monitoring
+
+* [ ] **Wire Up Current API Endpoints for E2E Testing**
+  * Implement comprehensive E2E tests for `POST /api/events`
+  * Test event ingestion with database persistence validation
+  * Test event retrieval endpoints (`GET /api/events/user/{userId}`, `GET /api/events/type/{eventType}`)
+  * Validate JSON response formats and HTTP status codes
+  * Test error handling and validation scenarios
+  * Verify background service event processing
+
+**Deliverable:** Complete E2E testing infrastructure that validates the entire stack from HTTP requests through database persistence, with reusable components for future development phases.
+
+---
+
 ### **Phase 3 – Condition Engine**
 
 * [ ] **Define Condition base interface**.
