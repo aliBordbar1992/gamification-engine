@@ -1,9 +1,8 @@
-using GamificationEngine.Integration.Tests.Database;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
-using GamificationEngine.Integration.Tests.Infrastructure.Testing;
+using GamificationEngine.Integration.Tests.Infrastructure.Abstractions;
 
-namespace GamificationEngine.Integration.Tests.Testing;
+namespace GamificationEngine.Integration.Tests.Infrastructure.Data;
 
 /// <summary>
 /// Manages test database state, including resets, snapshots, and cleanup operations
@@ -323,12 +322,12 @@ public class DatabaseSnapshot
     /// <summary>
     /// The actual events data (optional, for full state restoration)
     /// </summary>
-    public List<GamificationEngine.Domain.Events.Event>? Events { get; set; }
+    public List<Domain.Events.Event>? Events { get; set; }
 
     /// <summary>
     /// The actual user states data (optional, for full state restoration)
     /// </summary>
-    public List<GamificationEngine.Domain.Users.UserState>? UserStates { get; set; }
+    public List<Domain.Users.UserState>? UserStates { get; set; }
 }
 
 /// <summary>

@@ -3,9 +3,11 @@ using Moq;
 using Shouldly;
 using Xunit;
 using GamificationEngine.Integration.Tests.Infrastructure.Testing;
-using GamificationEngine.Integration.Tests.Database;
+using GamificationEngine.Integration.Tests.Infrastructure.Utils;
+using GamificationEngine.Integration.Tests.Infrastructure.Abstractions;
+using GamificationEngine.Integration.Tests.Infrastructure.Data;
 
-namespace GamificationEngine.Integration.Tests.Testing;
+namespace GamificationEngine.Integration.Tests.Tests;
 
 /// <summary>
 /// Tests for the test data management infrastructure
@@ -222,7 +224,7 @@ public class TestDataManagementInfrastructureTests
     public void TestDataValidationUtilities_ValidateEvent_ShouldRejectInvalidEvent()
     {
         // Arrange
-        var invalidEvent = new GamificationEngine.Domain.Events.Event(
+        var invalidEvent = new Domain.Events.Event(
             "valid-id", // Need valid ID to create event
             "TEST_EVENT",
             "test-user",
@@ -256,8 +258,8 @@ public class TestDataManagementInfrastructureTests
         var invalidFixture = new TestDataFixture
         {
             Name = "", // Invalid empty name
-            Events = new List<GamificationEngine.Domain.Events.Event>(),
-            UserStates = new List<GamificationEngine.Domain.Users.UserState>()
+            Events = new List<Domain.Events.Event>(),
+            UserStates = new List<Domain.Users.UserState>()
         };
 
         // Act

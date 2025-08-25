@@ -1,4 +1,6 @@
-namespace GamificationEngine.Integration.Tests.Infrastructure.Testing;
+using GamificationEngine.Integration.Tests.Infrastructure.Testing;
+
+namespace GamificationEngine.Integration.Tests.Infrastructure.Abstractions;
 
 /// <summary>
 /// Interface for managing test lifecycle operations including setup, teardown, and state management

@@ -1,9 +1,9 @@
-using GamificationEngine.Integration.Tests.Infrastructure.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Shouldly;
+using GamificationEngine.Integration.Tests.Infrastructure;
 
-namespace GamificationEngine.Integration.Tests.Infrastructure;
+namespace GamificationEngine.Integration.Tests.Tests;
 
 /// <summary>
 /// Sample integration test demonstrating the test infrastructure

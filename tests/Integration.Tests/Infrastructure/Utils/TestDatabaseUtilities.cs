@@ -4,9 +4,9 @@ using GamificationEngine.Domain.Users;
 using GamificationEngine.Infrastructure.Storage.EntityFramework;
 using GamificationEngine.Integration.Tests.Infrastructure;
 using GamificationEngine.Integration.Tests.Infrastructure.Testing;
-using GamificationEngine.Integration.Tests.Testing.BusinessLogic;
+using GamificationEngine.Integration.Tests.Infrastructure.Data;
 
-namespace GamificationEngine.Integration.Tests.Database;
+namespace GamificationEngine.Integration.Tests.Infrastructure.Utils;
 
 /// <summary>
 /// Utilities for managing test database state, seeding, and cleanup

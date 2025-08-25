@@ -1,11 +1,11 @@
 using GamificationEngine.Integration.Tests.Infrastructure.Configuration;
 using GamificationEngine.Integration.Tests.Infrastructure.Http;
-using GamificationEngine.Integration.Tests.Infrastructure.Logging;
+using GamificationEngine.Integration.Tests.Infrastructure.Utils;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace GamificationEngine.Integration.Tests.Infrastructure.Core;
+namespace GamificationEngine.Integration.Tests.Infrastructure;
 
 /// <summary>
 /// Base class for all integration tests providing common setup and teardown functionality

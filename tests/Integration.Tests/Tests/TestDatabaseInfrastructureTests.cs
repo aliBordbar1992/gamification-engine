@@ -2,8 +2,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using GamificationEngine.Infrastructure.Storage.EntityFramework;
 using Shouldly;
+using GamificationEngine.Integration.Tests.Database;
+using GamificationEngine.Integration.Tests.Infrastructure.Utils;
+using GamificationEngine.Integration.Tests.Infrastructure.Abstractions;
 
-namespace GamificationEngine.Integration.Tests.Database;
+namespace GamificationEngine.Integration.Tests.Tests;
 
 /// <summary>
 /// Tests for the test database infrastructure to ensure it works correctly

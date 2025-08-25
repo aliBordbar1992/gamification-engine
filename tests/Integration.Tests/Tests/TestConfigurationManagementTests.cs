@@ -1,10 +1,12 @@
-using GamificationEngine.Integration.Tests.Infrastructure.Logging;
+using GamificationEngine.Integration.Tests.Infrastructure;
+using GamificationEngine.Integration.Tests.Infrastructure.Configuration;
+using GamificationEngine.Integration.Tests.Infrastructure.Utils;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Shouldly;
 
-namespace GamificationEngine.Integration.Tests.Infrastructure.Configuration;
+namespace GamificationEngine.Integration.Tests.Tests;
 
 /// <summary>
 /// Tests for the test configuration management system

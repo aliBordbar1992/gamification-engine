@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using GamificationEngine.Infrastructure.Storage.EntityFramework;
 
-namespace GamificationEngine.Integration.Tests.Database;
+namespace GamificationEngine.Integration.Tests.Infrastructure.Abstractions;
 
 /// <summary>
 /// Interface for test database implementations providing database management capabilities for integration tests

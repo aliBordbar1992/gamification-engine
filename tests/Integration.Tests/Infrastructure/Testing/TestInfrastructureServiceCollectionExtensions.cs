@@ -1,6 +1,7 @@
 using GamificationEngine.Integration.Tests.Database;
-using GamificationEngine.Integration.Tests.Infrastructure.Logging;
-using GamificationEngine.Integration.Tests.Testing.BusinessLogic;
+using GamificationEngine.Integration.Tests.Infrastructure.Abstractions;
+using GamificationEngine.Integration.Tests.Infrastructure.Configuration;
+using GamificationEngine.Integration.Tests.Infrastructure.Data;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 

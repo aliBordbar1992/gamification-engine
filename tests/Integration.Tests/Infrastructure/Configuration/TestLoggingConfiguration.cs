@@ -2,7 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Debug;
 
-namespace GamificationEngine.Integration.Tests.Infrastructure.Logging;
+namespace GamificationEngine.Integration.Tests.Infrastructure.Configuration;
 
 /// <summary>
 /// Configures test-specific logging including structured logging, log levels, and test monitoring

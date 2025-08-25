@@ -1,4 +1,4 @@
-namespace GamificationEngine.Integration.Tests.Infrastructure.Testing;
+namespace GamificationEngine.Integration.Tests.Infrastructure.Abstractions;
 
 /// <summary>
 /// Interface for test timing and synchronization utilities

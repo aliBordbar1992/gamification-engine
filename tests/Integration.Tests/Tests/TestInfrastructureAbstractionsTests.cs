@@ -1,11 +1,12 @@
-using GamificationEngine.Integration.Tests.Database;
 using GamificationEngine.Infrastructure.Storage.EntityFramework;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
+using GamificationEngine.Integration.Tests.Infrastructure.Testing;
+using GamificationEngine.Integration.Tests.Infrastructure.Abstractions;
 
-namespace GamificationEngine.Integration.Tests.Infrastructure.Testing;
+namespace GamificationEngine.Integration.Tests.Tests;
 
 /// <summary>
 /// Tests for test infrastructure abstractions

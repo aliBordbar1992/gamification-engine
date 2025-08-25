@@ -1,7 +1,7 @@
 using GamificationEngine.Domain.Events;
 using GamificationEngine.Domain.Users;
 
-namespace GamificationEngine.Integration.Tests.Infrastructure.Testing;
+namespace GamificationEngine.Integration.Tests.Infrastructure.Abstractions;
 
 /// <summary>
 /// Interface for managing test data creation, validation, and cleanup

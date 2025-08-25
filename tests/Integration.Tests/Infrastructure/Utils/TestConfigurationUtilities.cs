@@ -1,10 +1,10 @@
-using GamificationEngine.Integration.Tests.Infrastructure.Logging;
+using GamificationEngine.Integration.Tests.Infrastructure.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace GamificationEngine.Integration.Tests.Infrastructure.Configuration;
+namespace GamificationEngine.Integration.Tests.Infrastructure.Utils;
 
 /// <summary>
 /// Utility methods for test configuration management

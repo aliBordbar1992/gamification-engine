@@ -1,8 +1,8 @@
 using GamificationEngine.Domain.Events;
 using GamificationEngine.Domain.Users;
-using GamificationEngine.Integration.Tests.Infrastructure.Testing;
+using GamificationEngine.Integration.Tests.Infrastructure.Abstractions;
 
-namespace GamificationEngine.Integration.Tests.Testing;
+namespace GamificationEngine.Integration.Tests.Infrastructure.Utils;
 
 /// <summary>
 /// Utilities for validating test data and ensuring data integrity

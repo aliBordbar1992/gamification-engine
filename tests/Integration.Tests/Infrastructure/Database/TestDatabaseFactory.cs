@@ -1,3 +1,4 @@
+using GamificationEngine.Integration.Tests.Infrastructure.Abstractions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 

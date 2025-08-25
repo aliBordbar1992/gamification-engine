@@ -3,7 +3,7 @@ using GamificationEngine.Domain.Events;
 using GamificationEngine.Domain.Users;
 using Shouldly;
 
-namespace GamificationEngine.Integration.Tests.Infrastructure.Testing;
+namespace GamificationEngine.Integration.Tests.Infrastructure.Utils;
 
 /// <summary>
 /// Utility class providing custom assertion helpers for integration tests

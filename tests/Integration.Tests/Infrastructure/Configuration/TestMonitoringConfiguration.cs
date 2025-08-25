@@ -2,7 +2,7 @@ using System.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace GamificationEngine.Integration.Tests.Infrastructure.Logging;
+namespace GamificationEngine.Integration.Tests.Infrastructure.Configuration;
 
 /// <summary>
 /// Configures test monitoring, metrics collection, and performance tracking

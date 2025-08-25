@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
 using Microsoft.Extensions.Logging;
 
-namespace GamificationEngine.Integration.Tests.Testing;
+namespace GamificationEngine.Integration.Tests.Infrastructure.Data;
 
 /// <summary>
 /// Manages test data isolation to prevent test interference during parallel execution

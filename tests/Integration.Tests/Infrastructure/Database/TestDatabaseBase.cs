@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using GamificationEngine.Infrastructure.Storage.EntityFramework;
+using GamificationEngine.Integration.Tests.Infrastructure.Abstractions;
 
 namespace GamificationEngine.Integration.Tests.Database;
 
