@@ -66,5 +66,6 @@ alwaysApply: true
 - Write BDD-style acceptance tests for complex rule scenarios using Gherkin or similar.
 - Integration tests must cover full event ingestion → rules evaluation → reward issuance flows.
 - No production code merged without passing automated tests.
+- All APIs should have E2E test corresponding to the existing testing infrustructure
 - All APIs should have a corresponding and up-to-date .http test file
 
