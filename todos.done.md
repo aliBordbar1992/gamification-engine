@@ -182,3 +182,55 @@ Deliverable achieved: Events can be sent to the engine via POST /api/events and 
 - Comprehensive HTTP test scenarios for manual testing
 
 **Next Steps:** The next task should be "Create '.http' test files for API" to provide additional testing capabilities, though this has already been completed as part of this task.
+
+---
+
+## Phase 2.1 – E2E Testing Infrastructure (Partially Completed)
+
+### Set up Integration Test Project Structure ✅
+**Completed:** 2025-01-26  
+**Summary:** Successfully created comprehensive integration testing infrastructure for the Gamification Engine, establishing the foundation for end-to-end testing of the entire application stack. The implementation includes:
+
+- **Integration Test Project**: Created `tests/Integration.Tests/` project with proper project references and dependencies
+- **WebApplicationFactory Configuration**: Set up `WebApplicationFactory<Program>` for full application testing with TestServer
+- **Test Infrastructure Abstractions**: Implemented `ITestDatabase` interface for database management across different providers
+- **Test Data Builder**: Created `TestDataBuilder` static class with factory methods for generating test events, user states, and complex test scenarios
+- **HTTP Client Factory**: Implemented `TestHttpClientFactory` for creating configured HTTP clients with custom headers, authentication, and service configuration
+- **Base Test Class**: Created `IntegrationTestBase` abstract class providing common setup, teardown, and service access functionality
+- **Test Assertion Utilities**: Implemented `TestAssertionUtilities` with custom assertion helpers for JSON responses, domain entities, and HTTP validation
+- **Test Configuration**: Created `appsettings.Testing.json` with test-specific database and service configurations
+- **Sample Integration Tests**: Implemented working sample tests demonstrating the infrastructure capabilities
+
+**Project Structure Created:**
+- `tests/Integration.Tests/GamificationEngine.Integration.Tests.csproj` - Main test project file
+- `tests/Integration.Tests/appsettings.Testing.json` - Test configuration
+- `tests/Integration.Tests/Infrastructure/` - Core testing infrastructure
+  - `ITestDatabase.cs` - Database abstraction interface
+  - `TestDataBuilder.cs` - Test data factory methods
+  - `TestHttpClientFactory.cs` - HTTP client configuration
+  - `IntegrationTestBase.cs` - Base test class with WebApplicationFactory
+  - `TestAssertionUtilities.cs` - Custom assertion helpers
+- `tests/Integration.Tests/SampleIntegrationTest.cs` - Working demonstration tests
+
+**Technical Implementation Details:**
+- **Dependencies**: xUnit, Shouldly, Microsoft.AspNetCore.Mvc.Testing, Microsoft.AspNetCore.TestHost
+- **Database Support**: EF Core InMemory and SQLite providers for testing
+- **Service Configuration**: Custom service injection and configuration overrides
+- **Test Lifecycle**: Proper setup/teardown with async disposal support
+- **Configuration Management**: Test-specific appsettings with environment variable overrides
+- **HTTP Testing**: Full HTTP client configuration with custom headers and authentication
+
+**Test Results:**
+- **All Tests Passing**: 5/5 integration tests successful
+- **Build Successful**: Project compiles without errors
+- **Solution Integration**: Successfully added to main solution file
+- **No Breaking Changes**: Existing tests continue to pass
+
+**Architecture Benefits:**
+- **Clean Architecture Compliance**: Tests run against the full application stack without compromising domain purity
+- **Reusable Infrastructure**: Base classes and utilities can be extended for future testing needs
+- **Database Flexibility**: Support for multiple database providers (InMemory, SQLite, SQL Server)
+- **Service Isolation**: Proper dependency injection configuration for test scenarios
+- **Performance**: TestServer provides fast, isolated testing without external dependencies
+
+**Next Steps:** The next task should be "Implement Test Database Infrastructure" to complete the database testing capabilities and enable comprehensive E2E testing with persistent storage.
