@@ -11,6 +11,7 @@ namespace GamificationEngine.Integration.Tests.Infrastructure;
 /// <summary>
 /// Base class for all integration tests providing common setup and teardown functionality
 /// </summary>
+[Trait("Category", "Integration")]
 public abstract class IntegrationTestBase : IAsyncDisposable
 {
     protected WebApplicationFactory<Program> Factory { get; private set; }

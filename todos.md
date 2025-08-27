@@ -142,15 +142,12 @@ Organized into **phases** with clear, testable boundaries so that AI coding tool
   * Set up test execution time monitoring
 
 * [ ] **Wire Up Current API Endpoints for E2E Testing**
-  * Implement comprehensive E2E tests for `POST /api/events`
-  * Test event ingestion with database persistence validation
-  * Test event retrieval endpoints (`GET /api/events/user/{userId}`, `GET /api/events/type/{eventType}`)
+  * Implement comprehensive E2E tests for all endpoints in EventsController
+  * Test event ingestion with database persistence validation (postgres)
   * Validate JSON response formats and HTTP status codes
   * Test error handling and validation scenarios
-  * Create test harness for `EventQueueBackgroundService`
-  * Implement test event queue with configurable processing
-  * Verify background service event processing
   * Ensure that tests are using **Existing** infrastructures and utilities existing in `/tests/Integration.Tests/Infrastructure` folder
+  * This test should work as a comprehensive example of how to use all aspects of infrastructures implemented in tasks 1 through 8 in this phase
 
 **Deliverable:** Complete E2E testing infrastructure that validates the entire stack from HTTP requests through database persistence, with reusable components for future development phases.
 
