@@ -1,0 +1,181 @@
+---
+description: Core Frontend & Architecture Rules for Next.js React Application
+globs:
+  - admin-ui/src/**/*.tsx
+  - admin-ui/src/**/*.ts
+  - admin-ui/tests/**/*.ts
+  - admin-ui/tests/**/*.tsx
+
+alwaysApply: false
+---
+
+# Workflow
+- After implementing or modifying any code, **you MUST run all automated tests** and verify that all tests pass before proceeding to the next task.
+- You MUST always refer to `admin.todos.md` for the next task to work on.
+- You MUST work strictly **one task at a time**, completing it fully before moving to the next.
+- Upon completion of each task, you MUST mark the corresponding item as done in `admin.todos.done.md`.
+- Summaries in `admin.todos.done.md` MUST clearly reference the original `admin.todos.md` item they relate to.
+- You MUST NOT skip or reorder tasks without explicit instruction.
+
+# React Frontend – Core Guidelines
+
+## 1. Component Structure
+
+* UI components must be pure functions of props and state.
+* Business logic must not exist inside UI components.
+* Side effects must only be implemented in `useEffect`.
+* Derived state must be computed inline during render, never duplicated in `useState`.
+* No business rules or engine logic are allowed in the UI.
+
+---
+
+## 2. Hooks
+
+* Use `useState` for local, simple state.
+* Use `useReducer` for local, complex state transitions.
+* Use `useEffect` only for performing side effects.
+* Use `useMemo` and `useCallback` only for performance optimization.
+* Use `useContext` only for globally available read-only values.
+* Custom hooks must encapsulate business logic and return only data and callbacks.
+* Custom hooks must not directly render UI.
+
+---
+
+## 3. State Management
+
+* Local UI state → `useState` inside component.
+* Global client state → Zustand store.
+* Server state → React Query.
+* Client state and server state must never be stored in the same store.
+* Context must only be used for read-only global values (e.g., theme, authenticated user).
+
+---
+
+## 4. Data Fetching
+
+* Use React Query for all data fetching, caching, and synchronization.
+* Do not use `useEffect + fetch` for data fetching.
+* Use React Query mutations for POST, PUT, and DELETE.
+* API interaction must be encapsulated in service modules.
+
+---
+
+## 5. Services
+
+* Service modules must contain only API call logic (fetch/axios).
+* Service functions must return raw or parsed data, never mutate React state directly.
+* Service functions must never import React.
+* API errors must be normalized and thrown as domain-specific errors.
+
+---
+
+## 6. Controllers
+
+* Controller hooks must orchestrate application logic.
+* Controllers must import services and trigger queries.
+* Controllers must return data and event handlers for UI components.
+* Controllers must never contain UI rendering logic.
+
+---
+
+## 7. Separation of Concerns
+
+* UI components → presentational logic only.
+* Hooks (custom or controller) → business/application logic.
+* Service layer → API calls only.
+* State store → client-side state only.
+* React Query → server state only.
+* Validation logic → JSON Schema or Zod schemas.
+
+---
+
+## 8. Error Handling
+
+* Use error boundaries for UI-level recovery.
+* Use React Query error states for server errors.
+* Controllers must map service/query errors to user-facing states.
+* Services must not leak raw fetch/axios errors.
+* All async calls must be awaited and errors handled explicitly.
+
+---
+
+## 9. Logging
+
+* Logging must be implemented in a centralized utility.
+* No logging calls inside UI components.
+* Logs must include metadata (user ID if available, request ID, timestamps).
+* Sensitive data must never be logged.
+
+---
+
+## 10. Module Interaction
+
+* Modules must communicate only via hooks, controllers, and services.
+* UI components must not import services or stores directly.
+* API routes must call only service modules.
+* Cross-cutting concerns (authentication, theme) must be isolated into providers.
+
+---
+
+## 11. Testing
+
+* TDD is mandatory for hooks, controllers, and services.
+* UI components must be tested with React Testing Library.
+* Hooks, controllers, and services must be unit tested.
+* Integration tests must cover complete flows from interaction → controller → service.
+* All APIs must have up-to-date MSW (Mock Service Worker) handlers.
+* No production code merged without passing automated tests.
+
+---
+
+# Admin Panel – Specific Rules
+
+## 12. Scope Philosophy
+
+* Read-only first; then safe toggles; then schema-validated edits.
+* All rules and entities must remain declarative (JSON/YAML).
+* The sandbox must have zero side effects.
+
+---
+
+## 13. Tech Stack
+
+* Build tooling: Vite + TypeScript.
+* UI library: Ant Design.
+* Routing: React Router v6.
+* Data fetching/caching: React Query.
+* Forms and validation: React Hook Form + Zod.
+* JSON/YAML editing: Monaco Editor + ajv + yaml.
+* HTTP client: Axios with interceptors.
+* State management: Zustand for global client state, React Query for server state, co-located `useState` for local UI state.
+* Authentication: JWT (cookie or header) with refresh handling and route guards.
+* Testing: Vitest + React Testing Library; Playwright for E2E.
+* Linting/formatting: ESLint, Prettier, Stylelint.
+* Icons: Ant Design Icons.
+
+---
+
+## 14. Project Structure
+
+* Feature-first folders with clear boundaries.
+* Co-locate UI, API, and validation per feature.
+* Shared primitives only in `components/`.
+* All API calls in `api/` folder with typed service functions and query hooks.
+* All validation declarative (Zod/JSON Schema).
+* No bypass of schema validation in editors.
+
+---
+
+## 15. Development Guidelines
+
+* TypeScript strict mode enabled.
+* No `any` in exported APIs.
+* Accessibility compliance (keyboard navigation, aria labels, color contrast).
+* Performance optimizations: virtualization for large tables, query caching, no unnecessary global state.
+* Centralized error handling via Axios interceptors and typed error boundaries.
+* Security enforced via role-based guards and CSRF-safe patterns.
+* Testing must cover unit, integration, and E2E happy/error paths.
+* Rule/entity edits must support drafts, diffs, confirmations, and audit metadata.
+* Observability allowed only via sanitized client logs.
+
+---

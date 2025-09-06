@@ -4,7 +4,7 @@ globs:
   - src/**/*.cs
   - tests/**/*.cs
 
-alwaysApply: true
+alwaysApply: false
 ---
 
 # Workflow
