@@ -32,7 +32,7 @@ public class EventQueueBackgroundServiceIntegrationTests : IntegrationTestBase, 
         _timingUtilities = new BackgroundServiceTestTimingUtilities(GetService<ILogger<BackgroundServiceTestTimingUtilities>>());
     }
 
-    public async Task DisposeAsync()
+    public new async Task DisposeAsync()
     {
         if (_serviceHarness != null)
         {

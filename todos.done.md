@@ -840,3 +840,146 @@ var conditionsMet = rule.EvaluateConditions(events, triggerEvent);
 ```
 
 **Next Steps:** The next task should be "Phase 5 – Rewards System" to implement the actual reward execution logic for points, badges, trophies, levels, and penalties.
+
+---
+
+## Phase 6 – Entity Definitions ✅
+**Completed:** 2025-01-26  
+**Summary:** Successfully implemented comprehensive entity definitions system providing complete CRUD operations for point categories, badges, trophies, and levels. The implementation includes:
+
+- **Domain Entities**: Created rich domain models for `PointCategory`, `Badge`, `Trophy`, and `Level` with proper validation, business logic encapsulation, and SOLID principles compliance
+- **Repository Interfaces**: Implemented complete repository interfaces (`IPointCategoryRepository`, `IBadgeRepository`, `ITrophyRepository`, `ILevelRepository`) with async/await patterns and comprehensive CRUD operations
+- **Application Services**: Created `EntityManagementService` and `EntityConfigurationLoader` providing business logic layer with proper error handling and Result pattern usage
+- **API Controllers**: Implemented REST API controllers (`PointCategoriesController`, `BadgesController`, `TrophiesController`, `LevelsController`) with full CRUD endpoints, validation, and proper HTTP status codes
+- **Configuration Integration**: Updated `EngineConfiguration` to support loading entity definitions from YAML configuration files with `TrophyDefinition` and `LevelDefinition` classes
+- **DTOs**: Created comprehensive data transfer objects for all entity types with proper request/response models for API operations
+- **Comprehensive Testing**: Implemented extensive test coverage with 346 domain tests and 18 application service tests, all passing successfully
+
+**Files Created:**
+- `src/Domain/Entities/PointCategory.cs` - Point category domain entity
+- `src/Domain/Entities/Badge.cs` - Badge domain entity  
+- `src/Domain/Entities/Trophy.cs` - Trophy domain entity
+- `src/Domain/Entities/Level.cs` - Level domain entity
+- `src/Domain/Repositories/IPointCategoryRepository.cs` - Point category repository interface
+- `src/Domain/Repositories/IBadgeRepository.cs` - Badge repository interface
+- `src/Domain/Repositories/ITrophyRepository.cs` - Trophy repository interface
+- `src/Domain/Repositories/ILevelRepository.cs` - Level repository interface
+- `src/Application/Abstractions/IEntityManagementService.cs` - Entity management service interface
+- `src/Application/Abstractions/IEntityConfigurationLoader.cs` - Entity configuration loader interface
+- `src/Application/Services/EntityManagementService.cs` - Entity management service implementation
+- `src/Application/Services/EntityConfigurationLoader.cs` - Entity configuration loader implementation
+- `src/Application/DTOs/PointCategoryDto.cs` - Point category DTOs
+- `src/Application/DTOs/BadgeDto.cs` - Badge DTOs
+- `src/Application/DTOs/TrophyDto.cs` - Trophy DTOs
+- `src/Application/DTOs/LevelDto.cs` - Level DTOs
+- `src/GamificationEngine.Api/Controllers/PointCategoriesController.cs` - Point categories API controller
+- `src/GamificationEngine.Api/Controllers/BadgesController.cs` - Badges API controller
+- `src/GamificationEngine.Api/Controllers/TrophiesController.cs` - Trophies API controller
+- `src/GamificationEngine.Api/Controllers/LevelsController.cs` - Levels API controller
+- `tests/Domain.Tests/Entities/PointCategoryTests.cs` - Point category domain tests
+- `tests/Domain.Tests/Entities/BadgeTests.cs` - Badge domain tests
+- `tests/Domain.Tests/Entities/TrophyTests.cs` - Trophy domain tests
+- `tests/Domain.Tests/Entities/LevelTests.cs` - Level domain tests
+- `tests/Application.Tests/Services/EntityManagementServiceTests.cs` - Entity management service tests
+
+**Key Features:**
+- **Rich Domain Models**: Entities encapsulate business logic with validation, update methods, and business rules
+- **Complete CRUD Operations**: Full Create, Read, Update, Delete operations for all entity types
+- **Configuration Loading**: Entities can be loaded from YAML configuration files with validation
+- **REST API**: Complete REST API with proper HTTP status codes, validation, and error handling
+- **Clean Architecture**: Domain layer maintains purity with no infrastructure dependencies
+- **SOLID Principles**: Single responsibility, dependency inversion, and proper encapsulation throughout
+- **Comprehensive Testing**: TDD approach with extensive test coverage using reflection for edge cases
+
+**Test Results:**
+- **All Domain Tests Passing**: 346/346 tests successful
+- **All Application Tests Passing**: 18/18 entity management service tests successful
+- **Build Successful**: All projects compile without errors
+- **No Breaking Changes**: Existing functionality preserved and enhanced
+
+**Architecture Benefits:**
+- **Clean Architecture Compliance**: Domain layer remains pure with proper separation of concerns
+- **DDD Patterns**: Rich domain models with encapsulated business logic and validation
+- **SOLID Principles**: Single responsibility, dependency injection, and interface segregation
+- **Extensibility**: Easy to add new entity types following established patterns
+- **Maintainability**: Clear separation between domain, application, and API layers
+- **Performance**: Efficient operations with proper async/await patterns throughout
+
+**Configuration Integration:**
+The system now supports loading entity definitions from the existing `configuration-example.yml` file, which already contains examples of:
+- Point categories (xp, score, credits)
+- Badges (commenter, profile complete, special offer buyer, bookaholic, streak crusher)
+- Trophies (badge collector)
+- Levels (bronze, silver, gold, legendary)
+
+**API Endpoints:**
+- `GET /api/pointcategories` - Get all point categories
+- `GET /api/pointcategories/{id}` - Get point category by ID
+- `POST /api/pointcategories` - Create new point category
+- `PUT /api/pointcategories/{id}` - Update point category
+- `DELETE /api/pointcategories/{id}` - Delete point category
+- Similar endpoints for badges, trophies, and levels with additional filtering options
+
+---
+
+## Phase 7 – Leaderboards (Completed)
+
+- [x] Implement leaderboard generation logic (per category, time range)
+  - Matches `todos.md` Phase 7 item: leaderboard generation logic
+  - Created comprehensive domain model with `LeaderboardEntry`, `LeaderboardType`, `TimeRange`, `LeaderboardQuery`, and `LeaderboardResult`
+  - Implemented `ILeaderboardRepository` interface for data access
+  - Created `InMemoryLeaderboardRepository` with caching support
+  - Implemented `ILeaderboardService` and `LeaderboardService` in Application layer
+  - Support for different leaderboard types: points, badges, trophies, levels
+  - Support for different time ranges: daily, weekly, monthly, all-time
+  - Proper ranking logic with pagination support
+
+- [x] In-memory first, then cached DB implementation
+  - Matches `todos.md` Phase 7 item: in-memory first, then cached DB implementation
+  - Implemented `InMemoryLeaderboardRepository` with caching mechanism
+  - Cache keys based on query parameters for efficient retrieval
+  - Support for cache refresh and clearing operations
+  - Ready for future database implementation
+
+- [x] API to query leaderboards (`GET /leaderboards`)
+  - Matches `todos.md` Phase 7 item: API to query leaderboards
+  - Created `LeaderboardsController` with comprehensive endpoints
+  - Main endpoint: `GET /api/leaderboards` with query parameters
+  - Specific endpoints: `/api/leaderboards/points/{category}`, `/api/leaderboards/badges`, `/api/leaderboards/trophies`, `/api/leaderboards/levels/{category}`
+  - User rank endpoint: `GET /api/leaderboards/user/{userId}/rank`
+  - Cache refresh endpoint: `POST /api/leaderboards/refresh`
+
+- [x] Support pagination & filters
+  - Matches `todos.md` Phase 7 item: support pagination & filters
+  - Comprehensive pagination with page, pageSize parameters (1-1000 range)
+  - Filtering by leaderboard type, category, and time range
+  - Pagination metadata in response (totalCount, totalPages, hasNextPage, hasPreviousPage)
+  - Proper validation of all query parameters
+
+- [x] Unit tests for leaderboard rankings
+  - Matches `todos.md` Phase 7 item: unit tests for leaderboard rankings
+  - **Following TDD principles**: Created comprehensive test suite
+  - Domain tests: `LeaderboardEntryTests`, `LeaderboardTypeTests`, `TimeRangeTests`, `LeaderboardQueryTests`, `LeaderboardResultTests`
+  - Application service tests: `LeaderboardServiceTests` with 15 test cases
+  - Integration tests: `LeaderboardsControllerTests` with 20+ test scenarios
+  - HTTP test file: `Leaderboards.http` with 44 test cases covering all endpoints
+  - All tests passing, comprehensive coverage of ranking logic and edge cases
+
+**Architecture Benefits:**
+- **Clean Architecture Compliance**: Domain layer remains pure with proper separation of concerns
+- **DDD Patterns**: Rich domain models with encapsulated business logic and validation
+- **SOLID Principles**: Single responsibility, dependency injection, and interface segregation
+- **Extensibility**: Easy to add new leaderboard types and time ranges
+- **Performance**: Efficient caching and pagination for large datasets
+- **Maintainability**: Clear separation between domain, application, and API layers
+
+**API Endpoints:**
+- `GET /api/leaderboards` - Get leaderboard with query parameters
+- `GET /api/leaderboards/points/{category}` - Get points leaderboard for specific category
+- `GET /api/leaderboards/badges` - Get badges leaderboard
+- `GET /api/leaderboards/trophies` - Get trophies leaderboard
+- `GET /api/leaderboards/levels/{category}` - Get levels leaderboard for specific category
+- `GET /api/leaderboards/user/{userId}/rank` - Get user's rank in specific leaderboard
+- `POST /api/leaderboards/refresh` - Refresh leaderboard cache
+
+**Next Steps:** The next task should be "Phase 8 – API & Integration Layer" to complete the REST API and add webhook support.

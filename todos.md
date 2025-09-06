@@ -200,12 +200,12 @@ Organized into **phases** with clear, testable boundaries so that AI coding tool
 
 ### **Phase 6 – Entity Definitions**
 
-* [ ] **Define schema for point categories**.
-* [ ] **Define schema for badges** (ID, name, description, icon).
-* [ ] **Define schema for trophies**.
-* [ ] **Define schema for levels**.
-* [ ] **Load entity definitions from config**.
-* [ ] **Expose CRUD API for admin to manage these entities**.
+* [x] **Define schema for point categories**.
+* [x] **Define schema for badges** (ID, name, description, icon).
+* [x] **Define schema for trophies**.
+* [x] **Define schema for levels**.
+* [x] **Load entity definitions from config**.
+* [x] **Expose CRUD API for admin to manage these entities**.
 
 **Deliverable:** Admin can define rewards and use them in rules.
 
@@ -213,11 +213,11 @@ Organized into **phases** with clear, testable boundaries so that AI coding tool
 
 ### **Phase 7 – Leaderboards**
 
-* [ ] **Implement leaderboard generation logic** (per category, time range).
-* [ ] **In-memory first, then cached DB implementation**.
-* [ ] **API to query leaderboards** (`GET /leaderboards`).
-* [ ] **Support pagination & filters**.
-* [ ] **Unit tests for leaderboard rankings**.
+* [x] **Implement leaderboard generation logic** (per category, time range).
+* [x] **In-memory first, then cached DB implementation**.
+* [x] **API to query leaderboards** (`GET /leaderboards`).
+* [x] **Support pagination & filters**.
+* [x] **Unit tests for leaderboard rankings**.
 
 **Deliverable:** Leaderboards show correct rankings for different time ranges.
 

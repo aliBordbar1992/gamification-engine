@@ -1,0 +1,185 @@
+### Leaderboards API Tests
+
+### Variables
+@baseUrl = https://localhost:7001
+@apiUrl = {{baseUrl}}/api/leaderboards
+
+### 1. Get Points Leaderboard (Daily)
+GET {{apiUrl}}?type=points&category=xp&timeRange=daily&page=1&pageSize=50
+Content-Type: application/json
+
+### 2. Get Points Leaderboard (Weekly)
+GET {{apiUrl}}?type=points&category=xp&timeRange=weekly&page=1&pageSize=25
+Content-Type: application/json
+
+### 3. Get Points Leaderboard (Monthly)
+GET {{apiUrl}}?type=points&category=xp&timeRange=monthly&page=1&pageSize=25
+Content-Type: application/json
+
+### 4. Get Points Leaderboard (All Time)
+GET {{apiUrl}}?type=points&category=xp&timeRange=alltime&page=1&pageSize=50
+Content-Type: application/json
+
+### 5. Get Badges Leaderboard (Daily)
+GET {{apiUrl}}?type=badges&timeRange=daily&page=1&pageSize=25
+Content-Type: application/json
+
+### 6. Get Badges Leaderboard (Weekly)
+GET {{apiUrl}}?type=badges&timeRange=weekly&page=1&pageSize=25
+Content-Type: application/json
+
+### 7. Get Badges Leaderboard (Monthly)
+GET {{apiUrl}}?type=badges&timeRange=monthly&page=1&pageSize=25
+Content-Type: application/json
+
+### 8. Get Badges Leaderboard (All Time)
+GET {{apiUrl}}?type=badges&timeRange=alltime&page=1&pageSize=50
+Content-Type: application/json
+
+### 9. Get Trophies Leaderboard (Daily)
+GET {{apiUrl}}?type=trophies&timeRange=daily&page=1&pageSize=25
+Content-Type: application/json
+
+### 10. Get Trophies Leaderboard (Weekly)
+GET {{apiUrl}}?type=trophies&timeRange=weekly&page=1&pageSize=25
+Content-Type: application/json
+
+### 11. Get Trophies Leaderboard (Monthly)
+GET {{apiUrl}}?type=trophies&timeRange=monthly&page=1&pageSize=25
+Content-Type: application/json
+
+### 12. Get Trophies Leaderboard (All Time)
+GET {{apiUrl}}?type=trophies&timeRange=alltime&page=1&pageSize=50
+Content-Type: application/json
+
+### 13. Get Levels Leaderboard (Daily)
+GET {{apiUrl}}?type=level&category=xp&timeRange=daily&page=1&pageSize=25
+Content-Type: application/json
+
+### 14. Get Levels Leaderboard (Weekly)
+GET {{apiUrl}}?type=level&category=xp&timeRange=weekly&page=1&pageSize=25
+Content-Type: application/json
+
+### 15. Get Levels Leaderboard (Monthly)
+GET {{apiUrl}}?type=level&category=xp&timeRange=monthly&page=1&pageSize=25
+Content-Type: application/json
+
+### 16. Get Levels Leaderboard (All Time)
+GET {{apiUrl}}?type=level&category=xp&timeRange=alltime&page=1&pageSize=50
+Content-Type: application/json
+
+### 17. Get Points Leaderboard - Specific Endpoint
+GET {{apiUrl}}/points/xp?timeRange=daily&page=1&pageSize=50
+Content-Type: application/json
+
+### 18. Get Points Leaderboard - Different Category
+GET {{apiUrl}}/points/score?timeRange=weekly&page=1&pageSize=25
+Content-Type: application/json
+
+### 19. Get Badges Leaderboard - Specific Endpoint
+GET {{apiUrl}}/badges?timeRange=weekly&page=1&pageSize=25
+Content-Type: application/json
+
+### 20. Get Trophies Leaderboard - Specific Endpoint
+GET {{apiUrl}}/trophies?timeRange=monthly&page=1&pageSize=25
+Content-Type: application/json
+
+### 21. Get Levels Leaderboard - Specific Endpoint
+GET {{apiUrl}}/levels/xp?timeRange=alltime&page=1&pageSize=50
+Content-Type: application/json
+
+### 22. Get Levels Leaderboard - Different Category
+GET {{apiUrl}}/levels/score?timeRange=daily&page=1&pageSize=25
+Content-Type: application/json
+
+### 23. Get User Rank - Points Leaderboard
+GET {{apiUrl}}/user/user123/rank?type=points&category=xp&timeRange=daily
+Content-Type: application/json
+
+### 24. Get User Rank - Badges Leaderboard
+GET {{apiUrl}}/user/user123/rank?type=badges&timeRange=weekly
+Content-Type: application/json
+
+### 25. Get User Rank - Trophies Leaderboard
+GET {{apiUrl}}/user/user123/rank?type=trophies&timeRange=monthly
+Content-Type: application/json
+
+### 26. Get User Rank - Levels Leaderboard
+GET {{apiUrl}}/user/user123/rank?type=level&category=xp&timeRange=alltime
+Content-Type: application/json
+
+### 27. Refresh Cache - Points Leaderboard
+POST {{apiUrl}}/refresh?type=points&category=xp&timeRange=daily
+Content-Type: application/json
+
+### 28. Refresh Cache - Badges Leaderboard
+POST {{apiUrl}}/refresh?type=badges&timeRange=weekly
+Content-Type: application/json
+
+### 29. Refresh Cache - Trophies Leaderboard
+POST {{apiUrl}}/refresh?type=trophies&timeRange=monthly
+Content-Type: application/json
+
+### 30. Refresh Cache - Levels Leaderboard
+POST {{apiUrl}}/refresh?type=level&category=xp&timeRange=alltime
+Content-Type: application/json
+
+### Error Cases
+
+### 31. Invalid Leaderboard Type
+GET {{apiUrl}}?type=invalid&category=xp&timeRange=daily&page=1&pageSize=50
+Content-Type: application/json
+
+### 32. Invalid Time Range
+GET {{apiUrl}}?type=points&category=xp&timeRange=invalid&page=1&pageSize=50
+Content-Type: application/json
+
+### 33. Invalid Page (0)
+GET {{apiUrl}}?type=points&category=xp&timeRange=daily&page=0&pageSize=50
+Content-Type: application/json
+
+### 34. Invalid Page (Negative)
+GET {{apiUrl}}?type=points&category=xp&timeRange=daily&page=-1&pageSize=50
+Content-Type: application/json
+
+### 35. Invalid Page Size (0)
+GET {{apiUrl}}?type=points&category=xp&timeRange=daily&page=1&pageSize=0
+Content-Type: application/json
+
+### 36. Invalid Page Size (Too Large)
+GET {{apiUrl}}?type=points&category=xp&timeRange=daily&page=1&pageSize=1001
+Content-Type: application/json
+
+### 37. Points Leaderboard Without Category
+GET {{apiUrl}}?type=points&timeRange=daily&page=1&pageSize=50
+Content-Type: application/json
+
+### 38. Levels Leaderboard Without Category
+GET {{apiUrl}}?type=level&timeRange=daily&page=1&pageSize=50
+Content-Type: application/json
+
+### 39. Invalid User Rank Request
+GET {{apiUrl}}/user//rank?type=points&category=xp&timeRange=daily
+Content-Type: application/json
+
+### 40. Invalid Refresh Cache Request
+POST {{apiUrl}}/refresh?type=invalid&category=xp&timeRange=daily
+Content-Type: application/json
+
+### Pagination Tests
+
+### 41. First Page
+GET {{apiUrl}}?type=points&category=xp&timeRange=daily&page=1&pageSize=10
+Content-Type: application/json
+
+### 42. Second Page
+GET {{apiUrl}}?type=points&category=xp&timeRange=daily&page=2&pageSize=10
+Content-Type: application/json
+
+### 43. Large Page Size
+GET {{apiUrl}}?type=points&category=xp&timeRange=daily&page=1&pageSize=100
+Content-Type: application/json
+
+### 44. Small Page Size
+GET {{apiUrl}}?type=points&category=xp&timeRange=daily&page=1&pageSize=1
+Content-Type: application/json

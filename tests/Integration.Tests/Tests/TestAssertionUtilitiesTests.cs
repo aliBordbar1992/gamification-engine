@@ -29,7 +29,7 @@ public class TestAssertionUtilitiesTests : IntegrationTestBase, IAsyncLifetime
         await CleanupDatabase();
     }
 
-    public async Task DisposeAsync()
+    public new async Task DisposeAsync()
     {
         await CleanupDatabase();
     }
@@ -423,6 +423,11 @@ public class TestAssertionUtilitiesTests : IntegrationTestBase, IAsyncLifetime
     {
         public TestCondition(string conditionId, string type) : base(conditionId, type)
         {
+        }
+
+        public override bool Evaluate(IEnumerable<Event> events, Event triggerEvent)
+        {
+            return true; // Simple test implementation
         }
     }
 

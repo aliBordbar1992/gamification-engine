@@ -6,6 +6,8 @@ public sealed class EngineConfiguration
     public List<EventDefinition> Events { get; set; } = new();
     public List<PointCategory> PointCategories { get; set; } = new();
     public List<BadgeDefinition> Badges { get; set; } = new();
+    public List<TrophyDefinition> Trophies { get; set; } = new();
+    public List<LevelDefinition> Levels { get; set; } = new();
 }
 
 public sealed class EngineSettings
@@ -43,4 +45,26 @@ public sealed class BadgeDefinition
     public string Description { get; set; } = string.Empty;
     public string Image { get; set; } = string.Empty;
     public bool Visible { get; set; }
+}
+
+public sealed class TrophyDefinition
+{
+    public string Id { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public string Image { get; set; } = string.Empty;
+    public bool Visible { get; set; }
+}
+
+public sealed class LevelDefinition
+{
+    public string Id { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
+    public LevelCriteria Criteria { get; set; } = new();
+}
+
+public sealed class LevelCriteria
+{
+    public string Category { get; set; } = string.Empty;
+    public long MinPoints { get; set; }
 }
