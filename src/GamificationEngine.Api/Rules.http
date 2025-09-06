@@ -1,0 +1,281 @@
+### Gamification Engine API - Rules Management Endpoints
+### Base URL: https://localhost:7000
+
+### Get all rules
+GET https://localhost:7000/api/rules
+Accept: application/json
+
+###
+
+### Get active rules only
+GET https://localhost:7000/api/rules/active
+Accept: application/json
+
+###
+
+### Get rules by trigger event type
+GET https://localhost:7000/api/rules/trigger/USER_COMMENTED
+Accept: application/json
+
+###
+
+### Get specific rule by ID
+GET https://localhost:7000/api/rules/rule123
+Accept: application/json
+
+###
+
+### Create a new rule
+POST https://localhost:7000/api/rules
+Content-Type: application/json
+
+{
+  "id": "rule123",
+  "name": "First Comment Reward",
+  "description": "Award 10 XP for first comment",
+  "isActive": true,
+  "triggers": ["USER_COMMENTED"],
+  "conditions": [
+    {
+      "type": "firstOccurrence",
+      "parameters": {}
+    }
+  ],
+  "rewards": [
+    {
+      "type": "points",
+      "targetId": "xp",
+      "amount": 10,
+      "parameters": {}
+    }
+  ]
+}
+
+###
+
+### Update an existing rule
+PUT https://localhost:7000/api/rules/rule123
+Content-Type: application/json
+
+{
+  "name": "First Comment Reward (Updated)",
+  "description": "Award 15 XP for first comment",
+  "isActive": true,
+  "triggers": ["USER_COMMENTED"],
+  "conditions": [
+    {
+      "type": "firstOccurrence",
+      "parameters": {}
+    }
+  ],
+  "rewards": [
+    {
+      "type": "points",
+      "targetId": "xp",
+      "amount": 15,
+      "parameters": {}
+    }
+  ]
+}
+
+###
+
+### Activate a rule
+POST https://localhost:7000/api/rules/rule123/activate
+Accept: application/json
+
+###
+
+### Deactivate a rule
+POST https://localhost:7000/api/rules/rule123/deactivate
+Accept: application/json
+
+###
+
+### Delete a rule
+DELETE https://localhost:7000/api/rules/rule123
+Accept: application/json
+
+###
+
+### Entity Management - Point Categories
+
+### Get all point categories
+GET https://localhost:7000/api/rules/entities/point-categories
+Accept: application/json
+
+###
+
+### Create a new point category
+POST https://localhost:7000/api/rules/entities/point-categories
+Content-Type: application/json
+
+{
+  "id": "xp",
+  "name": "Experience Points",
+  "description": "Points earned through user activities"
+}
+
+###
+
+### Get point category by ID
+GET https://localhost:7000/api/rules/entities/point-categories/xp
+Accept: application/json
+
+###
+
+### Update a point category
+PUT https://localhost:7000/api/rules/entities/point-categories/xp
+Content-Type: application/json
+
+{
+  "name": "Experience Points (Updated)",
+  "description": "Points earned through user activities and achievements"
+}
+
+###
+
+### Delete a point category
+DELETE https://localhost:7000/api/rules/entities/point-categories/xp
+Accept: application/json
+
+###
+
+### Entity Management - Badges
+
+### Get all badges
+GET https://localhost:7000/api/rules/entities/badges
+Accept: application/json
+
+###
+
+### Create a new badge
+POST https://localhost:7000/api/rules/entities/badges
+Content-Type: application/json
+
+{
+  "id": "first-comment",
+  "name": "First Comment",
+  "description": "Awarded for making your first comment",
+  "image": "https://example.com/badges/first-comment.png",
+  "visible": true
+}
+
+###
+
+### Get badge by ID
+GET https://localhost:7000/api/rules/entities/badges/first-comment
+Accept: application/json
+
+###
+
+### Update a badge
+PUT https://localhost:7000/api/rules/entities/badges/first-comment
+Content-Type: application/json
+
+{
+  "name": "First Comment (Updated)",
+  "description": "Awarded for making your first comment on the platform",
+  "image": "https://example.com/badges/first-comment-updated.png",
+  "visible": true
+}
+
+###
+
+### Delete a badge
+DELETE https://localhost:7000/api/rules/entities/badges/first-comment
+Accept: application/json
+
+###
+
+### Entity Management - Trophies
+
+### Get all trophies
+GET https://localhost:7000/api/rules/entities/trophies
+Accept: application/json
+
+###
+
+### Create a new trophy
+POST https://localhost:7000/api/rules/entities/trophies
+Content-Type: application/json
+
+{
+  "id": "comment-master",
+  "name": "Comment Master",
+  "description": "Awarded for making 100 comments",
+  "image": "https://example.com/trophies/comment-master.png",
+  "visible": true
+}
+
+###
+
+### Get trophy by ID
+GET https://localhost:7000/api/rules/entities/trophies/comment-master
+Accept: application/json
+
+###
+
+### Update a trophy
+PUT https://localhost:7000/api/rules/entities/trophies/comment-master
+Content-Type: application/json
+
+{
+  "name": "Comment Master (Updated)",
+  "description": "Awarded for making 100 quality comments",
+  "image": "https://example.com/trophies/comment-master-updated.png",
+  "visible": true
+}
+
+###
+
+### Delete a trophy
+DELETE https://localhost:7000/api/rules/entities/trophies/comment-master
+Accept: application/json
+
+###
+
+### Entity Management - Levels
+
+### Get all levels
+GET https://localhost:7000/api/rules/entities/levels
+Accept: application/json
+
+###
+
+### Create a new level
+POST https://localhost:7000/api/rules/entities/levels
+Content-Type: application/json
+
+{
+  "id": "level-1",
+  "name": "Beginner",
+  "category": "xp",
+  "minPoints": 0
+}
+
+###
+
+### Get level by ID
+GET https://localhost:7000/api/rules/entities/levels/level-1
+Accept: application/json
+
+###
+
+### Update a level
+PUT https://localhost:7000/api/rules/entities/levels/level-1
+Content-Type: application/json
+
+{
+  "name": "Beginner (Updated)",
+  "category": "xp",
+  "minPoints": 0
+}
+
+###
+
+### Delete a level
+DELETE https://localhost:7000/api/rules/entities/levels/level-1
+Accept: application/json
+
+###

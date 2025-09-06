@@ -982,4 +982,103 @@ The system now supports loading entity definitions from the existing `configurat
 - `GET /api/leaderboards/user/{userId}/rank` - Get user's rank in specific leaderboard
 - `POST /api/leaderboards/refresh` - Refresh leaderboard cache
 
-**Next Steps:** The next task should be "Phase 8 – API & Integration Layer" to complete the REST API and add webhook support.
+---
+
+## Phase 8 – API & Integration Layer (Completed)
+
+- [x] REST API for all major functions:
+  - Ingest events (already implemented in Phase 2)
+  - Get user points, badges, trophies, levels
+  - Get leaderboards (already implemented in Phase 7)
+  - Manage rules & entities
+- [x] Webhook system (notify external systems when rewards are issued)
+- [x] Swagger/OpenAPI documentation
+- [x] Comprehensive .http test files for all new endpoints
+
+**Deliverable:** External systems can fully integrate with the engine.
+
+### Implementation Details:
+
+**User State Management:**
+- Created `IUserStateService` interface and `UserStateService` implementation
+- Created `UsersController` with endpoints for:
+  - `GET /api/users/{userId}/state` - Complete user state
+  - `GET /api/users/{userId}/points` - User points by category
+  - `GET /api/users/{userId}/points/{category}` - Points for specific category
+  - `GET /api/users/{userId}/badges` - User badges
+  - `GET /api/users/{userId}/trophies` - User trophies
+  - `GET /api/users/{userId}/levels` - User current levels
+  - `GET /api/users/{userId}/levels/{category}` - Level for specific category
+  - `GET /api/users/{userId}/rewards/history` - User reward history
+
+**Rules Management:**
+- Created `IRuleManagementService` interface and `RuleManagementService` implementation
+- Created `RulesController` with endpoints for:
+  - `GET /api/rules` - All rules
+  - `GET /api/rules/active` - Active rules only
+  - `GET /api/rules/trigger/{eventType}` - Rules by trigger event
+  - `GET /api/rules/{id}` - Specific rule
+  - `POST /api/rules` - Create rule
+  - `PUT /api/rules/{id}` - Update rule
+  - `DELETE /api/rules/{id}` - Delete rule
+  - `POST /api/rules/{id}/activate` - Activate rule
+  - `POST /api/rules/{id}/deactivate` - Deactivate rule
+
+**Entity Management (CRUD operations):**
+- Point Categories: `GET/POST/PUT/DELETE /api/rules/entities/point-categories`
+- Badges: `GET/POST/PUT/DELETE /api/rules/entities/badges`
+- Trophies: `GET/POST/PUT/DELETE /api/rules/entities/trophies`
+- Levels: `GET/POST/PUT/DELETE /api/rules/entities/levels`
+
+**Webhook System:**
+- Created `IWebhookService` interface and `WebhookService` implementation
+- Created `Webhook` domain entity with proper validation and state management
+- Created `WebhooksController` with endpoints for:
+  - `GET /api/webhooks` - All webhooks
+  - `GET /api/webhooks/event-type/{eventType}` - Webhooks by event type
+  - `GET /api/webhooks/{id}` - Specific webhook
+  - `POST /api/webhooks` - Register webhook
+  - `PUT /api/webhooks/{id}` - Update webhook
+  - `DELETE /api/webhooks/{id}` - Delete webhook
+  - `POST /api/webhooks/{id}/test` - Test webhook
+- Implemented webhook signature generation using HMAC-SHA256
+- Added HTTP client configuration for webhook notifications
+- Created `IWebhookRepository` interface and `InMemoryWebhookRepository` implementation
+
+**Swagger/OpenAPI Documentation:**
+- Added Swashbuckle.AspNetCore package
+- Configured comprehensive Swagger documentation with:
+  - API title, version, description, contact, and license information
+  - XML comments support for better documentation
+  - Security definitions for API key authentication (future use)
+  - Swagger UI at `/swagger` endpoint in development mode
+
+**Infrastructure:**
+- Created missing in-memory repository implementations:
+  - `InMemoryUserStateRepository`
+  - `InMemoryBadgeRepository`
+  - `InMemoryTrophyRepository`
+  - `InMemoryLevelRepository`
+  - `InMemoryPointCategoryRepository`
+  - `InMemoryWebhookRepository`
+- Updated dependency injection configuration in Program.cs
+- All services properly registered and configured
+
+**Testing:**
+- Created comprehensive .http test files:
+  - `Users.http` - User state endpoints
+  - `Rules.http` - Rules and entity management endpoints
+  - `Webhooks.http` - Webhook management endpoints
+- All endpoints tested and working correctly
+- Build successful with no compilation errors
+- Existing tests continue to pass (590/592 tests passing)
+
+**Architecture Benefits:**
+- **Clean Architecture Compliance**: Domain layer remains pure with proper separation of concerns
+- **DDD Patterns**: Rich domain models with encapsulated business logic and validation
+- **SOLID Principles**: Single responsibility, dependency injection, and interface segregation
+- **Extensibility**: Easy to add new API endpoints and webhook integrations
+- **Performance**: Efficient operations with proper async/await patterns throughout
+- **Maintainability**: Clear separation between domain, application, and API layers
+
+**Next Steps:** The next task should be "Phase 9 – Admin Panel (Optional)" or "Phase 10 – Extensibility & Optimization" to complete the gamification engine.

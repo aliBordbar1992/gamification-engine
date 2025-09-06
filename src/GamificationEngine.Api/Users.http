@@ -1,0 +1,62 @@
+### Gamification Engine API - Users Endpoints
+### Base URL: https://localhost:7000
+
+### Get complete user state
+GET https://localhost:7000/api/users/user123/state
+Accept: application/json
+
+###
+
+### Get user points for all categories
+GET https://localhost:7000/api/users/user123/points
+Accept: application/json
+
+###
+
+### Get user points for specific category
+GET https://localhost:7000/api/users/user123/points/xp
+Accept: application/json
+
+###
+
+### Get user badges
+GET https://localhost:7000/api/users/user123/badges
+Accept: application/json
+
+###
+
+### Get user trophies
+GET https://localhost:7000/api/users/user123/trophies
+Accept: application/json
+
+###
+
+### Get user current level for specific category
+GET https://localhost:7000/api/users/user123/levels/xp
+Accept: application/json
+
+###
+
+### Get user current levels for all categories
+GET https://localhost:7000/api/users/user123/levels
+Accept: application/json
+
+###
+
+### Get user reward history
+GET https://localhost:7000/api/users/user123/rewards/history?page=1&pageSize=20
+Accept: application/json
+
+###
+
+### Test with different user IDs
+GET https://localhost:7000/api/users/user456/state
+Accept: application/json
+
+###
+
+### Test with non-existent user (should return empty state)
+GET https://localhost:7000/api/users/nonexistent/state
+Accept: application/json
+
+###

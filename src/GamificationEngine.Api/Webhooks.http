@@ -1,0 +1,150 @@
+### Gamification Engine API - Webhooks Endpoints
+### Base URL: https://localhost:7000
+
+### Get all webhooks
+GET https://localhost:7000/api/webhooks
+Accept: application/json
+
+###
+
+### Get webhooks by event type
+GET https://localhost:7000/api/webhooks/event-type/USER_COMMENTED
+Accept: application/json
+
+###
+
+### Get webhook by ID
+GET https://localhost:7000/api/webhooks/webhook123
+Accept: application/json
+
+###
+
+### Register a new webhook
+POST https://localhost:7000/api/webhooks
+Content-Type: application/json
+
+{
+  "id": "webhook123",
+  "name": "User Activity Notifications",
+  "url": "https://example.com/webhooks/user-activity",
+  "secret": "your-webhook-secret-key",
+  "eventTypes": ["USER_COMMENTED", "USER_PURCHASED", "USER_LEVELED_UP"],
+  "isActive": true,
+  "retryCount": 3,
+  "timeoutSeconds": 30
+}
+
+###
+
+### Update an existing webhook
+PUT https://localhost:7000/api/webhooks/webhook123
+Content-Type: application/json
+
+{
+  "name": "User Activity Notifications (Updated)",
+  "url": "https://example.com/webhooks/user-activity-updated",
+  "secret": "your-updated-webhook-secret-key",
+  "eventTypes": ["USER_COMMENTED", "USER_PURCHASED", "USER_LEVELED_UP", "USER_BADGE_EARNED"],
+  "isActive": true,
+  "retryCount": 5,
+  "timeoutSeconds": 45
+}
+
+###
+
+### Test a webhook
+POST https://localhost:7000/api/webhooks/webhook123/test
+Accept: application/json
+
+###
+
+### Delete a webhook
+DELETE https://localhost:7000/api/webhooks/webhook123
+Accept: application/json
+
+###
+
+### Register webhook for specific event types
+POST https://localhost:7000/api/webhooks
+Content-Type: application/json
+
+{
+  "id": "badge-webhook",
+  "name": "Badge Notifications",
+  "url": "https://example.com/webhooks/badges",
+  "secret": "badge-webhook-secret",
+  "eventTypes": ["USER_BADGE_EARNED", "USER_TROPHY_EARNED"],
+  "isActive": true,
+  "retryCount": 2,
+  "timeoutSeconds": 20
+}
+
+###
+
+### Register webhook for points events
+POST https://localhost:7000/api/webhooks
+Content-Type: application/json
+
+{
+  "id": "points-webhook",
+  "name": "Points Notifications",
+  "url": "https://example.com/webhooks/points",
+  "secret": "points-webhook-secret",
+  "eventTypes": ["USER_POINTS_AWARDED", "USER_LEVELED_UP"],
+  "isActive": true,
+  "retryCount": 3,
+  "timeoutSeconds": 30
+}
+
+###
+
+### Test webhook with invalid URL (should fail)
+POST https://localhost:7000/api/webhooks
+Content-Type: application/json
+
+{
+  "id": "invalid-webhook",
+  "name": "Invalid Webhook",
+  "url": "not-a-valid-url",
+  "secret": "test-secret",
+  "eventTypes": ["USER_COMMENTED"],
+  "isActive": true,
+  "retryCount": 3,
+  "timeoutSeconds": 30
+}
+
+###
+
+### Test webhook with no event types (should fail)
+POST https://localhost:7000/api/webhooks
+Content-Type: application/json
+
+{
+  "id": "no-events-webhook",
+  "name": "No Events Webhook",
+  "url": "https://example.com/webhooks/no-events",
+  "secret": "test-secret",
+  "eventTypes": [],
+  "isActive": true,
+  "retryCount": 3,
+  "timeoutSeconds": 30
+}
+
+###
+
+### Test webhook with empty name (should fail)
+POST https://localhost:7000/api/webhooks
+Content-Type: application/json
+
+{
+  "id": "empty-name-webhook",
+  "name": "",
+  "url": "https://example.com/webhooks/empty-name",
+  "secret": "test-secret",
+  "eventTypes": ["USER_COMMENTED"],
+  "isActive": true,
+  "retryCount": 3,
+  "timeoutSeconds": 30
+}
+
+###
