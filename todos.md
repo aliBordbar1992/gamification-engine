@@ -225,15 +225,15 @@ Organized into **phases** with clear, testable boundaries so that AI coding tool
 
 ### **Phase 8 – API & Integration Layer**
 
-* [ ] **REST API for all major functions**:
+* [x] **REST API for all major functions**:
 
   * Ingest events
   * Get user points, badges, trophies, levels
   * Get leaderboards
   * Manage rules & entities
-* [ ] **Webhook system** (notify external systems when rewards are issued).
+* [x] **Webhook system** (notify external systems when rewards are issued).
 * [ ] **SDK for JS/TS** (optional).
-* [ ] **Swagger/OpenAPI documentation**.
+* [x] **Swagger/OpenAPI documentation**.
 
 **Deliverable:** External systems can fully integrate with the engine.
 
