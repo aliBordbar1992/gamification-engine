@@ -54,4 +54,34 @@ public class UserState
         if (string.IsNullOrWhiteSpace(badgeId)) throw new ArgumentException("badgeId cannot be empty", nameof(badgeId));
         _badges.Add(badgeId);
     }
+
+    /// <summary>
+    /// Removes a badge from the user if present.
+    /// </summary>
+    /// <param name="badgeId">Badge identifier.</param>
+    public void RemoveBadge(string badgeId)
+    {
+        if (string.IsNullOrWhiteSpace(badgeId)) throw new ArgumentException("badgeId cannot be empty", nameof(badgeId));
+        _badges.Remove(badgeId);
+    }
+
+    /// <summary>
+    /// Grants a trophy to the user if not already present.
+    /// </summary>
+    /// <param name="trophyId">Trophy identifier.</param>
+    public void GrantTrophy(string trophyId)
+    {
+        if (string.IsNullOrWhiteSpace(trophyId)) throw new ArgumentException("trophyId cannot be empty", nameof(trophyId));
+        _trophies.Add(trophyId);
+    }
+
+    /// <summary>
+    /// Removes a trophy from the user if present.
+    /// </summary>
+    /// <param name="trophyId">Trophy identifier.</param>
+    public void RemoveTrophy(string trophyId)
+    {
+        if (string.IsNullOrWhiteSpace(trophyId)) throw new ArgumentException("trophyId cannot be empty", nameof(trophyId));
+        _trophies.Remove(trophyId);
+    }
 }

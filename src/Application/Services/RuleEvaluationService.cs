@@ -16,18 +16,18 @@ public class RuleEvaluationService : IRuleEvaluationService
 {
     private readonly IRuleRepository _ruleRepository;
     private readonly IEventRepository _eventRepository;
-    private readonly IUserStateRepository _userStateRepository;
+    private readonly IRewardExecutionService _rewardExecutionService;
     private readonly ILogger<RuleEvaluationService> _logger;
 
     public RuleEvaluationService(
         IRuleRepository ruleRepository,
         IEventRepository eventRepository,
-        IUserStateRepository userStateRepository,
+        IRewardExecutionService rewardExecutionService,
         ILogger<RuleEvaluationService> logger)
     {
         _ruleRepository = ruleRepository ?? throw new ArgumentNullException(nameof(ruleRepository));
         _eventRepository = eventRepository ?? throw new ArgumentNullException(nameof(eventRepository));
-        _userStateRepository = userStateRepository ?? throw new ArgumentNullException(nameof(userStateRepository));
+        _rewardExecutionService = rewardExecutionService ?? throw new ArgumentNullException(nameof(rewardExecutionService));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
@@ -70,12 +70,12 @@ public class RuleEvaluationService : IRuleEvaluationService
                 var ruleResult = await EvaluateSingleRuleAsync(rule, triggerEvent, cancellationToken);
                 if (ruleResult.IsSuccess)
                 {
-                    executedRewards.AddRange(ruleResult.Value.ExecutedRewards);
+                    executedRewards.AddRange(ruleResult.Value?.ExecutedRewards ?? new List<RewardExecutionResult>());
                 }
                 else
                 {
                     _logger.LogWarning("Rule evaluation failed for rule {RuleId}: {Error}",
-                        rule.RuleId, ruleResult.Error.Message);
+                        rule.RuleId, ruleResult.Error?.Message ?? "Unknown error");
                     // If a rule evaluation fails due to a system error (not just condition failure),
                     // we should fail the entire operation
                     if (ruleResult.Error.Code == "RULE_EVALUATION_ERROR")
@@ -141,8 +141,24 @@ public class RuleEvaluationService : IRuleEvaluationService
             var executedRewards = new List<RewardExecutionResult>();
             foreach (var reward in rule.Rewards)
             {
-                var rewardResult = await ExecuteRewardAsync(reward, triggerEvent, cancellationToken);
-                executedRewards.Add(rewardResult);
+                var rewardResult = await _rewardExecutionService.ExecuteRewardAsync(reward, triggerEvent.UserId, triggerEvent, cancellationToken);
+                if (rewardResult.IsSuccess && rewardResult.Value != null)
+                {
+                    executedRewards.Add(rewardResult.Value);
+                }
+                else
+                {
+                    _logger.LogWarning("Failed to execute reward {RewardId}: {Error}", reward.RewardId, rewardResult.Error?.Message ?? "Unknown error");
+                    // Still add a failed execution result for tracking
+                    executedRewards.Add(new RewardExecutionResult(
+                        reward.RewardId,
+                        reward.Type,
+                        triggerEvent.UserId,
+                        triggerEvent.EventId,
+                        DateTimeOffset.UtcNow,
+                        false,
+                        rewardResult.Error.Message));
+                }
             }
 
             return Result<RuleEvaluationResult, DomainError>.Success(new RuleEvaluationResult(
@@ -158,53 +174,5 @@ public class RuleEvaluationService : IRuleEvaluationService
         }
     }
 
-    /// <summary>
-    /// Executes a single reward
-    /// </summary>
-    /// <param name="reward">The reward to execute</param>
-    /// <param name="triggerEvent">The event that triggered the reward</param>
-    /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>Result of the reward execution</returns>
-    private async Task<RewardExecutionResult> ExecuteRewardAsync(
-        Reward reward,
-        Event triggerEvent,
-        CancellationToken cancellationToken)
-    {
-        try
-        {
-            _logger.LogDebug("Executing reward {RewardId} of type {RewardType} for user {UserId}",
-                reward.RewardId, reward.Type, triggerEvent.UserId);
-
-            // For now, we'll create a basic reward execution result
-            // In Phase 5, this will be expanded to actually execute different reward types
-            var executionResult = new RewardExecutionResult(
-                reward.RewardId,
-                reward.Type,
-                triggerEvent.UserId,
-                triggerEvent.EventId,
-                DateTimeOffset.UtcNow,
-                true,
-                "Reward executed successfully");
-
-            _logger.LogInformation("Successfully executed reward {RewardId} for user {UserId}",
-                reward.RewardId, triggerEvent.UserId);
-
-            return executionResult;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to execute reward {RewardId} for user {UserId}",
-                reward.RewardId, triggerEvent.UserId);
-
-            return new RewardExecutionResult(
-                reward.RewardId,
-                reward.Type,
-                triggerEvent.UserId,
-                triggerEvent.EventId,
-                DateTimeOffset.UtcNow,
-                false,
-                $"Reward execution failed: {ex.Message}");
-        }
-    }
 }
 

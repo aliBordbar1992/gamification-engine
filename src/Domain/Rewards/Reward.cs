@@ -21,4 +21,13 @@ public abstract class Reward
     public string RewardId { get; set; } = string.Empty;
     public string Type { get; set; } = string.Empty;
     public IReadOnlyDictionary<string, object> Parameters { get; set; } = new Dictionary<string, object>();
+
+    /// <summary>
+    /// Validates the reward configuration
+    /// </summary>
+    /// <returns>True if the reward is valid, false otherwise</returns>
+    public virtual bool IsValid()
+    {
+        return !string.IsNullOrWhiteSpace(RewardId) && !string.IsNullOrWhiteSpace(Type);
+    }
 }

@@ -187,12 +187,12 @@ Organized into **phases** with clear, testable boundaries so that AI coding tool
 
 ### **Phase 5 – Rewards System**
 
-* [ ] **Points awarding logic** (multiple categories).
-* [ ] **Badge awarding logic** (once per badge).
-* [ ] **Trophy awarding logic** (meta-badges).
-* [ ] **Level progression** (based on point thresholds).
-* [ ] **Penalty application** (points, badges, level).
-* [ ] **Store and retrieve user reward history**.
+* [x] **Points awarding logic** (multiple categories).
+* [x] **Badge awarding logic** (once per badge).
+* [x] **Trophy awarding logic** (meta-badges).
+* [x] **Level progression** (based on point thresholds).
+* [x] **Penalty application** (points, badges, level).
+* [x] **Store and retrieve user reward history**.
 
 **Deliverable:** Rules can give points, badges, trophies, levels, and penalties.
 

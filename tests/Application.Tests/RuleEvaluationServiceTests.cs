@@ -1,11 +1,13 @@
 using GamificationEngine.Application.Abstractions;
 using GamificationEngine.Application.Services;
 using GamificationEngine.Domain.Events;
+using GamificationEngine.Domain.Errors;
 using GamificationEngine.Domain.Repositories;
 using GamificationEngine.Domain.Rules;
 using GamificationEngine.Domain.Rules.Conditions;
 using GamificationEngine.Domain.Rewards;
 using GamificationEngine.Infrastructure.Storage.InMemory;
+using GamificationEngine.Shared;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Shouldly;
@@ -16,7 +18,7 @@ namespace GamificationEngine.Application.Tests;
 public class RuleEvaluationServiceTests
 {
     private readonly Mock<IEventRepository> _mockEventRepository;
-    private readonly Mock<IUserStateRepository> _mockUserStateRepository;
+    private readonly Mock<IRewardExecutionService> _mockRewardExecutionService;
     private readonly Mock<ILogger<RuleEvaluationService>> _mockLogger;
     private readonly InMemoryRuleRepository _ruleRepository;
     private readonly RuleEvaluationService _service;
@@ -24,14 +26,14 @@ public class RuleEvaluationServiceTests
     public RuleEvaluationServiceTests()
     {
         _mockEventRepository = new Mock<IEventRepository>();
-        _mockUserStateRepository = new Mock<IUserStateRepository>();
+        _mockRewardExecutionService = new Mock<IRewardExecutionService>();
         _mockLogger = new Mock<ILogger<RuleEvaluationService>>();
         _ruleRepository = new InMemoryRuleRepository();
 
         _service = new RuleEvaluationService(
             _ruleRepository,
             _mockEventRepository.Object,
-            _mockUserStateRepository.Object,
+            _mockRewardExecutionService.Object,
             _mockLogger.Object);
     }
 
@@ -74,6 +76,14 @@ public class RuleEvaluationServiceTests
 
         _mockEventRepository.Setup(x => x.GetByUserIdAsync("user-123", 1000, 0))
             .ReturnsAsync(userEvents);
+
+        _mockRewardExecutionService.Setup(x => x.ExecuteRewardAsync(
+            It.IsAny<Reward>(),
+            "user-123",
+            triggerEvent,
+            It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result<RewardExecutionResult, DomainError>.Success(
+                new RewardExecutionResult("reward-1", "POINTS", "user-123", "event-1", DateTimeOffset.UtcNow, true, "Reward executed successfully")));
 
         // Act
         var result = await _service.EvaluateRulesAsync(triggerEvent);
@@ -156,6 +166,22 @@ public class RuleEvaluationServiceTests
 
         _mockEventRepository.Setup(x => x.GetByUserIdAsync("user-123", 1000, 0))
             .ReturnsAsync(userEvents);
+
+        _mockRewardExecutionService.Setup(x => x.ExecuteRewardAsync(
+            It.Is<Reward>(r => r.RewardId == "reward-1"),
+            "user-123",
+            triggerEvent,
+            It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result<RewardExecutionResult, DomainError>.Success(
+                new RewardExecutionResult("reward-1", "POINTS", "user-123", "event-1", DateTimeOffset.UtcNow, true, "Reward executed successfully")));
+
+        _mockRewardExecutionService.Setup(x => x.ExecuteRewardAsync(
+            It.Is<Reward>(r => r.RewardId == "reward-2"),
+            "user-123",
+            triggerEvent,
+            It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result<RewardExecutionResult, DomainError>.Success(
+                new RewardExecutionResult("reward-2", "BADGE", "user-123", "event-1", DateTimeOffset.UtcNow, true, "Reward executed successfully")));
 
         // Act
         var result = await _service.EvaluateRulesAsync(triggerEvent);
@@ -258,7 +284,7 @@ public class RuleEvaluationServiceTests
         // Assert
         result.IsSuccess.ShouldBeFalse();
         result.Error.Code.ShouldBe("RULE_EVALUATION_ERROR");
-        result.Error.Message.ShouldContain("Failed to evaluate rules");
+        result.Error.Message.ShouldContain("Failed to evaluate rule rule-1");
     }
 
     [Fact]
@@ -299,6 +325,14 @@ public class RuleEvaluationServiceTests
 
         _mockEventRepository.Setup(x => x.GetByUserIdAsync("user-123", 1000, 0))
             .ReturnsAsync(userEvents);
+
+        _mockRewardExecutionService.Setup(x => x.ExecuteRewardAsync(
+            It.IsAny<Reward>(),
+            "user-123",
+            triggerEvent,
+            It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result<RewardExecutionResult, DomainError>.Success(
+                new RewardExecutionResult("reward-1", "POINTS", "user-123", "event-1", DateTimeOffset.UtcNow, true, "Reward executed successfully")));
 
         // Act
         var result = await _service.EvaluateRulesAsync(triggerEvent);
