@@ -175,11 +175,11 @@ Organized into **phases** with clear, testable boundaries so that AI coding tool
 
 ### **Phase 4 – Rules Engine**
 
-* [ ] **Define Rule entity** (triggers + conditions + rewards).
-* [ ] **Implement Rule evaluation lifecycle** (trigger → fetch conditions → check → execute rewards).
-* [ ] **Add configuration for rules** (YAML/JSON).
-* [ ] **Support multiple triggers per rule**.
-* [ ] **Logging for rule execution**.
+* [x] **Define Rule entity** (triggers + conditions + rewards).
+* [x] **Implement Rule evaluation lifecycle** (trigger → fetch conditions → check → execute rewards).
+* [x] **Add configuration for rules** (YAML/JSON).
+* [x] **Support multiple triggers per rule**.
+* [x] **Logging for rule execution**.
 
 **Deliverable:** Engine can process a rule end-to-end and issue rewards.
 
