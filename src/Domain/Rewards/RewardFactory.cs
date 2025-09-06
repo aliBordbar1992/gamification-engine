@@ -1,10 +1,19 @@
+using GamificationEngine.Domain.Rewards.Plugins;
+
 namespace GamificationEngine.Domain.Rewards;
 
 /// <summary>
 /// Factory for creating reward instances from configuration data
 /// </summary>
-public static class RewardFactory
+public class RewardFactory
 {
+    private readonly IRewardPluginRegistry? _pluginRegistry;
+
+    public RewardFactory(IRewardPluginRegistry? pluginRegistry = null)
+    {
+        _pluginRegistry = pluginRegistry;
+    }
+
     /// <summary>
     /// Creates a reward instance from configuration data
     /// </summary>
@@ -13,11 +22,28 @@ public static class RewardFactory
     /// <param name="parameters">Configuration parameters for the reward</param>
     /// <returns>A reward instance</returns>
     /// <exception cref="ArgumentException">Thrown when the reward type is not supported or parameters are invalid</exception>
-    public static Reward CreateReward(string rewardId, string rewardType, IDictionary<string, object>? parameters = null)
+    public Reward CreateReward(string rewardId, string rewardType, IDictionary<string, object>? parameters = null)
     {
         if (string.IsNullOrWhiteSpace(rewardId)) throw new ArgumentException("rewardId cannot be empty", nameof(rewardId));
         if (string.IsNullOrWhiteSpace(rewardType)) throw new ArgumentException("rewardType cannot be empty", nameof(rewardType));
 
+        // First check if there's a plugin for this reward type
+        if (_pluginRegistry != null && _pluginRegistry.IsRegistered(rewardType))
+        {
+            var plugin = _pluginRegistry.GetPlugin(rewardType);
+            if (plugin != null)
+            {
+                // Validate parameters using the plugin
+                if (!plugin.ValidateParameters(parameters ?? new Dictionary<string, object>()))
+                {
+                    throw new ArgumentException($"Invalid parameters for reward type '{rewardType}'", nameof(parameters));
+                }
+
+                return plugin.CreateReward(rewardId, parameters);
+            }
+        }
+
+        // Fall back to built-in reward types
         return rewardType.ToLowerInvariant() switch
         {
             "points" => CreatePointsReward(rewardId, parameters),
@@ -26,6 +52,99 @@ public static class RewardFactory
             "level" => CreateLevelReward(rewardId, parameters),
             "penalty" => CreatePenaltyReward(rewardId, parameters),
             _ => throw new ArgumentException($"Unsupported reward type: {rewardType}", nameof(rewardType))
+        };
+    }
+
+    /// <summary>
+    /// Gets all available reward types (built-in + plugins)
+    /// </summary>
+    /// <returns>Collection of available reward types</returns>
+    public IEnumerable<string> GetAvailableRewardTypes()
+    {
+        var builtInTypes = new[] { "points", "badge", "trophy", "level", "penalty" };
+        var pluginTypes = _pluginRegistry?.GetAllPlugins().Select(p => p.RewardType) ?? Enumerable.Empty<string>();
+
+        return builtInTypes.Concat(pluginTypes).Distinct();
+    }
+
+    /// <summary>
+    /// Gets metadata for a reward type
+    /// </summary>
+    /// <param name="rewardType">The reward type</param>
+    /// <returns>Reward metadata if available</returns>
+    public RewardMetadata? GetRewardMetadata(string rewardType)
+    {
+        if (_pluginRegistry != null && _pluginRegistry.IsRegistered(rewardType))
+        {
+            var plugin = _pluginRegistry.GetPlugin(rewardType);
+            if (plugin != null)
+            {
+                return new RewardMetadata(
+                    plugin.RewardType,
+                    plugin.DisplayName,
+                    plugin.Description,
+                    plugin.Version,
+                    plugin.GetRequiredParameters(),
+                    plugin.GetOptionalParameters(),
+                    true // isPlugin
+                );
+            }
+        }
+
+        // Return metadata for built-in types
+        return GetBuiltInRewardMetadata(rewardType);
+    }
+
+    private static RewardMetadata? GetBuiltInRewardMetadata(string rewardType)
+    {
+        return rewardType.ToLowerInvariant() switch
+        {
+            "points" => new RewardMetadata(
+                "points",
+                "Points",
+                "Awards points to a user in a specific category",
+                "1.0.0",
+                new Dictionary<string, string> { { "category", "The point category" }, { "amount", "The number of points to award" } },
+                new Dictionary<string, string>(),
+                false
+            ),
+            "badge" => new RewardMetadata(
+                "badge",
+                "Badge",
+                "Awards a badge to a user",
+                "1.0.0",
+                new Dictionary<string, string> { { "badgeId", "The ID of the badge to award" } },
+                new Dictionary<string, string>(),
+                false
+            ),
+            "trophy" => new RewardMetadata(
+                "trophy",
+                "Trophy",
+                "Awards a trophy to a user",
+                "1.0.0",
+                new Dictionary<string, string> { { "trophyId", "The ID of the trophy to award" } },
+                new Dictionary<string, string>(),
+                false
+            ),
+            "level" => new RewardMetadata(
+                "level",
+                "Level",
+                "Awards a level to a user",
+                "1.0.0",
+                new Dictionary<string, string> { { "levelId", "The ID of the level to award" } },
+                new Dictionary<string, string> { { "category", "The point category (default: xp)" } },
+                false
+            ),
+            "penalty" => new RewardMetadata(
+                "penalty",
+                "Penalty",
+                "Applies a penalty to a user",
+                "1.0.0",
+                new Dictionary<string, string> { { "penaltyType", "The type of penalty" }, { "targetId", "The target ID for the penalty" } },
+                new Dictionary<string, string> { { "amount", "The amount for penalties that require it" } },
+                false
+            ),
+            _ => null
         };
     }
 
@@ -77,3 +196,16 @@ public static class RewardFactory
         return new PenaltyReward(rewardId, penaltyType, targetId, amount, parameters);
     }
 }
+
+/// <summary>
+/// Metadata for a reward type
+/// </summary>
+public record RewardMetadata(
+    string Type,
+    string DisplayName,
+    string Description,
+    string Version,
+    IDictionary<string, string> RequiredParameters,
+    IDictionary<string, string> OptionalParameters,
+    bool IsPlugin
+);

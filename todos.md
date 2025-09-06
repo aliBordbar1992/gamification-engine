@@ -252,10 +252,10 @@ Organized into **phases** with clear, testable boundaries so that AI coding tool
 
 ### **Phase 10 – Extensibility & Optimization**
 
-* [ ] **Plugin interface for new condition types**.
-* [ ] **Plugin interface for new reward types**.
-* [ ] **Performance optimization** (caching, async execution).
-* [ ] **Scalable event queue adapter** (Kafka, SQS, etc.).
-* [ ] **Stress tests** for high event volume.
+* [x] **Plugin interface for new condition types**.
+* [x] **Plugin interface for new reward types**.
+* [x] **Performance optimization** (caching, async execution).
+* [x] **Scalable event queue adapter** (Kafka, SQS, etc.).
+* [x] **Stress tests** for high event volume.
 
 **Deliverable:** Engine is production-ready, scalable, and easy to extend.

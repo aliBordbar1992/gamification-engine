@@ -23,9 +23,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Infrastructure\Configuration\GamificationEngine.Infrastructure.Configuration.csproj" />
-    <ProjectReference Include="..\..\src\Infrastructure\Storage.InMemory\GamificationEngine.Infrastructure.Storage.InMemory.csproj" />
+    <ProjectReference
+      Include="..\..\src\Infrastructure\Configuration\GamificationEngine.Infrastructure.Configuration.csproj" />
+    <ProjectReference
+      Include="..\..\src\Infrastructure\Storage.InMemory\GamificationEngine.Infrastructure.Storage.InMemory.csproj" />
+    <ProjectReference
+      Include="..\..\src\Infrastructure\Caching\GamificationEngine.Infrastructure.Caching.csproj" />
+    <ProjectReference
+      Include="..\..\src\Infrastructure\Plugins\GamificationEngine.Infrastructure.Plugins.csproj" />
     <ProjectReference Include="..\..\src\Application\GamificationEngine.Application.csproj" />
+    <ProjectReference Include="..\..\src\Domain\GamificationEngine.Domain.csproj" />
     <ProjectReference Include="..\..\src\GamificationEngine.Api\GamificationEngine.Api.csproj" />
   </ItemGroup>
 

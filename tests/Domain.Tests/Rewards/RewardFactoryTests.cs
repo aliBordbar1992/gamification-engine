@@ -19,7 +19,8 @@ public class RewardFactoryTests
         };
 
         // Act
-        var reward = RewardFactory.CreateReward(rewardId, rewardType, parameters);
+        var factory = new RewardFactory();
+        var reward = factory.CreateReward(rewardId, rewardType, parameters);
 
         // Assert
         reward.ShouldBeOfType<PointsReward>();
@@ -42,7 +43,8 @@ public class RewardFactoryTests
         };
 
         // Act
-        var reward = RewardFactory.CreateReward(rewardId, rewardType, parameters);
+        var factory = new RewardFactory();
+        var reward = factory.CreateReward(rewardId, rewardType, parameters);
 
         // Assert
         reward.ShouldBeOfType<BadgeReward>();
@@ -64,7 +66,8 @@ public class RewardFactoryTests
         };
 
         // Act
-        var reward = RewardFactory.CreateReward(rewardId, rewardType, parameters);
+        var factory = new RewardFactory();
+        var reward = factory.CreateReward(rewardId, rewardType, parameters);
 
         // Assert
         reward.ShouldBeOfType<TrophyReward>();
@@ -87,7 +90,8 @@ public class RewardFactoryTests
         };
 
         // Act
-        var reward = RewardFactory.CreateReward(rewardId, rewardType, parameters);
+        var factory = new RewardFactory();
+        var reward = factory.CreateReward(rewardId, rewardType, parameters);
 
         // Assert
         reward.ShouldBeOfType<LevelReward>();
@@ -110,7 +114,8 @@ public class RewardFactoryTests
         };
 
         // Act
-        var reward = RewardFactory.CreateReward(rewardId, rewardType, parameters);
+        var factory = new RewardFactory();
+        var reward = factory.CreateReward(rewardId, rewardType, parameters);
 
         // Assert
         reward.ShouldBeOfType<LevelReward>();
@@ -132,7 +137,8 @@ public class RewardFactoryTests
         };
 
         // Act
-        var reward = RewardFactory.CreateReward(rewardId, rewardType, parameters);
+        var factory = new RewardFactory();
+        var reward = factory.CreateReward(rewardId, rewardType, parameters);
 
         // Assert
         reward.ShouldBeOfType<PenaltyReward>();
@@ -157,7 +163,8 @@ public class RewardFactoryTests
         };
 
         // Act
-        var reward = RewardFactory.CreateReward(rewardId, rewardType, parameters);
+        var factory = new RewardFactory();
+        var reward = factory.CreateReward(rewardId, rewardType, parameters);
 
         // Assert
         reward.ShouldBeOfType<PenaltyReward>();
@@ -332,7 +339,8 @@ public class RewardFactoryTests
         };
 
         // Act
-        var reward = RewardFactory.CreateReward(rewardId, rewardType, parameters);
+        var factory = new RewardFactory();
+        var reward = factory.CreateReward(rewardId, rewardType, parameters);
 
         // Assert
         reward.Parameters.ShouldNotBeNull();
