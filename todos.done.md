@@ -690,3 +690,82 @@ tracker.MarkSuccess(); // or tracker.MarkFailure(exception)
 - **Resource Usage**: Memory and CPU usage limits with configurable thresholds
 
 **Next Steps:** The next task should be "Wire Up Current API Endpoints for E2E Testing" to complete the E2E testing infrastructure and validate the entire stack from HTTP requests through database persistence.
+
+---
+
+## Phase 3 – Condition Engine ✅
+**Completed:** 2025-01-26  
+**Summary:** Successfully implemented comprehensive condition engine providing flexible condition evaluation against stored events. The implementation includes:
+
+- **Condition Base Interface**: Updated `Condition.cs` to include abstract `Evaluate` method for condition evaluation against events
+- **Condition Types Constants**: Created `ConditionTypes.cs` with string constants for all supported condition types
+- **Core Condition Types**: Implemented 8 condition types covering common evaluation scenarios:
+  - `AlwaysTrueCondition`: Always evaluates to true (useful for testing)
+  - `AttributeEqualsCondition`: Checks if event attribute equals specific value
+  - `CountCondition`: Counts events of specific type with optional time window
+  - `ThresholdCondition`: Compares numeric attributes against thresholds with operators (>=, >, <=, <, =, !=)
+  - `SequenceCondition`: Validates ordered sequence of events within time window
+  - `TimeSinceLastEventCondition`: Ensures minimum time has passed since last event of type
+  - `FirstOccurrenceCondition`: Checks if this is first occurrence of event type for user
+  - `CustomScriptCondition`: Placeholder for future custom scripting capabilities
+
+- **Condition Evaluation Framework**: Created `ConditionEvaluator` supporting AND/OR logic for condition groups
+- **Condition Factory**: Implemented `ConditionFactory` for creating condition instances based on type
+- **Comprehensive Testing**: Created extensive test suite with 31 tests covering all condition types and evaluation scenarios
+
+**Files Created:**
+- `src/Domain/Rules/ConditionTypes.cs` - Condition type constants
+- `src/Domain/Rules/Conditions/AlwaysTrueCondition.cs` - Always true condition
+- `src/Domain/Rules/Conditions/AttributeEqualsCondition.cs` - Attribute equality condition
+- `src/Domain/Rules/Conditions/CountCondition.cs` - Event count condition
+- `src/Domain/Rules/Conditions/ThresholdCondition.cs` - Numeric threshold condition
+- `src/Domain/Rules/Conditions/SequenceCondition.cs` - Event sequence condition
+- `src/Domain/Rules/Conditions/TimeSinceLastEventCondition.cs` - Time-based condition
+- `src/Domain/Rules/Conditions/FirstOccurrenceCondition.cs` - First occurrence condition
+- `src/Domain/Rules/Conditions/CustomScriptCondition.cs` - Custom script placeholder
+- `src/Domain/Rules/ConditionEvaluator.cs` - Condition evaluation framework
+- `src/Domain/Rules/ConditionFactory.cs` - Condition factory
+- `tests/Domain.Tests/Rules/ConditionTests.cs` - Comprehensive condition tests
+- `tests/Domain.Tests/Rules/ConditionEvaluatorTests.cs` - Evaluator tests
+- `tests/Domain.Tests/Rules/ConditionFactoryTests.cs` - Factory tests
+
+**Key Features:**
+- **Flexible Evaluation**: All conditions evaluate against collections of events with trigger event context
+- **Time Window Support**: Conditions support configurable time windows for temporal evaluation
+- **Parameter-Driven**: All conditions accept parameters for flexible configuration
+- **Clean Architecture**: Domain layer maintains purity with no external dependencies
+- **SOLID Principles**: Single responsibility, dependency injection, and proper encapsulation
+- **Comprehensive Testing**: TDD approach with extensive test coverage
+
+**Test Results:**
+- **All Tests Passing**: 111/111 domain tests successful (80 existing + 31 new)
+- **Build Successful**: All projects compile without errors
+- **No Breaking Changes**: Existing functionality preserved
+
+**Architecture Benefits:**
+- **Clean Architecture Compliance**: Domain layer remains pure with no infrastructure dependencies
+- **Extensibility**: Easy to add new condition types through factory pattern
+- **Maintainability**: Clear separation of concerns with specialized condition classes
+- **Performance**: Efficient evaluation with LINQ and optimized algorithms
+- **Flexibility**: Parameter-driven conditions support various evaluation scenarios
+
+**Usage Examples:**
+```csharp
+// Create conditions using factory
+var factory = new ConditionFactory();
+var countCondition = factory.CreateCondition("count-1", ConditionTypes.Count, new Dictionary<string, object>
+{
+    { "eventType", "USER_COMMENT" },
+    { "minCount", 5 },
+    { "timeWindowMinutes", 60 }
+});
+
+// Evaluate conditions
+var evaluator = new ConditionEvaluator();
+var result = evaluator.EvaluateConditions(conditions, events, triggerEvent, "all");
+
+// Direct condition evaluation
+var isSatisfied = countCondition.Evaluate(events, triggerEvent);
+```
+
+**Next Steps:** The next task should be "Phase 4 – Rules Engine" to implement rule evaluation lifecycle connecting triggers, conditions, and rewards.

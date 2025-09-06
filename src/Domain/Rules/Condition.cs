@@ -1,3 +1,5 @@
+using GamificationEngine.Domain.Events;
+
 namespace GamificationEngine.Domain.Rules;
 
 /// <summary>
@@ -21,4 +23,12 @@ public abstract class Condition
     public string ConditionId { get; set; } = string.Empty;
     public string Type { get; set; } = string.Empty;
     public IReadOnlyDictionary<string, object> Parameters { get; set; } = new Dictionary<string, object>();
+
+    /// <summary>
+    /// Evaluates the condition against a collection of events
+    /// </summary>
+    /// <param name="events">The events to evaluate against</param>
+    /// <param name="triggerEvent">The specific event that triggered the rule evaluation</param>
+    /// <returns>True if the condition is satisfied, false otherwise</returns>
+    public abstract bool Evaluate(IEnumerable<Event> events, Event triggerEvent);
 }

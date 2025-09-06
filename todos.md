@@ -155,8 +155,8 @@ Organized into **phases** with clear, testable boundaries so that AI coding tool
 
 ### **Phase 3 – Condition Engine**
 
-* [ ] **Define Condition base interface**.
-* [ ] **Implement core condition types**:
+* [x] **Define Condition base interface**.
+* [x] **Implement core condition types**:
 
   * `alwaysTrue`
   * `attributeEquals`
@@ -166,8 +166,8 @@ Organized into **phases** with clear, testable boundaries so that AI coding tool
   * `timeSinceLastEvent`
   * `firstOccurrence`
   * `customScript` (optional sandboxed code)
-* [ ] **Condition evaluation framework** (all/any logic).
-* [ ] **Unit tests for each condition type**.
+* [x] **Condition evaluation framework** (all/any logic).
+* [x] **Unit tests for each condition type**.
 
 **Deliverable:** Any condition type can be evaluated against stored events.
 
