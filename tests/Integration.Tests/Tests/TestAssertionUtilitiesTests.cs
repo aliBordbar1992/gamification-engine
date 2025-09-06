@@ -382,7 +382,7 @@ public class TestAssertionUtilitiesTests : IntegrationTestBase, IAsyncLifetime
     public void TestResultReportingUtilities_ShouldGenerateSummaryReport()
     {
         // Arrange
-        var contexts = new List<TestResultReportingUtilities.TestExecutionContext>
+        var contexts = new List<TestExecutionContext>
         {
             CreateTestContextWithDuration("Test1", TimeSpan.FromMilliseconds(100)),
             CreateTestContextWithDuration("Test2", TimeSpan.FromMilliseconds(200)),
@@ -401,7 +401,7 @@ public class TestAssertionUtilitiesTests : IntegrationTestBase, IAsyncLifetime
         summary.ShouldContain("Max Duration: 200.00ms");
     }
 
-    private TestResultReportingUtilities.TestExecutionContext CreateTestContextWithDuration(string testName, TimeSpan duration)
+    private TestExecutionContext CreateTestContextWithDuration(string testName, TimeSpan duration)
     {
         var context = TestResultReportingUtilities.CreateTestContext(testName);
         context.StartTime = DateTime.Now.Subtract(duration);

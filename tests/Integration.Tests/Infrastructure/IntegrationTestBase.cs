@@ -1,3 +1,4 @@
+using GamificationEngine.Infrastructure.Storage.EntityFramework;
 using GamificationEngine.Integration.Tests.Infrastructure.Abstractions;
 using GamificationEngine.Integration.Tests.Infrastructure.Configuration;
 using GamificationEngine.Integration.Tests.Infrastructure.Http;
@@ -5,6 +6,7 @@ using GamificationEngine.Integration.Tests.Infrastructure.Utils;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
 
 namespace GamificationEngine.Integration.Tests.Infrastructure;
 
@@ -76,7 +78,7 @@ public abstract class IntegrationTestBase : IAsyncDisposable
     /// </summary>
     protected virtual void ConfigureTestServices(IServiceCollection services)
     {
-        // Default implementation - override in derived classes
+        return;
     }
 
     /// <summary>
