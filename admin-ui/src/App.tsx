@@ -80,6 +80,16 @@ function App() {
                 }
               />
               <Route
+                path="/rules/:id"
+                element={
+                  <RouteGuard>
+                    <MainLayout>
+                      <Rules />
+                    </MainLayout>
+                  </RouteGuard>
+                }
+              />
+              <Route
                 path="/entities/*"
                 element={
                   <RouteGuard>
