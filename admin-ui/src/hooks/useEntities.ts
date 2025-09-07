@@ -5,18 +5,6 @@ import {
   levelsApi,
   pointCategoriesApi,
 } from '@/api/entities'
-import type {
-  CreateBadgeDto,
-  CreateTrophyDto,
-  CreateLevelDto,
-  CreatePointCategoryDto,
-} from '@/api/generated/models'
-
-// Type aliases for better readability
-type Badge = CreateBadgeDto
-type Trophy = CreateTrophyDto
-type Level = CreateLevelDto
-type PointCategory = CreatePointCategoryDto
 
 // Badges hooks
 export const useBadges = () => {

@@ -34,8 +34,6 @@ export const mockRules: Rule[] = [
         parameters: {},
       },
     ],
-    createdAt: '2023-01-01T00:00:00Z',
-    updatedAt: '2023-01-02T00:00:00Z',
   },
   {
     id: 'rule2',
@@ -59,8 +57,6 @@ export const mockRules: Rule[] = [
         },
       },
     ],
-    createdAt: '2023-01-02T00:00:00Z',
-    updatedAt: '2023-01-03T00:00:00Z',
   },
   {
     id: 'rule3',
@@ -86,8 +82,6 @@ export const mockRules: Rule[] = [
         },
       },
     ],
-    createdAt: '2023-01-03T00:00:00Z',
-    updatedAt: '2023-01-04T00:00:00Z',
   },
 ]
 

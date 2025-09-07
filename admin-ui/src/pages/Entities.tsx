@@ -1,132 +1,89 @@
-import React, { useState } from 'react'
-import { Tabs, Typography } from 'antd'
+import React from 'react'
+import { Typography, Card, Row, Col, Statistic } from 'antd'
 import { TrophyOutlined, CrownOutlined, StarOutlined, DollarOutlined } from '@ant-design/icons'
+import { useNavigate } from 'react-router-dom'
+import { useBadges, useTrophies, useLevels, usePointCategories } from '@/hooks/useEntities'
 
-// Import entity list components
-import BadgesList from '@/components/entities/BadgesList'
-import TrophiesList from '@/components/entities/TrophiesList'
-import LevelsList from '@/components/entities/LevelsList'
-import PointCategoriesList from '@/components/entities/PointCategoriesList'
-
-// Import entity details components
-import BadgeDetails from '@/components/entities/BadgeDetails'
-import TrophyDetails from '@/components/entities/TrophyDetails'
-import LevelDetails from '@/components/entities/LevelDetails'
-import PointCategoryDetails from '@/components/entities/PointCategoryDetails'
-
-const { Title } = Typography
-
-type EntityType = 'badges' | 'trophies' | 'levels' | 'point-categories'
-type ViewMode = 'list' | 'details'
+const { Title, Text } = Typography
 
 const Entities: React.FC = () => {
-  const [viewMode, setViewMode] = useState<ViewMode>('list')
-  const [selectedEntityType, setSelectedEntityType] = useState<EntityType>('badges')
-  const [selectedEntityId, setSelectedEntityId] = useState<string>('')
+  const navigate = useNavigate()
+  
+  const { data: badges = [], isLoading: badgesLoading } = useBadges()
+  const { data: trophies = [], isLoading: trophiesLoading } = useTrophies()
+  const { data: levels = [], isLoading: levelsLoading } = useLevels()
+  const { data: pointCategories = [], isLoading: pointCategoriesLoading } = usePointCategories()
 
-  const handleViewDetails = (entityType: EntityType, id: string) => {
-    setSelectedEntityType(entityType)
-    setSelectedEntityId(id)
-    setViewMode('details')
-  }
-
-  const handleBackToList = () => {
-    setViewMode('list')
-    setSelectedEntityId('')
-  }
-
-  const renderEntityDetails = () => {
-    switch (selectedEntityType) {
-      case 'badges':
-        return <BadgeDetails id={selectedEntityId} onBack={handleBackToList} />
-      case 'trophies':
-        return <TrophyDetails id={selectedEntityId} onBack={handleBackToList} />
-      case 'levels':
-        return <LevelDetails id={selectedEntityId} onBack={handleBackToList} />
-      case 'point-categories':
-        return <PointCategoryDetails id={selectedEntityId} onBack={handleBackToList} />
-      default:
-        return null
-    }
-  }
-
-  const tabItems = [
+  const entityCards = [
     {
-      key: 'badges',
-      label: (
-        <span>
-          <TrophyOutlined />
-          Badges
-        </span>
-      ),
-      children: (
-        <BadgesList
-          onViewDetails={(id) => handleViewDetails('badges', id)}
-        />
-      ),
+      title: 'Badges',
+      icon: <TrophyOutlined style={{ fontSize: '24px', color: '#1890ff' }} />,
+      count: badges.length,
+      loading: badgesLoading,
+      path: '/entities/badges',
+      description: 'Award badges to users for achievements',
     },
     {
-      key: 'trophies',
-      label: (
-        <span>
-          <CrownOutlined />
-          Trophies
-        </span>
-      ),
-      children: (
-        <TrophiesList
-          onViewDetails={(id) => handleViewDetails('trophies', id)}
-        />
-      ),
+      title: 'Trophies',
+      icon: <CrownOutlined style={{ fontSize: '24px', color: '#52c41a' }} />,
+      count: trophies.length,
+      loading: trophiesLoading,
+      path: '/entities/trophies',
+      description: 'Special trophies for major accomplishments',
     },
     {
-      key: 'levels',
-      label: (
-        <span>
-          <StarOutlined />
-          Levels
-        </span>
-      ),
-      children: (
-        <LevelsList
-          onViewDetails={(id) => handleViewDetails('levels', id)}
-        />
-      ),
+      title: 'Levels',
+      icon: <StarOutlined style={{ fontSize: '24px', color: '#faad14' }} />,
+      count: levels.length,
+      loading: levelsLoading,
+      path: '/entities/levels',
+      description: 'User progression levels based on points',
     },
     {
-      key: 'point-categories',
-      label: (
-        <span>
-          <DollarOutlined />
-          Point Categories
-        </span>
-      ),
-      children: (
-        <PointCategoriesList
-          onViewDetails={(id) => handleViewDetails('point-categories', id)}
-        />
-      ),
+      title: 'Point Categories',
+      icon: <DollarOutlined style={{ fontSize: '24px', color: '#722ed1' }} />,
+      count: pointCategories.length,
+      loading: pointCategoriesLoading,
+      path: '/entities/point-categories',
+      description: 'Different types of points users can earn',
     },
   ]
 
-  if (viewMode === 'details') {
-    return (
-      <div>
-        <Title level={2}>Entities Management</Title>
-        {renderEntityDetails()}
-      </div>
-    )
-  }
-
   return (
     <div>
-      <Title level={2}>Entities Management</Title>
-      <Tabs
-        defaultActiveKey="badges"
-        items={tabItems}
-        size="large"
-        tabPosition="top"
-      />
+      <Title level={2}>Entities Overview</Title>
+      <Text type="secondary" style={{ fontSize: '16px', marginBottom: '24px', display: 'block' }}>
+        Manage badges, trophies, levels, and point categories
+      </Text>
+      
+      <Row gutter={[16, 16]}>
+        {entityCards.map((entity) => (
+          <Col xs={24} sm={12} lg={6} key={entity.title}>
+            <Card
+              hoverable
+              onClick={() => navigate(entity.path)}
+              style={{ height: '100%' }}
+            >
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ marginBottom: '16px' }}>
+                  {entity.icon}
+                </div>
+                <Title level={4} style={{ marginBottom: '8px' }}>
+                  {entity.title}
+                </Title>
+                <Statistic
+                  value={entity.count}
+                  loading={entity.loading}
+                  valueStyle={{ fontSize: '24px', fontWeight: 'bold' }}
+                />
+                <Text type="secondary" style={{ fontSize: '12px', display: 'block', marginTop: '8px' }}>
+                  {entity.description}
+                </Text>
+              </div>
+            </Card>
+          </Col>
+        ))}
+      </Row>
     </div>
   )
 }

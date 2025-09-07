@@ -7,13 +7,7 @@ import type {
   CreatePointCategoryDto,
   CreateLevelDto,
 } from './generated/models'
-import {
-  mockRules,
-  mockPointCategories,
-  mockBadges,
-  mockTrophies,
-  mockLevels,
-} from '../test/mockRules'
+import { mockRules } from '../test/mockRules'
 
 // Type aliases for better readability
 type Rule = CreateRuleDto

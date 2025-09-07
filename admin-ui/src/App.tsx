@@ -13,6 +13,10 @@ import {
   Dashboard,
   Rules,
   Entities,
+  Badges,
+  Trophies,
+  Levels,
+  PointCategories,
   Users,
   Leaderboards,
   Sandbox,
@@ -101,11 +105,51 @@ function App() {
                 }
               />
               <Route
-                path="/entities/*"
+                path="/entities"
                 element={
                   <RouteGuard>
                     <MainLayout>
                       <Entities />
+                    </MainLayout>
+                  </RouteGuard>
+                }
+              />
+              <Route
+                path="/entities/badges"
+                element={
+                  <RouteGuard>
+                    <MainLayout>
+                      <Badges />
+                    </MainLayout>
+                  </RouteGuard>
+                }
+              />
+              <Route
+                path="/entities/trophies"
+                element={
+                  <RouteGuard>
+                    <MainLayout>
+                      <Trophies />
+                    </MainLayout>
+                  </RouteGuard>
+                }
+              />
+              <Route
+                path="/entities/levels"
+                element={
+                  <RouteGuard>
+                    <MainLayout>
+                      <Levels />
+                    </MainLayout>
+                  </RouteGuard>
+                }
+              />
+              <Route
+                path="/entities/point-categories"
+                element={
+                  <RouteGuard>
+                    <MainLayout>
+                      <PointCategories />
                     </MainLayout>
                   </RouteGuard>
                 }
