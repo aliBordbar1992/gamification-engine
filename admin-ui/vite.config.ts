@@ -7,6 +7,10 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': '/src',
+      url: '/src/polyfills/url-polyfill.ts',
     },
+  },
+  define: {
+    global: 'globalThis',
   },
 })

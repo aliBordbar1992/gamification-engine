@@ -21,7 +21,7 @@ import {
   PauseCircleOutlined,
 } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
-import { useRules } from '@/hooks/useRules'
+import { useRules } from '@/hooks/useGeneratedRules'
 import type { Rule, RulesFilters } from '@/types'
 
 const { Title, Text } = Typography
@@ -37,7 +37,11 @@ const RulesList: React.FC<RulesListProps> = ({ onViewRule }) => {
   const [filters, setFilters] = useState<RulesFilters>({})
   const [searchText, setSearchText] = useState('')
 
-  const { data: rules = [], isLoading, error } = useRules({
+  const {
+    data: rules = [],
+    isLoading,
+    error,
+  } = useRules({
     filters: {
       ...filters,
       search: searchText || undefined,
@@ -53,7 +57,7 @@ const RulesList: React.FC<RulesListProps> = ({ onViewRule }) => {
   }
 
   const handleFilterChange = (key: keyof RulesFilters, value: any) => {
-    setFilters(prev => ({
+    setFilters((prev) => ({
       ...prev,
       [key]: value,
     }))
@@ -106,7 +110,7 @@ const RulesList: React.FC<RulesListProps> = ({ onViewRule }) => {
       key: 'triggers',
       render: (triggers: string[]) => (
         <Space wrap>
-          {triggers.slice(0, 2).map(trigger => (
+          {triggers.slice(0, 2).map((trigger) => (
             <Tag key={trigger} color="blue">
               {trigger}
             </Tag>
@@ -145,9 +149,7 @@ const RulesList: React.FC<RulesListProps> = ({ onViewRule }) => {
       key: 'createdAt',
       width: 120,
       render: (date: string) => (
-        <Text type="secondary">
-          {new Date(date).toLocaleDateString()}
-        </Text>
+        <Text type="secondary">{new Date(date).toLocaleDateString()}</Text>
       ),
     },
     {
@@ -170,7 +172,7 @@ const RulesList: React.FC<RulesListProps> = ({ onViewRule }) => {
 
   const stats = useMemo(() => {
     const total = rules.length
-    const active = rules.filter(rule => rule.isActive).length
+    const active = rules.filter((rule) => rule.isActive).length
     const inactive = total - active
     return { total, active, inactive }
   }, [rules])
@@ -178,9 +180,7 @@ const RulesList: React.FC<RulesListProps> = ({ onViewRule }) => {
   if (error) {
     return (
       <Card>
-        <Text type="danger">
-          Error loading rules: {error.message}
-        </Text>
+        <Text type="danger">Error loading rules: {error.message}</Text>
       </Card>
     )
   }

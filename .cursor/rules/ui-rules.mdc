@@ -54,7 +54,7 @@ alwaysApply: false
 
 ## 4. Data Fetching
 
-* Refer to http://localhost:5046/swagger/v1/swagger.json to read updated APIs and DTOs to work with
+* Refer to `API-GENERATION.md` when working with APIs
 * If back-end is not running, run 'dotnet run --project src/GamificationEngine.Api --no-build --no-restore' to start the server
 * Use React Query for all data fetching, caching, and synchronization.
 * Do not use `useEffect + fetch` for data fetching.
@@ -171,6 +171,7 @@ alwaysApply: false
 
 ## 15. Development Guidelines
 
+* Never execute any npm command outside the `admin-ui` folder.
 * TypeScript strict mode enabled.
 * No `any` in exported APIs.
 * Accessibility compliance (keyboard navigation, aria labels, color contrast).

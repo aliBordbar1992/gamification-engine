@@ -21,7 +21,7 @@ import {
   EditOutlined,
 } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
-import { useRule } from '@/hooks/useRules'
+import { useRule } from '@/hooks/useGeneratedRules'
 import type { Rule } from '@/types'
 
 const { Title, Text, Paragraph } = Typography
@@ -58,7 +58,7 @@ const RuleDetails: React.FC<RuleDetailsProps> = ({ ruleId, onEdit }) => {
   const convertToYaml = (obj: any, indent = 0): string => {
     const spaces = '  '.repeat(indent)
     let yaml = ''
-    
+
     for (const [key, value] of Object.entries(obj)) {
       if (Array.isArray(value)) {
         yaml += `${spaces}${key}:\n`
@@ -79,7 +79,7 @@ const RuleDetails: React.FC<RuleDetailsProps> = ({ ruleId, onEdit }) => {
         yaml += `${spaces}${key}: ${value}\n`
       }
     }
-    
+
     return yaml
   }
 
@@ -90,9 +90,7 @@ const RuleDetails: React.FC<RuleDetailsProps> = ({ ruleId, onEdit }) => {
   if (error) {
     return (
       <Card>
-        <Text type="danger">
-          Error loading rule: {error.message}
-        </Text>
+        <Text type="danger">Error loading rule: {error.message}</Text>
       </Card>
     )
   }
@@ -196,7 +194,7 @@ const RuleDetails: React.FC<RuleDetailsProps> = ({ ruleId, onEdit }) => {
               <Col span={12}>
                 <Card title="Triggers" size="small">
                   <Space wrap>
-                    {rule.triggers.map(trigger => (
+                    {rule.triggers.map((trigger) => (
                       <Tag key={trigger} color="blue">
                         {trigger}
                       </Tag>
@@ -212,19 +210,25 @@ const RuleDetails: React.FC<RuleDetailsProps> = ({ ruleId, onEdit }) => {
                   {rule.conditions.length > 0 ? (
                     <Space direction="vertical" style={{ width: '100%' }}>
                       {rule.conditions.map((condition, index) => (
-                        <Card key={index} size="small" style={{ backgroundColor: '#fafafa' }}>
+                        <Card
+                          key={index}
+                          size="small"
+                          style={{ backgroundColor: '#fafafa' }}
+                        >
                           <Text strong>{condition.type}</Text>
                           {Object.keys(condition.parameters).length > 0 && (
                             <div style={{ marginTop: 8 }}>
                               <Text type="secondary">Parameters:</Text>
-                              <pre style={{ 
-                                marginTop: 4, 
-                                fontSize: '12px',
-                                backgroundColor: '#fff',
-                                padding: 8,
-                                borderRadius: 4,
-                                border: '1px solid #d9d9d9'
-                              }}>
+                              <pre
+                                style={{
+                                  marginTop: 4,
+                                  fontSize: '12px',
+                                  backgroundColor: '#fff',
+                                  padding: 8,
+                                  borderRadius: 4,
+                                  border: '1px solid #d9d9d9',
+                                }}
+                              >
                                 {JSON.stringify(condition.parameters, null, 2)}
                               </pre>
                             </div>
@@ -242,7 +246,11 @@ const RuleDetails: React.FC<RuleDetailsProps> = ({ ruleId, onEdit }) => {
                   {rule.rewards.length > 0 ? (
                     <Space direction="vertical" style={{ width: '100%' }}>
                       {rule.rewards.map((reward, index) => (
-                        <Card key={index} size="small" style={{ backgroundColor: '#f6ffed' }}>
+                        <Card
+                          key={index}
+                          size="small"
+                          style={{ backgroundColor: '#f6ffed' }}
+                        >
                           <Space>
                             <Tag color="green">{reward.type}</Tag>
                             <Text strong>{reward.targetId}</Text>
@@ -253,14 +261,16 @@ const RuleDetails: React.FC<RuleDetailsProps> = ({ ruleId, onEdit }) => {
                           {Object.keys(reward.parameters).length > 0 && (
                             <div style={{ marginTop: 8 }}>
                               <Text type="secondary">Parameters:</Text>
-                              <pre style={{ 
-                                marginTop: 4, 
-                                fontSize: '12px',
-                                backgroundColor: '#fff',
-                                padding: 8,
-                                borderRadius: 4,
-                                border: '1px solid #d9d9d9'
-                              }}>
+                              <pre
+                                style={{
+                                  marginTop: 4,
+                                  fontSize: '12px',
+                                  backgroundColor: '#fff',
+                                  padding: 8,
+                                  borderRadius: 4,
+                                  border: '1px solid #d9d9d9',
+                                }}
+                              >
                                 {JSON.stringify(reward.parameters, null, 2)}
                               </pre>
                             </div>
@@ -278,13 +288,15 @@ const RuleDetails: React.FC<RuleDetailsProps> = ({ ruleId, onEdit }) => {
 
           <TabPane tab="JSON" key="json">
             <Card>
-              <pre style={{ 
-                backgroundColor: '#f5f5f5',
-                padding: 16,
-                borderRadius: 6,
-                overflow: 'auto',
-                maxHeight: '600px'
-              }}>
+              <pre
+                style={{
+                  backgroundColor: '#f5f5f5',
+                  padding: 16,
+                  borderRadius: 6,
+                  overflow: 'auto',
+                  maxHeight: '600px',
+                }}
+              >
                 {JSON.stringify(rule, null, 2)}
               </pre>
             </Card>
@@ -292,13 +304,15 @@ const RuleDetails: React.FC<RuleDetailsProps> = ({ ruleId, onEdit }) => {
 
           <TabPane tab="YAML" key="yaml">
             <Card>
-              <pre style={{ 
-                backgroundColor: '#f5f5f5',
-                padding: 16,
-                borderRadius: 6,
-                overflow: 'auto',
-                maxHeight: '600px'
-              }}>
+              <pre
+                style={{
+                  backgroundColor: '#f5f5f5',
+                  padding: 16,
+                  borderRadius: 6,
+                  overflow: 'auto',
+                  maxHeight: '600px',
+                }}
+              >
                 {convertToYaml(rule)}
               </pre>
             </Card>

@@ -3,10 +3,10 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import RuleDetails from '../components/RuleDetails'
-import { useRule } from '../hooks/useRules'
+import { useRule } from '../hooks/useGeneratedRules'
 
 // Mock the hooks
-vi.mock('../hooks/useRules', () => ({
+vi.mock('../hooks/useGeneratedRules', () => ({
   useRule: vi.fn(),
 }))
 

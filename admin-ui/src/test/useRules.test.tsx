@@ -1,3 +1,4 @@
+import React from 'react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { renderHook, waitFor } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -17,35 +18,51 @@ import {
   useTrophies,
   useLevels,
 } from '../hooks/useRules'
-import { rulesApi, entitiesApi } from '../api/rules'
 
-// Mock the API
-vi.mock('../api/rules', () => ({
-  rulesApi: {
-    getAllRules: vi.fn(),
-    getActiveRules: vi.fn(),
-    getRulesByTrigger: vi.fn(),
-    getRuleById: vi.fn(),
-    createRule: vi.fn(),
-    updateRule: vi.fn(),
-    activateRule: vi.fn(),
-    deactivateRule: vi.fn(),
-    deleteRule: vi.fn(),
-  },
-  entitiesApi: {
-    getPointCategories: vi.fn(),
-    getPointCategoryById: vi.fn(),
-    getBadges: vi.fn(),
-    getBadgeById: vi.fn(),
-    getTrophies: vi.fn(),
-    getTrophyById: vi.fn(),
-    getLevels: vi.fn(),
-    getLevelById: vi.fn(),
-  },
+// Mock the generated API
+vi.mock('../api/generated-client', () => ({
+  RulesApi: vi.fn(),
+  createApiInstance: vi.fn(() => ({
+    apiRulesGet: vi.fn(),
+    apiRulesActiveGet: vi.fn(),
+    apiRulesTriggerEventTypeGet: vi.fn(),
+    apiRulesIdGet: vi.fn(),
+    apiRulesPost: vi.fn(),
+    apiRulesIdPut: vi.fn(),
+    apiRulesIdActivatePost: vi.fn(),
+    apiRulesIdDeactivatePost: vi.fn(),
+    apiRulesIdDelete: vi.fn(),
+    apiRulesEntitiesPointCategoriesGet: vi.fn(),
+    apiRulesEntitiesPointCategoriesIdGet: vi.fn(),
+    apiRulesEntitiesBadgesGet: vi.fn(),
+    apiRulesEntitiesBadgesIdGet: vi.fn(),
+    apiRulesEntitiesTrophiesGet: vi.fn(),
+    apiRulesEntitiesTrophiesIdGet: vi.fn(),
+    apiRulesEntitiesLevelsGet: vi.fn(),
+    apiRulesEntitiesLevelsIdGet: vi.fn(),
+  })),
 }))
 
-const mockRulesApi = rulesApi as any
-const mockEntitiesApi = entitiesApi as any
+// Create mock API instance
+const mockApiInstance = {
+  apiRulesGet: vi.fn(),
+  apiRulesActiveGet: vi.fn(),
+  apiRulesTriggerEventTypeGet: vi.fn(),
+  apiRulesIdGet: vi.fn(),
+  apiRulesPost: vi.fn(),
+  apiRulesIdPut: vi.fn(),
+  apiRulesIdActivatePost: vi.fn(),
+  apiRulesIdDeactivatePost: vi.fn(),
+  apiRulesIdDelete: vi.fn(),
+  apiRulesEntitiesPointCategoriesGet: vi.fn(),
+  apiRulesEntitiesPointCategoriesIdGet: vi.fn(),
+  apiRulesEntitiesBadgesGet: vi.fn(),
+  apiRulesEntitiesBadgesIdGet: vi.fn(),
+  apiRulesEntitiesTrophiesGet: vi.fn(),
+  apiRulesEntitiesTrophiesIdGet: vi.fn(),
+  apiRulesEntitiesLevelsGet: vi.fn(),
+  apiRulesEntitiesLevelsIdGet: vi.fn(),
+}
 
 // Test wrapper with QueryClient
 const createWrapper = () => {
@@ -61,9 +78,7 @@ const createWrapper = () => {
   })
 
   return ({ children }: { children: ReactNode }) => (
-    <QueryClientProvider client={queryClient}>
-      {children}
-    </QueryClientProvider>
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   )
 }
 
@@ -87,7 +102,7 @@ describe('useRules hooks', () => {
         },
       ]
 
-      mockRulesApi.getAllRules.mockResolvedValue(mockRules)
+      mockApiInstance.apiRulesGet.mockResolvedValue(mockRules)
 
       const { result } = renderHook(() => useRules(), {
         wrapper: createWrapper(),
@@ -98,7 +113,7 @@ describe('useRules hooks', () => {
       })
 
       expect(result.current.data).toEqual(mockRules)
-      expect(mockRulesApi.getAllRules).toHaveBeenCalled()
+      expect(mockApiInstance.apiRulesGet).toHaveBeenCalled()
     })
 
     it('should filter rules by active status', async () => {
@@ -125,7 +140,7 @@ describe('useRules hooks', () => {
         },
       ]
 
-      mockRulesApi.getAllRules.mockResolvedValue(mockRules)
+      mockApiInstance.apiRulesGet.mockResolvedValue(mockRules)
 
       const { result } = renderHook(
         () => useRules({ filters: { isActive: true } }),
@@ -165,7 +180,7 @@ describe('useRules hooks', () => {
         },
       ]
 
-      mockRulesApi.getAllRules.mockResolvedValue(mockRules)
+      mockApiInstance.apiRulesGet.mockResolvedValue(mockRules)
 
       const { result } = renderHook(
         () => useRules({ filters: { triggerType: 'USER_COMMENTED' } }),
@@ -205,7 +220,7 @@ describe('useRules hooks', () => {
         },
       ]
 
-      mockRulesApi.getAllRules.mockResolvedValue(mockRules)
+      mockApiInstance.apiRulesGet.mockResolvedValue(mockRules)
 
       const { result } = renderHook(
         () => useRules({ filters: { search: 'comment' } }),
@@ -235,7 +250,7 @@ describe('useRules hooks', () => {
         },
       ]
 
-      mockRulesApi.getActiveRules.mockResolvedValue(mockRules)
+      mockApiInstance.apiRulesActiveGet.mockResolvedValue(mockRules)
 
       const { result } = renderHook(() => useActiveRules(), {
         wrapper: createWrapper(),
@@ -246,7 +261,7 @@ describe('useRules hooks', () => {
       })
 
       expect(result.current.data).toEqual(mockRules)
-      expect(mockRulesApi.getActiveRules).toHaveBeenCalled()
+      expect(mockApiInstance.apiRulesActiveGet).toHaveBeenCalled()
     })
 
     it('should fetch rules by trigger', async () => {
@@ -263,7 +278,7 @@ describe('useRules hooks', () => {
         },
       ]
 
-      mockRulesApi.getRulesByTrigger.mockResolvedValue(mockRules)
+      mockApiInstance.apiRulesTriggerEventTypeGet.mockResolvedValue(mockRules)
 
       const { result } = renderHook(() => useRulesByTrigger('USER_COMMENTED'), {
         wrapper: createWrapper(),
@@ -274,7 +289,9 @@ describe('useRules hooks', () => {
       })
 
       expect(result.current.data).toEqual(mockRules)
-      expect(mockRulesApi.getRulesByTrigger).toHaveBeenCalledWith('USER_COMMENTED')
+      expect(mockApiInstance.apiRulesTriggerEventTypeGet).toHaveBeenCalledWith(
+        'USER_COMMENTED'
+      )
     })
 
     it('should fetch single rule', async () => {
@@ -289,7 +306,7 @@ describe('useRules hooks', () => {
         createdAt: '2023-01-01T00:00:00Z',
       }
 
-      mockRulesApi.getRuleById.mockResolvedValue(mockRule)
+      mockApiInstance.apiRulesIdGet.mockResolvedValue(mockRule)
 
       const { result } = renderHook(() => useRule('rule1'), {
         wrapper: createWrapper(),
@@ -300,7 +317,7 @@ describe('useRules hooks', () => {
       })
 
       expect(result.current.data).toEqual(mockRule)
-      expect(mockRulesApi.getRuleById).toHaveBeenCalledWith('rule1')
+      expect(mockApiInstance.apiRulesIdGet).toHaveBeenCalledWith('rule1')
     })
   })
 
@@ -321,7 +338,7 @@ describe('useRules hooks', () => {
         createdAt: '2023-01-01T00:00:00Z',
       }
 
-      mockRulesApi.createRule.mockResolvedValue(createdRule)
+      mockApiInstance.apiRulesPost.mockResolvedValue({ data: createdRule })
 
       const { result } = renderHook(() => useCreateRule(), {
         wrapper: createWrapper(),
@@ -329,7 +346,7 @@ describe('useRules hooks', () => {
 
       await result.current.mutateAsync(newRule)
 
-      expect(mockRulesApi.createRule).toHaveBeenCalledWith(newRule)
+      expect(mockApiInstance.apiRulesPost).toHaveBeenCalledWith(newRule)
     })
 
     it('should update a rule', async () => {
@@ -349,7 +366,7 @@ describe('useRules hooks', () => {
         updatedAt: '2023-01-02T00:00:00Z',
       }
 
-      mockRulesApi.updateRule.mockResolvedValue(updatedRule)
+      mockApiInstance.apiRulesIdPut.mockResolvedValue({ data: updatedRule })
 
       const { result } = renderHook(() => useUpdateRule(), {
         wrapper: createWrapper(),
@@ -357,11 +374,14 @@ describe('useRules hooks', () => {
 
       await result.current.mutateAsync({ id: 'rule1', rule: updateData })
 
-      expect(mockRulesApi.updateRule).toHaveBeenCalledWith('rule1', updateData)
+      expect(mockApiInstance.apiRulesIdPut).toHaveBeenCalledWith(
+        'rule1',
+        updateData
+      )
     })
 
     it('should activate a rule', async () => {
-      mockRulesApi.activateRule.mockResolvedValue(undefined)
+      mockApiInstance.apiRulesIdActivatePost.mockResolvedValue(undefined)
 
       const { result } = renderHook(() => useActivateRule(), {
         wrapper: createWrapper(),
@@ -369,11 +389,13 @@ describe('useRules hooks', () => {
 
       await result.current.mutateAsync('rule1')
 
-      expect(mockRulesApi.activateRule).toHaveBeenCalledWith('rule1')
+      expect(mockApiInstance.apiRulesIdActivatePost).toHaveBeenCalledWith(
+        'rule1'
+      )
     })
 
     it('should deactivate a rule', async () => {
-      mockRulesApi.deactivateRule.mockResolvedValue(undefined)
+      mockApiInstance.apiRulesIdDeactivatePost.mockResolvedValue(undefined)
 
       const { result } = renderHook(() => useDeactivateRule(), {
         wrapper: createWrapper(),
@@ -381,11 +403,13 @@ describe('useRules hooks', () => {
 
       await result.current.mutateAsync('rule1')
 
-      expect(mockRulesApi.deactivateRule).toHaveBeenCalledWith('rule1')
+      expect(mockApiInstance.apiRulesIdDeactivatePost).toHaveBeenCalledWith(
+        'rule1'
+      )
     })
 
     it('should delete a rule', async () => {
-      mockRulesApi.deleteRule.mockResolvedValue(undefined)
+      mockApiInstance.apiRulesIdDelete.mockResolvedValue(undefined)
 
       const { result } = renderHook(() => useDeleteRule(), {
         wrapper: createWrapper(),
@@ -393,7 +417,7 @@ describe('useRules hooks', () => {
 
       await result.current.mutateAsync('rule1')
 
-      expect(mockRulesApi.deleteRule).toHaveBeenCalledWith('rule1')
+      expect(mockApiInstance.apiRulesIdDelete).toHaveBeenCalledWith('rule1')
     })
   })
 
@@ -408,7 +432,9 @@ describe('useRules hooks', () => {
         },
       ]
 
-      mockEntitiesApi.getPointCategories.mockResolvedValue(mockCategories)
+      mockApiInstance.apiRulesEntitiesPointCategoriesGet.mockResolvedValue(
+        mockCategories
+      )
 
       const { result } = renderHook(() => usePointCategories(), {
         wrapper: createWrapper(),
@@ -419,7 +445,9 @@ describe('useRules hooks', () => {
       })
 
       expect(result.current.data).toEqual(mockCategories)
-      expect(mockEntitiesApi.getPointCategories).toHaveBeenCalled()
+      expect(
+        mockApiInstance.apiRulesEntitiesPointCategoriesGet
+      ).toHaveBeenCalled()
     })
 
     it('should fetch badges', async () => {
@@ -433,7 +461,7 @@ describe('useRules hooks', () => {
         },
       ]
 
-      mockEntitiesApi.getBadges.mockResolvedValue(mockBadges)
+      mockApiInstance.apiRulesEntitiesBadgesGet.mockResolvedValue(mockBadges)
 
       const { result } = renderHook(() => useBadges(), {
         wrapper: createWrapper(),
@@ -444,7 +472,7 @@ describe('useRules hooks', () => {
       })
 
       expect(result.current.data).toEqual(mockBadges)
-      expect(mockEntitiesApi.getBadges).toHaveBeenCalled()
+      expect(mockApiInstance.apiRulesEntitiesBadgesGet).toHaveBeenCalled()
     })
 
     it('should fetch trophies', async () => {
@@ -458,7 +486,9 @@ describe('useRules hooks', () => {
         },
       ]
 
-      mockEntitiesApi.getTrophies.mockResolvedValue(mockTrophies)
+      mockApiInstance.apiRulesEntitiesTrophiesGet.mockResolvedValue(
+        mockTrophies
+      )
 
       const { result } = renderHook(() => useTrophies(), {
         wrapper: createWrapper(),
@@ -469,7 +499,7 @@ describe('useRules hooks', () => {
       })
 
       expect(result.current.data).toEqual(mockTrophies)
-      expect(mockEntitiesApi.getTrophies).toHaveBeenCalled()
+      expect(mockApiInstance.apiRulesEntitiesTrophiesGet).toHaveBeenCalled()
     })
 
     it('should fetch levels', async () => {
@@ -482,7 +512,7 @@ describe('useRules hooks', () => {
         },
       ]
 
-      mockEntitiesApi.getLevels.mockResolvedValue(mockLevels)
+      mockApiInstance.apiRulesEntitiesLevelsGet.mockResolvedValue(mockLevels)
 
       const { result } = renderHook(() => useLevels(), {
         wrapper: createWrapper(),
@@ -493,7 +523,7 @@ describe('useRules hooks', () => {
       })
 
       expect(result.current.data).toEqual(mockLevels)
-      expect(mockEntitiesApi.getLevels).toHaveBeenCalled()
+      expect(mockApiInstance.apiRulesEntitiesLevelsGet).toHaveBeenCalled()
     })
   })
 })
