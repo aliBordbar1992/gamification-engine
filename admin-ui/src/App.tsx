@@ -50,26 +50,81 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/unauthorized" element={<Unauthorized />} />
               <Route
-                path="/*"
+                path="/"
                 element={
                   <RouteGuard>
                     <MainLayout>
-                      <Routes>
-                        <Route
-                          path="/"
-                          element={<Navigate to="/dashboard" replace />}
-                        />
-                        <Route path="/dashboard" element={<Dashboard />} />
-                        <Route path="/rules" element={<Rules />} />
-                        <Route path="/entities/*" element={<Entities />} />
-                        <Route path="/users" element={<Users />} />
-                        <Route
-                          path="/leaderboards"
-                          element={<Leaderboards />}
-                        />
-                        <Route path="/sandbox" element={<Sandbox />} />
-                        <Route path="/settings" element={<Settings />} />
-                      </Routes>
+                      <Navigate to="/dashboard" replace />
+                    </MainLayout>
+                  </RouteGuard>
+                }
+              />
+              <Route
+                path="/dashboard"
+                element={
+                  <RouteGuard>
+                    <MainLayout>
+                      <Dashboard />
+                    </MainLayout>
+                  </RouteGuard>
+                }
+              />
+              <Route
+                path="/rules"
+                element={
+                  <RouteGuard>
+                    <MainLayout>
+                      <Rules />
+                    </MainLayout>
+                  </RouteGuard>
+                }
+              />
+              <Route
+                path="/entities/*"
+                element={
+                  <RouteGuard>
+                    <MainLayout>
+                      <Entities />
+                    </MainLayout>
+                  </RouteGuard>
+                }
+              />
+              <Route
+                path="/users"
+                element={
+                  <RouteGuard>
+                    <MainLayout>
+                      <Users />
+                    </MainLayout>
+                  </RouteGuard>
+                }
+              />
+              <Route
+                path="/leaderboards"
+                element={
+                  <RouteGuard>
+                    <MainLayout>
+                      <Leaderboards />
+                    </MainLayout>
+                  </RouteGuard>
+                }
+              />
+              <Route
+                path="/sandbox"
+                element={
+                  <RouteGuard>
+                    <MainLayout>
+                      <Sandbox />
+                    </MainLayout>
+                  </RouteGuard>
+                }
+              />
+              <Route
+                path="/settings"
+                element={
+                  <RouteGuard>
+                    <MainLayout>
+                      <Settings />
                     </MainLayout>
                   </RouteGuard>
                 }
