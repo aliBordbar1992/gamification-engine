@@ -6,7 +6,7 @@ import apiClient from './client' // Your existing axios instance
 
 // Create configuration for the generated API client
 export const apiConfiguration = new Configuration({
-  basePath: import.meta.env.VITE_API_BASE_URL || 'http://localhost:5046/api',
+  basePath: import.meta.env.VITE_API_BASE_URL || 'http://localhost:5046',
   accessToken: () => {
     const token = localStorage.getItem('auth_token')
     return token ? `Bearer ${token}` : ''
