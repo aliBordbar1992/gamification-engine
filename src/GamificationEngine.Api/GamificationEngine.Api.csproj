@@ -17,6 +17,8 @@
       Include="..\Infrastructure\Storage.InMemory\GamificationEngine.Infrastructure.Storage.InMemory.csproj" />
     <ProjectReference
       Include="..\Infrastructure\Storage.EntityFramework\GamificationEngine.Infrastructure.Storage.EntityFramework.csproj" />
+    <ProjectReference
+      Include="..\Infrastructure\Configuration\GamificationEngine.Infrastructure.Configuration.csproj" />
   </ItemGroup>
 
 </Project>

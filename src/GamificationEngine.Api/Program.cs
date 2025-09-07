@@ -3,6 +3,7 @@ using GamificationEngine.Application.Abstractions;
 using GamificationEngine.Domain.Repositories;
 using GamificationEngine.Infrastructure.Storage.InMemory;
 using GamificationEngine.Application.Services;
+using GamificationEngine.Infrastructure.Configuration;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 
@@ -85,6 +86,8 @@ builder.Services.AddScoped<IUserStateService, UserStateService>();
 builder.Services.AddScoped<IRuleManagementService, RuleManagementService>();
 builder.Services.AddScoped<IEntityManagementService, EntityManagementService>();
 builder.Services.AddScoped<IWebhookService, WebhookService>();
+builder.Services.AddScoped<IDatabaseSeederService, DatabaseSeederService>();
+builder.Services.AddScoped<IConfigurationLoader, YamlConfigurationLoader>();
 
 // Register infrastructure services
 builder.Services.AddSingleton<IEventRepository, EventRepository>();
@@ -108,6 +111,9 @@ builder.Services.AddHostedService<EventQueueBackgroundService>();
 // builder.Services.AddEntityFrameworkHealthChecks();
 
 var app = builder.Build();
+
+// Seed database if empty
+await SeedDatabaseIfEmptyAsync(app);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -138,4 +144,58 @@ app.MapControllers();
 app.Run();
 
 // Make Program class accessible for testing
-public partial class Program { }
+public partial class Program
+{
+    /// <summary>
+    /// Seeds the database with configuration data if it's empty
+    /// </summary>
+    static async Task SeedDatabaseIfEmptyAsync(WebApplication app)
+    {
+        try
+        {
+            using var scope = app.Services.CreateScope();
+            var seeder = scope.ServiceProvider.GetRequiredService<IDatabaseSeederService>();
+
+            // Look for configuration file in the project root
+            var configPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "configuration-example.yml");
+            if (!File.Exists(configPath))
+            {
+                // Try alternative path
+                configPath = Path.Combine(Directory.GetCurrentDirectory(), "configuration-example.yml");
+            }
+
+            // Try absolute path from project root
+            if (!File.Exists(configPath))
+            {
+                var projectRoot = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "..", ".."));
+                configPath = Path.Combine(projectRoot, "configuration-example.yml");
+            }
+
+            if (File.Exists(configPath))
+            {
+                Console.WriteLine($"📁 Found configuration file at: {configPath}");
+                var result = await seeder.SeedIfEmptyAsync(configPath);
+                if (result.IsSuccess && result.Value)
+                {
+                    Console.WriteLine("✅ Database seeded successfully with configuration data.");
+                }
+                else if (result.IsSuccess && !result.Value)
+                {
+                    Console.WriteLine("ℹ️ Database already contains data, skipping seeding.");
+                }
+                else
+                {
+                    Console.WriteLine($"⚠️ Failed to seed database: {result.Error}");
+                }
+            }
+            else
+            {
+                Console.WriteLine($"⚠️ Configuration file not found at: {configPath}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"❌ Error during database seeding: {ex.Message}");
+        }
+    }
+}

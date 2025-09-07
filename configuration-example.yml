@@ -174,11 +174,14 @@ rules:
     name: "Comment gives XP"
     triggers:
       - event: "USER_COMMENTED"
-    conditions: []
+    conditions:
+      - type: "alwaysTrue"
+        parameters: {}
     rewards:
       - type: "points"
-        category: "xp"
-        amount: 10
+        parameters:
+          category: "xp"
+          amount: 10
     metadata:
       notify_platform: true
       notify_template: "toast_comment_xp"
@@ -189,15 +192,19 @@ rules:
     triggers:
       - event: "PROFILE_COMPLETED"
     conditions:
-      - type: "attributeGreaterThan"
-        field: "completenessPercent"
-        value: 80
+      - type: "threshold"
+        parameters:
+          attribute: "completenessPercent"
+          operator: "greaterThan"
+          value: 80
     rewards:
       - type: "points"
-        category: "xp"
-        amount: 20
+        parameters:
+          category: "xp"
+          amount: 20
       - type: "badge"
-        badgeId: "badge-completed-profile"
+        parameters:
+          badgeId: "badge-completed-profile"
     metadata:
       one_time: true
 
@@ -209,17 +216,21 @@ rules:
       - event: "USER_PURCHASED_PRODUCT"
     conditions:
       - type: "sequence"
-        withinMinutes: 30
-        allowOtherEvents: true
+        parameters:
+          withinMinutes: 30
+          allowOtherEvents: true
       - type: "attributeEquals"
-        field: "source"
-        value: "special_offers"
+        parameters:
+          field: "source"
+          value: "special_offers"
     rewards:
       - type: "points"
-        category: "score"
-        amount: 100
+        parameters:
+          category: "score"
+          amount: 100
       - type: "badge"
-        badgeId: "badge-special-offer-buyer"
+        parameters:
+          badgeId: "badge-special-offer-buyer"
     metadata:
       notify_platform: true
       webhook_on_award: true
@@ -230,13 +241,15 @@ rules:
     triggers:
       - event: "USER_PURCHASED_PRODUCT"
     conditions:
-      - type: "eventCount"
-        eventType: "USER_PURCHASED_PRODUCT"
-        minCount: 10
-        withinDays: 3650 # lifetime
+      - type: "count"
+        parameters:
+          eventType: "USER_PURCHASED_PRODUCT"
+          minCount: 10
+          timeWindow: 525600 # 3650 days in minutes
     rewards:
       - type: "badge"
-        badgeId: "badge-bronze-medallion" # ensure defined in badges if used
+        parameters:
+          badgeId: "badge-bronze-medallion" # ensure defined in badges if used
     metadata:
       one_time: true
 
@@ -246,13 +259,15 @@ rules:
     triggers:
       - event: "BOOK_COMPLETED" # ensure this event exists in events catalog if used
     conditions:
-      - type: "distinctAttributeCount"
-        eventType: "BOOK_COMPLETED"
-        attribute: "bookId"
-        minCount: 100
+      - type: "count"
+        parameters:
+          eventType: "BOOK_COMPLETED"
+          minCount: 100
+          distinctAttribute: "bookId"
     rewards:
       - type: "badge"
-        badgeId: "badge-bookaholic"
+        parameters:
+          badgeId: "badge-bookaholic"
     metadata:
       one_time: true
 
@@ -262,11 +277,14 @@ rules:
     triggers:
       - event: "BADGE_GRANTED"
     conditions:
-      - type: "badgeCount"
-        minCount: 10
+      - type: "count"
+        parameters:
+          eventType: "BADGE_GRANTED"
+          minCount: 10
     rewards:
       - type: "trophy"
-        trophyId: "trophy-badge-collector"
+        parameters:
+          trophyId: "trophy-badge-collector"
     metadata:
       one_time: true
 
@@ -276,13 +294,15 @@ rules:
     triggers:
       - event: "USER_RECEIVED_DISLIKE"
     conditions:
-      - type: "eventCountNegative"
-        eventType: "USER_RECEIVED_DISLIKE"
-        minCount: 100
+      - type: "count"
+        parameters:
+          eventType: "USER_RECEIVED_DISLIKE"
+          minCount: 100
     rewards:
       - type: "points"
-        category: "xp"
-        amount: -10
+        parameters:
+          category: "xp"
+          amount: -10
     metadata:
       repeatable: false
 

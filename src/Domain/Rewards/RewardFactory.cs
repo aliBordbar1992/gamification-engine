@@ -153,8 +153,21 @@ public class RewardFactory
         if (parameters == null || !parameters.TryGetValue("category", out var categoryObj) || categoryObj is not string category)
             throw new ArgumentException("Points reward requires 'category' parameter");
 
-        if (!parameters.TryGetValue("amount", out var amountObj) || amountObj is not long amount)
+        if (!parameters.TryGetValue("amount", out var amountObj))
             throw new ArgumentException("Points reward requires 'amount' parameter");
+
+        long amount = amountObj switch
+        {
+            long l => l,
+            int i => i,
+            double d => (long)d,
+            decimal dec => (long)dec,
+            float f => (long)f,
+            string s when long.TryParse(s, out var parsed) => parsed,
+            string s when int.TryParse(s, out var parsed) => parsed,
+            string s => throw new ArgumentException($"Points reward 'amount' parameter must be a valid number, got string '{s}'"),
+            _ => throw new ArgumentException($"Points reward 'amount' parameter must be a number, got {amountObj?.GetType().Name ?? "null"} with value '{amountObj}'")
+        };
 
         return new PointsReward(rewardId, category, amount, parameters);
     }

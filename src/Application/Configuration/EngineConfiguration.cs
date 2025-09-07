@@ -8,6 +8,7 @@ public sealed class EngineConfiguration
     public List<BadgeDefinition> Badges { get; set; } = new();
     public List<TrophyDefinition> Trophies { get; set; } = new();
     public List<LevelDefinition> Levels { get; set; } = new();
+    public List<RuleDefinition> Rules { get; set; } = new();
 }
 
 public sealed class EngineSettings
@@ -67,4 +68,41 @@ public sealed class LevelCriteria
 {
     public string Category { get; set; } = string.Empty;
     public long MinPoints { get; set; }
+}
+
+public sealed class RuleDefinition
+{
+    public string Id { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
+    public string? Description { get; set; }
+    public List<RuleTrigger> Triggers { get; set; } = new();
+    public List<RuleCondition> Conditions { get; set; } = new();
+    public List<RuleReward> Rewards { get; set; } = new();
+    public RuleMetadata? Metadata { get; set; }
+}
+
+public sealed class RuleTrigger
+{
+    public string Event { get; set; } = string.Empty;
+}
+
+public sealed class RuleCondition
+{
+    public string Type { get; set; } = string.Empty;
+    public Dictionary<string, object> Parameters { get; set; } = new();
+}
+
+public sealed class RuleReward
+{
+    public string Type { get; set; } = string.Empty;
+    public Dictionary<string, object> Parameters { get; set; } = new();
+}
+
+public sealed class RuleMetadata
+{
+    public bool? OneTime { get; set; }
+    public bool? Repeatable { get; set; }
+    public bool? NotifyPlatform { get; set; }
+    public string? NotifyTemplate { get; set; }
+    public bool? WebhookOnAward { get; set; }
 }
