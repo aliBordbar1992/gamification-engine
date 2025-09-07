@@ -2,7 +2,10 @@ import React from 'react'
 import { Tag } from 'antd'
 import EntityList from '../EntityList'
 import { usePointCategories } from '@/hooks/useEntities'
-import type { PointCategory } from '@/types'
+import type { CreatePointCategoryDto } from '@/api/generated/models'
+
+// Type alias for better readability
+type PointCategory = CreatePointCategoryDto
 
 interface PointCategoriesListProps {
   onViewDetails: (id: string) => void

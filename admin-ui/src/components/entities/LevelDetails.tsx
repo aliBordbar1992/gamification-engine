@@ -3,6 +3,10 @@ import { Tag } from 'antd'
 import EntityDetails from '../EntityDetails'
 import { useLevel } from '@/hooks/useEntities'
 import type { EntityDetailsItem } from '../EntityDetails'
+import type { CreateLevelDto } from '@/api/generated/models'
+
+// Type alias for better readability
+type Level = CreateLevelDto
 
 interface LevelDetailsProps {
   id: string

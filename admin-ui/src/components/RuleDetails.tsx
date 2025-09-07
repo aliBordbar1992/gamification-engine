@@ -22,7 +22,10 @@ import {
 } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
 import { useRule } from '@/hooks/useGeneratedRules'
-import type { Rule } from '@/types'
+import type { CreateRuleDto } from '@/api/generated/models'
+
+// Type alias for better readability
+type Rule = CreateRuleDto
 
 const { Title, Text, Paragraph } = Typography
 const { TabPane } = Tabs

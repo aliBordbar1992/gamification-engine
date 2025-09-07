@@ -4,6 +4,10 @@ import { CheckCircleOutlined, EyeInvisibleOutlined } from '@ant-design/icons'
 import EntityDetails from '../EntityDetails'
 import { useTrophy } from '@/hooks/useEntities'
 import type { EntityDetailsItem } from '../EntityDetails'
+import type { CreateTrophyDto } from '@/api/generated/models'
+
+// Type alias for better readability
+type Trophy = CreateTrophyDto
 
 interface TrophyDetailsProps {
   id: string

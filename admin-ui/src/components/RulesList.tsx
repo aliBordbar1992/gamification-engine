@@ -16,7 +16,17 @@ import {
 import { FilterOutlined, EyeOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
 import { useRules } from '@/hooks/useGeneratedRules'
-import type { Rule, RulesFilters } from '@/types'
+import type { CreateRuleDto } from '@/api/generated/models'
+
+// Type aliases for better readability
+type Rule = CreateRuleDto
+
+// Filter and search types
+export interface RulesFilters {
+  isActive?: boolean
+  triggerType?: string
+  search?: string
+}
 
 const { Title, Text } = Typography
 const { Search } = Input

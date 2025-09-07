@@ -1,11 +1,22 @@
 import apiClient from './client'
-import type { Badge, Trophy, PointCategory, Level } from '@/types'
+import type {
+  CreateBadgeDto,
+  CreateTrophyDto,
+  CreatePointCategoryDto,
+  CreateLevelDto,
+} from './generated/models'
 import {
   mockPointCategories,
   mockBadges,
   mockTrophies,
   mockLevels,
 } from '../test/mockRules'
+
+// Type aliases for better readability
+type Badge = CreateBadgeDto
+type Trophy = CreateTrophyDto
+type PointCategory = CreatePointCategoryDto
+type Level = CreateLevelDto
 
 // Badges API
 export const badgesApi = {

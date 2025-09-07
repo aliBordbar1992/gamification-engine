@@ -1,14 +1,12 @@
 import apiClient from './client'
 import type {
-  Rule,
-  CreateRule,
-  UpdateRule,
-  Badge,
-  Trophy,
-  PointCategory,
-  Level,
-  RulesListParams,
-} from '@/types'
+  CreateRuleDto,
+  UpdateRuleDto,
+  CreateBadgeDto,
+  CreateTrophyDto,
+  CreatePointCategoryDto,
+  CreateLevelDto,
+} from './generated/models'
 import {
   mockRules,
   mockPointCategories,
@@ -16,6 +14,28 @@ import {
   mockTrophies,
   mockLevels,
 } from '../test/mockRules'
+
+// Type aliases for better readability
+type Rule = CreateRuleDto
+type CreateRule = CreateRuleDto
+type UpdateRule = UpdateRuleDto
+type Badge = CreateBadgeDto
+type Trophy = CreateTrophyDto
+type PointCategory = CreatePointCategoryDto
+type Level = CreateLevelDto
+
+// Filter and search types
+export interface RulesFilters {
+  isActive?: boolean
+  triggerType?: string
+  search?: string
+}
+
+export interface RulesListParams {
+  filters?: RulesFilters
+  page?: number
+  limit?: number
+}
 
 // Rules API
 export const rulesApi = {

@@ -4,6 +4,10 @@ import { CheckCircleOutlined, EyeInvisibleOutlined } from '@ant-design/icons'
 import EntityDetails from '../EntityDetails'
 import { useBadge } from '@/hooks/useEntities'
 import type { EntityDetailsItem } from '../EntityDetails'
+import type { CreateBadgeDto } from '@/api/generated/models'
+
+// Type alias for better readability
+type Badge = CreateBadgeDto
 
 interface BadgeDetailsProps {
   id: string

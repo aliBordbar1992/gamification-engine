@@ -1,4 +1,7 @@
-import { Rule } from '@/types'
+import type { CreateRuleDto } from '@/api/generated/models'
+
+// Type alias for better readability
+type Rule = CreateRuleDto
 
 // Mock data for development when backend is not available
 export const mockRules: Rule[] = [

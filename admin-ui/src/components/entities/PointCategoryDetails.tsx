@@ -3,6 +3,10 @@ import { Tag } from 'antd'
 import EntityDetails from '../EntityDetails'
 import { usePointCategory } from '@/hooks/useEntities'
 import type { EntityDetailsItem } from '../EntityDetails'
+import type { CreatePointCategoryDto } from '@/api/generated/models'
+
+// Type alias for better readability
+type PointCategory = CreatePointCategoryDto
 
 interface PointCategoryDetailsProps {
   id: string

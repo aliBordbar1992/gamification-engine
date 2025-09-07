@@ -1,16 +1,35 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { RulesApi, createApiInstance } from '@/api/generated-client'
-import type { CreateRuleDto, UpdateRuleDto } from '@/api/generated/models'
 import type {
-  Rule,
-  CreateRule,
-  UpdateRule,
-  Badge,
-  Trophy,
-  PointCategory,
-  Level,
-  RulesListParams,
-} from '@/types'
+  CreateRuleDto,
+  UpdateRuleDto,
+  CreateBadgeDto,
+  CreateTrophyDto,
+  CreatePointCategoryDto,
+  CreateLevelDto,
+} from '@/api/generated/models'
+
+// Type aliases for better readability
+type Rule = CreateRuleDto
+type CreateRule = CreateRuleDto
+type UpdateRule = UpdateRuleDto
+type Badge = CreateBadgeDto
+type Trophy = CreateTrophyDto
+type PointCategory = CreatePointCategoryDto
+type Level = CreateLevelDto
+
+// Filter and search types
+export interface RulesFilters {
+  isActive?: boolean
+  triggerType?: string
+  search?: string
+}
+
+export interface RulesListParams {
+  filters?: RulesFilters
+  page?: number
+  limit?: number
+}
 
 // Create API instance
 const rulesApi = createApiInstance(RulesApi)

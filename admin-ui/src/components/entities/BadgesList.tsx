@@ -3,7 +3,10 @@ import { Tag } from 'antd'
 import { CheckCircleOutlined, EyeInvisibleOutlined } from '@ant-design/icons'
 import EntityList from '../EntityList'
 import { useBadges } from '@/hooks/useEntities'
-import type { Badge } from '@/types'
+import type { CreateBadgeDto } from '@/api/generated/models'
+
+// Type alias for better readability
+type Badge = CreateBadgeDto
 
 interface BadgesListProps {
   onViewDetails: (id: string) => void

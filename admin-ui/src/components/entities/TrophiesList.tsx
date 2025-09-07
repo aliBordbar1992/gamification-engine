@@ -3,7 +3,10 @@ import { Tag } from 'antd'
 import { CheckCircleOutlined, EyeInvisibleOutlined } from '@ant-design/icons'
 import EntityList from '../EntityList'
 import { useTrophies } from '@/hooks/useEntities'
-import type { Trophy } from '@/types'
+import type { CreateTrophyDto } from '@/api/generated/models'
+
+// Type alias for better readability
+type Trophy = CreateTrophyDto
 
 interface TrophiesListProps {
   onViewDetails: (id: string) => void

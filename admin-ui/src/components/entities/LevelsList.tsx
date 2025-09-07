@@ -2,7 +2,10 @@ import React from 'react'
 import { Tag } from 'antd'
 import EntityList from '../EntityList'
 import { useLevels } from '@/hooks/useEntities'
-import type { Level } from '@/types'
+import type { CreateLevelDto } from '@/api/generated/models'
+
+// Type alias for better readability
+type Level = CreateLevelDto
 
 interface LevelsListProps {
   onViewDetails: (id: string) => void
