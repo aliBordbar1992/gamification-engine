@@ -20,6 +20,7 @@ import {
   Login,
   Unauthorized,
 } from '@/pages'
+import TestApi from '@/pages/TestApi'
 
 // Create a client
 const queryClient = new QueryClient({
@@ -85,6 +86,16 @@ function App() {
                   <RouteGuard>
                     <MainLayout>
                       <Rules />
+                    </MainLayout>
+                  </RouteGuard>
+                }
+              />
+              <Route
+                path="/test-api"
+                element={
+                  <RouteGuard>
+                    <MainLayout>
+                      <TestApi />
                     </MainLayout>
                   </RouteGuard>
                 }

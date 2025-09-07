@@ -9,13 +9,25 @@ import type {
   Level,
   RulesListParams,
 } from '@/types'
+import {
+  mockRules,
+  mockPointCategories,
+  mockBadges,
+  mockTrophies,
+  mockLevels,
+} from './mockRules'
 
 // Rules API
 export const rulesApi = {
   // Get all rules
   getAllRules: async (): Promise<Rule[]> => {
-    const response = await apiClient.get('/rules')
-    return response.data
+    try {
+      const response = await apiClient.get('/rules')
+      return response.data
+    } catch (error) {
+      console.warn('API not available, using mock data:', error)
+      return mockRules
+    }
   },
 
   // Get active rules only
@@ -32,8 +44,17 @@ export const rulesApi = {
 
   // Get specific rule by ID
   getRuleById: async (id: string): Promise<Rule> => {
-    const response = await apiClient.get(`/rules/${id}`)
-    return response.data
+    try {
+      const response = await apiClient.get(`/rules/${id}`)
+      return response.data
+    } catch (error) {
+      console.warn('API not available, using mock data:', error)
+      const mockRule = mockRules.find((rule) => rule.id === id)
+      if (!mockRule) {
+        throw new Error(`Rule with id ${id} not found`)
+      }
+      return mockRule
+    }
   },
 
   // Create a new rule
@@ -73,7 +94,9 @@ export const entitiesApi = {
   },
 
   getPointCategoryById: async (id: string): Promise<PointCategory> => {
-    const response = await apiClient.get(`/rules/entities/point-categories/${id}`)
+    const response = await apiClient.get(
+      `/rules/entities/point-categories/${id}`
+    )
     return response.data
   },
 

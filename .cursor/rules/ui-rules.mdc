@@ -16,6 +16,7 @@ alwaysApply: false
 - Upon completion of each task, you MUST mark the corresponding item as done in `admin.todos.done.md`.
 - Summaries in `admin.todos.done.md` MUST clearly reference the original `admin.todos.md` item they relate to.
 - You MUST NOT skip or reorder tasks without explicit instruction.
+- You MUST report any errors you encounter when communicating with backend to a file named `bugs.todos.md`
 
 # React Frontend – Core Guidelines
 
