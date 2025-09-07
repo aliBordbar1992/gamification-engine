@@ -7,13 +7,13 @@ The Admin Panel is a minimal, fast, and safe web application for operating the H
 
 ### Phase 1 – Foundations and Skeleton
 Tasks:
-- Initialize project (Vite + TS, ESLint/Prettier, Vitest/RTL, Playwright).
-- Set up Ant Design theme, layout (Sider + Header + Content), responsive grid.
-- Configure React Router with lazy routes and error boundaries.
-- Integrate TanStack Query with retry/backoff and devtools.
-- Implement Axios client with base URL, auth, error interceptors.
-- Add `AuthProvider` with role model (Viewer, Operator, Admin) and route guards.
-- Create placeholder pages: Dashboard, Rules, Entities, Users, Leaderboards, Sandbox, Settings.
+* [x] Initialize project (Vite + TS, ESLint/Prettier, Vitest/RTL, Playwright).
+* [x] Set up Ant Design theme, layout (Sider + Header + Content), responsive grid.
+* [x] Configure React Router with lazy routes and error boundaries.
+* [x] Integrate TanStack Query with retry/backoff and devtools.
+* [x] Implement Axios client with base URL, auth, error interceptors.
+* [x] Add `AuthProvider` with role model (Viewer, Operator, Admin) and route guards.
+* [x] Create placeholder pages: Dashboard, Rules, Entities, Users, Leaderboards, Sandbox, Settings.
 
 Deliverables:
 - Running app with navigation, auth guard stubs, query provider, CI (lint/test/build).
@@ -25,11 +25,11 @@ Area of Impact:
 
 ### Phase 2 – Read‑Only Operations (Safe by Default)
 Tasks:
-- Rules: list/search/filter; details page with read‑only JSON/YAML view.
-- Entities: lists (Badges, Trophies, Levels, Point Categories) + details (read‑only).
-- Users: ID lookup; show points by category, badges, trophies, level.
-- Leaderboards: query by category + time range; table + optional mini chart.
-- Implement API clients and query hooks for all above using existing engine endpoints.
+* [ ] Rules: list/search/filter; details page with read‑only JSON/YAML view.
+* [ ] Entities: lists (Badges, Trophies, Levels, Point Categories) + details (read‑only).
+* [ ] Users: ID lookup; show points by category, badges, trophies, level.
+* [ ] Leaderboards: query by category + time range; table + optional mini chart.
+* [ ] Implement API clients and query hooks for all above using existing engine endpoints.
 
 Deliverables:
 - Operators can browse rules, entities, users, and leaderboards without side effects.
@@ -41,9 +41,9 @@ Area of Impact:
 
 ### Phase 3 – Safe Controls: Enable/Disable and Audit
 Tasks:
-- Rules: enable/disable toggle with optimistic UI and rollback on failure.
-- Record audit metadata (actor, time, ruleId, action) via backend or client-side log + server endpoint.
-- Confirmation modals and access control (Admin only for toggles).
+* [ ] Rules: enable/disable toggle with optimistic UI and rollback on failure.
+* [ ] Record audit metadata (actor, time, ruleId, action) via backend or client-side log + server endpoint.
+* [ ] Confirmation modals and access control (Admin only for toggles).
 
 Deliverables:
 - Minimal yet essential operational control over rules with traceability.
@@ -55,11 +55,11 @@ Area of Impact:
 
 ### Phase 4 – Sandbox (Dry‑Run) with Evaluation Trace
 Tasks:
-- JSON/YAML event editor using Monaco with examples and schema hints.
-- Submit event to a dry‑run endpoint (no persistence/side effects).
-- Display evaluation trace: matched triggers, conditions results, rewards that would be issued.
-- Copy-as-cURL export of the request.
-- Persist last N sandbox inputs per user (localStorage only).
+* [ ] JSON/YAML event editor using Monaco with examples and schema hints.
+* [ ] Submit event to a dry‑run endpoint (no persistence/side effects).
+* [ ] Display evaluation trace: matched triggers, conditions results, rewards that would be issued.
+* [ ] Copy-as-cURL export of the request.
+* [ ] Persist last N sandbox inputs per user (localStorage only).
 
 Deliverables:
 - Safe experimentation environment to preview outcomes without affecting data.
@@ -71,11 +71,11 @@ Area of Impact:
 
 ### Phase 5 – Rule Editor (Schema‑Validated JSON/YAML)
 Tasks:
-- Read/write editor with Monaco for JSON and YAML.
-- JSON Schema validation via `ajv`; inline error markers; schema-driven intellisense.
-- Draft → Validate → Publish workflow with diff viewer against current active version.
-- Require change notes on publish; display version history (read-only list if backend supports).
-- Guardrails: can’t publish with validation errors; Admin role only.
+* [ ] Read/write editor with Monaco for JSON and YAML.
+* [ ] JSON Schema validation via `ajv`; inline error markers; schema-driven intellisense.
+* [ ] Draft → Validate → Publish workflow with diff viewer against current active version.
+* [ ] Require change notes on publish; display version history (read-only list if backend supports).
+* [ ] Guardrails: can’t publish with validation errors; Admin role only.
 
 Deliverables:
 - Safe editing of rules via declarative configs with strong validation and diff preview.
@@ -87,9 +87,9 @@ Area of Impact:
 
 ### Phase 6 – Entities CRUD (Minimal)
 Tasks:
-- Create/edit basic fields for Badges, Trophies, Levels, Point Categories.
-- Reuse form primitives with Zod validation; confirm on save.
-- Optional: reference checks (e.g., show rules referencing an entity before delete).
+* [ ] Create/edit basic fields for Badges, Trophies, Levels, Point Categories.
+* [ ] Reuse form primitives with Zod validation; confirm on save.
+* [ ] Optional: reference checks (e.g., show rules referencing an entity before delete).
 
 Deliverables:
 - Admins can minimally manage core entities directly from the UI.
@@ -101,9 +101,9 @@ Area of Impact:
 
 ### Phase 7 – Import/Export and Versioning
 Tasks:
-- Export all rules/entities as JSON bundle.
-- Import with schema validation and visual diff; require confirmation.
-- Optional: bulk toggle operations with preview.
+* [ ] Export all rules/entities as JSON bundle.
+* [ ] Import with schema validation and visual diff; require confirmation.
+* [ ] Optional: bulk toggle operations with preview.
 
 Deliverables:
 - Portable configuration management; safer bulk updates.
@@ -115,9 +115,9 @@ Area of Impact:
 
 ### Phase 8 – Security, Roles, and Policies
 Tasks:
-- Implement role‑based access (Viewer/Operator/Admin) across routes and actions.
-- Session handling (JWT renew, logout) and CSRF‑safe patterns if using cookies.
-- Rate limit sandbox requests client-side (debounce) and display server messages.
+* [ ] Implement role‑based access (Viewer/Operator/Admin) across routes and actions.
+* [ ] Session handling (JWT renew, logout) and CSRF‑safe patterns if using cookies.
+* [ ] Rate limit sandbox requests client-side (debounce) and display server messages.
 
 Deliverables:
 - Appropriate separation of duties; safer operations.
@@ -129,9 +129,9 @@ Area of Impact:
 
 ### Phase 9 – E2E Tests and Hardening
 Tasks:
-- Playwright E2E: navigation, rules toggle, sandbox dry‑run, rule edit publish, entity CRUD.
-- Contract tests for API clients (using MSW for mocks where needed).
-- Error states, loading skeletons, empty states; Lighthouse basic checks.
+* [ ] Playwright E2E: navigation, rules toggle, sandbox dry‑run, rule edit publish, entity CRUD.
+* [ ] Contract tests for API clients (using MSW for mocks where needed).
+* [ ] Error states, loading skeletons, empty states; Lighthouse basic checks.
 
 Deliverables:
 - Confidence to ship; guard against regressions.
@@ -143,9 +143,9 @@ Area of Impact:
 
 ### Phase 10 – Deployment & Ops
 Tasks:
-- CI: lint, typecheck, unit tests, E2E smoke, build artifacts.
-- CD: environment configs via `.env`; cache busting; error reporting hooks.
-- Runtime config screen (readonly) to display backend base URL, build hash, feature flags.
+* [ ] CI: lint, typecheck, unit tests, E2E smoke, build artifacts.
+* [ ] CD: environment configs via `.env`; cache busting; error reporting hooks.
+* [ ] Runtime config screen (readonly) to display backend base URL, build hash, feature flags.
 
 Deliverables:
 - Repeatable builds and deployments across environments.
@@ -156,24 +156,24 @@ Area of Impact:
 ---
 
 ## Mapping to Engine Capabilities (API Touchpoints)
-- Rules: list/get, enable/disable, update (publish), history (if available)
-- Entities: list/get, create/update/delete (optional minimal)
-- Users: get user state by ID
-- Leaderboards: query by category + time range
-- Sandbox: dry‑run evaluation endpoint returning trace + predicted rewards
+* [ ] Rules: list/get, enable/disable, update (publish), history (if available)
+* [ ] Entities: list/get, create/update/delete (optional minimal)
+* [ ] Users: get user state by ID
+* [ ] Leaderboards: query by category + time range
+* [ ] Sandbox: dry‑run evaluation endpoint returning trace + predicted rewards
 
 All write operations require Admin role; sandbox allowed for Operator.
 
 ---
 
 ## Later Steps to Follow
-- Advanced analytics: rule performance, reward issuance trends (read‑only dashboards).
-- Multi‑tenant support (org switcher) if backend supports tenants.
-- Feature flags for editor and import/export to roll out safely.
-- Plugin management UI (list installed condition/reward plugins, schema docs).
-- Webhook management views (endpoints, delivery logs, retry controls) if available.
-- Theming/branding options; i18n.
-- Offline drafts and collaborative editing (CRDT) in the rule editor.
+* [ ] Advanced analytics: rule performance, reward issuance trends (read‑only dashboards).
+* [ ] Multi‑tenant support (org switcher) if backend supports tenants.
+* [ ] Feature flags for editor and import/export to roll out safely.
+* [ ] Plugin management UI (list installed condition/reward plugins, schema docs).
+* [ ] Webhook management views (endpoints, delivery logs, retry controls) if available.
+* [ ] Theming/branding options; i18n.
+* [ ] Offline drafts and collaborative editing (CRDT) in the rule editor.
 
 ---
 
