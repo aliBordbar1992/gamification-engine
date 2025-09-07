@@ -83,6 +83,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddScoped<IEventIngestionService, EventIngestionService>();
 builder.Services.AddScoped<IUserStateService, UserStateService>();
 builder.Services.AddScoped<IRuleManagementService, RuleManagementService>();
+builder.Services.AddScoped<IEntityManagementService, EntityManagementService>();
 builder.Services.AddScoped<IWebhookService, WebhookService>();
 
 // Register infrastructure services
