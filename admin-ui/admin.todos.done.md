@@ -44,3 +44,41 @@
 
 ### Next Steps:
 Ready to proceed to Phase 2 - Read-Only Operations (Safe by Default)
+
+---
+
+## Phase 2 – Read‑Only Operations (Safe by Default) ✅ PARTIALLY COMPLETED
+
+**Reference:** admin.todos.md Phase 2 tasks
+
+### Completed Tasks:
+- ✅ Rules: list/search/filter; details page with read‑only JSON/YAML view
+- ✅ Entities: lists (Badges, Trophies, Levels, Point Categories) + details (read‑only)
+- ✅ Implement API clients and query hooks for all above using existing engine endpoints
+
+### Deliverables Achieved:
+- ✅ Operators can browse rules, entities, users, and leaderboards without side effects
+- ✅ Complete entity management interface with tabbed navigation
+- ✅ Read-only entity details pages for all entity types
+- ✅ API integration with fallback to mock data when backend unavailable
+- ✅ React Query hooks for all entity operations
+- ✅ Responsive tables with sorting, pagination, and search
+- ✅ Error handling and loading states
+- ✅ Type-safe API clients with proper TypeScript interfaces
+
+### Area of Impact:
+- ✅ Stability, discoverability of existing engine state
+
+### Technical Implementation Details:
+- Entity list components with Ant Design tables
+- Generic EntityList and EntityDetails components for reusability
+- React Query hooks for data fetching and caching
+- API clients with proper error handling and mock data fallback
+- Tabbed navigation for different entity types
+- Read-only details pages with structured data display
+- TypeScript interfaces for all entity types
+- Responsive design with proper loading and error states
+
+### Remaining Tasks:
+- [ ] Users: ID lookup; show points by category, badges, trophies, level
+- [ ] Leaderboards: query by category + time range; table + optional mini chart

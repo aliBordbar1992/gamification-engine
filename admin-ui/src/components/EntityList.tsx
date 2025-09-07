@@ -1,0 +1,101 @@
+import React from 'react'
+import { Card, Table, Tag, Button, Space, Typography, Spin, Alert } from 'antd'
+import { EyeOutlined } from '@ant-design/icons'
+import type { ColumnsType } from 'antd/es/table'
+
+const { Title, Text } = Typography
+
+export interface EntityListItem {
+  id: string
+  name: string
+  description: string
+  [key: string]: any
+}
+
+interface EntityListProps {
+  title: string
+  data: EntityListItem[]
+  loading: boolean
+  error: Error | null
+  columns: ColumnsType<EntityListItem>
+  onViewDetails: (id: string) => void
+  emptyMessage?: string
+}
+
+const EntityList: React.FC<EntityListProps> = ({
+  title,
+  data,
+  loading,
+  error,
+  columns,
+  onViewDetails,
+  emptyMessage = 'No items found',
+}) => {
+  const enhancedColumns: ColumnsType<EntityListItem> = [
+    ...columns,
+    {
+      title: 'Actions',
+      key: 'actions',
+      width: 100,
+      render: (_, record) => (
+        <Space>
+          <Button
+            type="link"
+            icon={<EyeOutlined />}
+            onClick={() => onViewDetails(record.id)}
+            size="small"
+          >
+            View
+          </Button>
+        </Space>
+      ),
+    },
+  ]
+
+  if (error) {
+    return (
+      <Card>
+        <Alert
+          message="Error loading data"
+          description={error.message}
+          type="error"
+          showIcon
+        />
+      </Card>
+    )
+  }
+
+  return (
+    <Card>
+      <div style={{ marginBottom: 16 }}>
+        <Title level={3}>{title}</Title>
+        <Text type="secondary">
+          {data.length} {data.length === 1 ? 'item' : 'items'} found
+        </Text>
+      </div>
+
+      <Table
+        columns={enhancedColumns}
+        dataSource={data}
+        loading={loading}
+        rowKey="id"
+        pagination={{
+          pageSize: 10,
+          showSizeChanger: true,
+          showQuickJumper: true,
+          showTotal: (total, range) =>
+            `${range[0]}-${range[1]} of ${total} items`,
+        }}
+        locale={{
+          emptyText: (
+            <div style={{ padding: '40px 0' }}>
+              <Text type="secondary">{emptyMessage}</Text>
+            </div>
+          ),
+        }}
+      />
+    </Card>
+  )
+}
+
+export default EntityList

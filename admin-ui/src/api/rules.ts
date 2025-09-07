@@ -15,7 +15,7 @@ import {
   mockBadges,
   mockTrophies,
   mockLevels,
-} from './mockRules'
+} from '../test/mockRules'
 
 // Rules API
 export const rulesApi = {

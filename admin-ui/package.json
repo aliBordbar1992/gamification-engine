@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "vite build",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "preview": "vite preview",
@@ -18,8 +18,7 @@
     "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit",
     "generate:api": "node scripts/generate-api.js",
-    "generate:api:watch": "nodemon --watch ../src/GamificationEngine.Api --exec \"npm run generate:api\"",
-    "prebuild": "npm run generate:api"
+    "generate:api:watch": "nodemon --watch ../src/GamificationEngine.Api --exec \"npm run generate:api\""
   },
   "dependencies": {
     "@ant-design/icons": "^6.0.1",

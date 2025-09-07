@@ -13,13 +13,7 @@ import {
   Tooltip,
   Badge,
 } from 'antd'
-import {
-  SearchOutlined,
-  FilterOutlined,
-  EyeOutlined,
-  PlayCircleOutlined,
-  PauseCircleOutlined,
-} from '@ant-design/icons'
+import { FilterOutlined, EyeOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
 import { useRules } from '@/hooks/useGeneratedRules'
 import type { Rule, RulesFilters } from '@/types'
@@ -37,16 +31,7 @@ const RulesList: React.FC<RulesListProps> = ({ onViewRule }) => {
   const [filters, setFilters] = useState<RulesFilters>({})
   const [searchText, setSearchText] = useState('')
 
-  const {
-    data: rules = [],
-    isLoading,
-    error,
-  } = useRules({
-    filters: {
-      ...filters,
-      search: searchText || undefined,
-    },
-  })
+  const { data: rules = [], isLoading, error } = useRules()
 
   const handleViewRule = (rule: Rule) => {
     if (onViewRule) {
