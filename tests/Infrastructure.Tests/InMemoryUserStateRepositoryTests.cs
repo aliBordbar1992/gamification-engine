@@ -10,7 +10,7 @@ public class InMemoryUserStateRepositoryTests
     [Fact]
     public async Task Save_Then_Get_Should_Return_Same_Instance()
     {
-        var repo = new UserStateRepository();
+        var repo = new InMemoryUserStateRepository();
         var state = new UserState("user-1");
         state.AddPoints("xp", 10);
         state.GrantBadge("badge-commenter");
