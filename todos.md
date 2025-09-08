@@ -218,8 +218,17 @@ Organized into **phases** with clear, testable boundaries so that AI coding tool
 * [x] **API to query leaderboards** (`GET /leaderboards`).
 * [x] **Support pagination & filters**.
 * [x] **Unit tests for leaderboard rankings**.
+* [ ] **Implement proper time range filtering for leaderboards**:
+  * Create `IRewardHistoryRepository` interface and implementation for tracking reward timestamps
+  * Keep `UserState` as aggregate root representing current state only (no history tracking)
+  * Create separate `RewardHistory` aggregate/entity to track when rewards were earned
+  * Update `FilterUsersByTimeRangeAsync()` to query `RewardHistory` for time-based filtering
+  * Implement time-based filtering logic that respects `daily`, `weekly`, `monthly`, and `alltime` ranges
+  * Add integration tests to verify time range filtering works correctly with real timestamp data
+  * Rewards should update `UserState` as they are earned by user
+  * Ensure leaderboard queries properly filter users based on when they earned their points/badges/trophies
 
-**Deliverable:** Leaderboards show correct rankings for different time ranges.
+**Deliverable:** Leaderboards show correct rankings for different time ranges with proper time-based filtering.
 
 ---
 

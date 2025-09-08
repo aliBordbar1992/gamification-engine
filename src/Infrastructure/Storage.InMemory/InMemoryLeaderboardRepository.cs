@@ -120,9 +120,7 @@ public class InMemoryLeaderboardRepository : ILeaderboardRepository
 
     private async Task<IEnumerable<UserState>> GetAllUserStatesAsync(CancellationToken cancellationToken)
     {
-        // This is a simplified implementation - in a real scenario, you'd need a way to get all users
-        // For now, we'll return an empty list as this would require additional infrastructure
-        return new List<UserState>();
+        return await _userStateRepository.GetAllAsync(cancellationToken);
     }
 
     private async Task<IEnumerable<UserState>> FilterUsersByTimeRangeAsync(IEnumerable<UserState> users, LeaderboardQuery query, CancellationToken cancellationToken)
@@ -149,7 +147,7 @@ public class InMemoryLeaderboardRepository : ILeaderboardRepository
     {
         return users
             .Where(u => u.PointsByCategory.ContainsKey(category))
-            .Select(u => new LeaderboardEntry(u.UserId, u.PointsByCategory[category], 0))
+            .Select(u => new LeaderboardEntry(u.UserId, u.PointsByCategory[category], 1))
             .Where(e => e.Points > 0);
     }
 
@@ -157,21 +155,21 @@ public class InMemoryLeaderboardRepository : ILeaderboardRepository
     {
         return users
             .Where(u => u.Badges.Count > 0)
-            .Select(u => new LeaderboardEntry(u.UserId, u.Badges.Count, 0));
+            .Select(u => new LeaderboardEntry(u.UserId, u.Badges.Count, 1));
     }
 
     private IEnumerable<LeaderboardEntry> GenerateTrophiesEntries(IEnumerable<UserState> users)
     {
         return users
             .Where(u => u.Trophies.Count > 0)
-            .Select(u => new LeaderboardEntry(u.UserId, u.Trophies.Count, 0));
+            .Select(u => new LeaderboardEntry(u.UserId, u.Trophies.Count, 1));
     }
 
     private IEnumerable<LeaderboardEntry> GenerateLevelEntries(IEnumerable<UserState> users, string category)
     {
         return users
             .Where(u => u.PointsByCategory.ContainsKey(category))
-            .Select(u => new LeaderboardEntry(u.UserId, u.PointsByCategory[category], 0))
+            .Select(u => new LeaderboardEntry(u.UserId, u.PointsByCategory[category], 1))
             .Where(e => e.Points > 0);
     }
 
