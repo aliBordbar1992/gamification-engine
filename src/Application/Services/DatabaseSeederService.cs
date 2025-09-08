@@ -20,6 +20,7 @@ public sealed class DatabaseSeederService : IDatabaseSeederService
     private readonly IRuleRepository _ruleRepository;
     private readonly IConfigurationLoader _configurationLoader;
     private readonly IUserStateSeederService _userStateSeederService;
+    private readonly RewardHistorySeederService _rewardHistorySeederService;
     private readonly ConditionFactory _conditionFactory;
     private readonly RewardFactory _rewardFactory;
 
@@ -30,7 +31,8 @@ public sealed class DatabaseSeederService : IDatabaseSeederService
         ILevelRepository levelRepository,
         IRuleRepository ruleRepository,
         IConfigurationLoader configurationLoader,
-        IUserStateSeederService userStateSeederService)
+        IUserStateSeederService userStateSeederService,
+        RewardHistorySeederService rewardHistorySeederService)
     {
         _pointCategoryRepository = pointCategoryRepository ?? throw new ArgumentNullException(nameof(pointCategoryRepository));
         _badgeRepository = badgeRepository ?? throw new ArgumentNullException(nameof(badgeRepository));
@@ -39,6 +41,7 @@ public sealed class DatabaseSeederService : IDatabaseSeederService
         _ruleRepository = ruleRepository ?? throw new ArgumentNullException(nameof(ruleRepository));
         _configurationLoader = configurationLoader ?? throw new ArgumentNullException(nameof(configurationLoader));
         _userStateSeederService = userStateSeederService ?? throw new ArgumentNullException(nameof(userStateSeederService));
+        _rewardHistorySeederService = rewardHistorySeederService ?? throw new ArgumentNullException(nameof(rewardHistorySeederService));
         _conditionFactory = new ConditionFactory();
         _rewardFactory = new RewardFactory();
     }

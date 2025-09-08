@@ -218,7 +218,7 @@ Organized into **phases** with clear, testable boundaries so that AI coding tool
 * [x] **API to query leaderboards** (`GET /leaderboards`).
 * [x] **Support pagination & filters**.
 * [x] **Unit tests for leaderboard rankings**.
-* [ ] **Implement proper time range filtering for leaderboards**:
+* [x] **Implement proper time range filtering for leaderboards**:
   * Create `IRewardHistoryRepository` interface and implementation for tracking reward timestamps
   * Keep `UserState` as aggregate root representing current state only (no history tracking)
   * Create separate `RewardHistory` aggregate/entity to track when rewards were earned

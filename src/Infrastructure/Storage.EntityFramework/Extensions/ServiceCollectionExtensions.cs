@@ -50,6 +50,7 @@ public static class ServiceCollectionExtensions
         // Register repositories
         services.AddScoped<IEventRepository, EventRepository>();
         services.AddScoped<IUserStateRepository, UserStateRepository>();
+        services.AddScoped<IRewardHistoryRepository, RewardHistoryRepository>();
 
         // Register background services
         services.AddHostedService<EventRetentionService>();

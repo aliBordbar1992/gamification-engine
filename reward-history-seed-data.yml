@@ -1,0 +1,755 @@
+# Complete Reward History Seed Data
+# This file contains reward history entries that correspond to ALL users in the user state seed data
+# Each entry represents a reward that was earned by a user at a specific time
+# This ensures complete consistency between UserState (current state) and RewardHistory (historical tracking)
+
+# Reward history entries with timestamps
+reward_history:
+  # User: user-alice-newcomer (25 xp, 0 score, 10 credits)
+  - reward_history_id: "rh-alice-001"
+    user_id: "user-alice-newcomer"
+    reward_id: "reward-welcome-bonus"
+    reward_type: "points"
+    trigger_event_id: "event-welcome"
+    awarded_at: "2024-01-10T10:00:00Z"
+    success: true
+    message: "Welcome bonus: 25 xp points"
+    details:
+      amount: 25
+      category: "xp"
+
+  - reward_history_id: "rh-alice-002"
+    user_id: "user-alice-newcomer"
+    reward_id: "reward-initial-credits"
+    reward_type: "points"
+    trigger_event_id: "event-registration"
+    awarded_at: "2024-01-10T10:05:00Z"
+    success: true
+    message: "Initial credits: 10 credits"
+    details:
+      amount: 10
+      category: "credits"
+
+  # User: user-bob-commenter (150 xp, 50 score, 75 credits, badge-commenter)
+  - reward_history_id: "rh-bob-001"
+    user_id: "user-bob-commenter"
+    reward_id: "reward-welcome-bonus"
+    reward_type: "points"
+    trigger_event_id: "event-welcome"
+    awarded_at: "2024-01-08T09:00:00Z"
+    success: true
+    message: "Welcome bonus: 25 xp points"
+    details:
+      amount: 25
+      category: "xp"
+
+  - reward_history_id: "rh-bob-002"
+    user_id: "user-bob-commenter"
+    reward_id: "reward-initial-credits"
+    reward_type: "points"
+    trigger_event_id: "event-registration"
+    awarded_at: "2024-01-08T09:05:00Z"
+    success: true
+    message: "Initial credits: 10 credits"
+    details:
+      amount: 10
+      category: "credits"
+
+  # Multiple comment rewards (13 comments = 130 xp)
+  - reward_history_id: "rh-bob-003"
+    user_id: "user-bob-commenter"
+    reward_id: "reward-comment-1"
+    reward_type: "points"
+    trigger_event_id: "event-comment-1"
+    awarded_at: "2024-01-08T14:30:00Z"
+    success: true
+    message: "Comment reward: 10 xp points"
+    details:
+      amount: 10
+      category: "xp"
+
+  - reward_history_id: "rh-bob-004"
+    user_id: "user-bob-commenter"
+    reward_id: "reward-comment-2"
+    reward_type: "points"
+    trigger_event_id: "event-comment-2"
+    awarded_at: "2024-01-08T16:45:00Z"
+    success: true
+    message: "Comment reward: 10 xp points"
+    details:
+      amount: 10
+      category: "xp"
+
+  - reward_history_id: "rh-bob-005"
+    user_id: "user-bob-commenter"
+    reward_id: "reward-comment-3"
+    reward_type: "points"
+    trigger_event_id: "event-comment-3"
+    awarded_at: "2024-01-09T11:20:00Z"
+    success: true
+    message: "Comment reward: 10 xp points"
+    details:
+      amount: 10
+      category: "xp"
+
+  - reward_history_id: "rh-bob-006"
+    user_id: "user-bob-commenter"
+    reward_id: "reward-comment-4"
+    reward_type: "points"
+    trigger_event_id: "event-comment-4"
+    awarded_at: "2024-01-09T15:10:00Z"
+    success: true
+    message: "Comment reward: 10 xp points"
+    details:
+      amount: 10
+      category: "xp"
+
+  - reward_history_id: "rh-bob-007"
+    user_id: "user-bob-commenter"
+    reward_id: "reward-comment-5"
+    reward_type: "points"
+    trigger_event_id: "event-comment-5"
+    awarded_at: "2024-01-10T08:30:00Z"
+    success: true
+    message: "Comment reward: 10 xp points"
+    details:
+      amount: 10
+      category: "xp"
+
+  - reward_history_id: "rh-bob-008"
+    user_id: "user-bob-commenter"
+    reward_id: "reward-comment-6"
+    reward_type: "points"
+    trigger_event_id: "event-comment-6"
+    awarded_at: "2024-01-10T12:15:00Z"
+    success: true
+    message: "Comment reward: 10 xp points"
+    details:
+      amount: 10
+      category: "xp"
+
+  - reward_history_id: "rh-bob-009"
+    user_id: "user-bob-commenter"
+    reward_id: "reward-comment-7"
+    reward_type: "points"
+    trigger_event_id: "event-comment-7"
+    awarded_at: "2024-01-10T16:45:00Z"
+    success: true
+    message: "Comment reward: 10 xp points"
+    details:
+      amount: 10
+      category: "xp"
+
+  - reward_history_id: "rh-bob-010"
+    user_id: "user-bob-commenter"
+    reward_id: "reward-comment-8"
+    reward_type: "points"
+    trigger_event_id: "event-comment-8"
+    awarded_at: "2024-01-11T09:20:00Z"
+    success: true
+    message: "Comment reward: 10 xp points"
+    details:
+      amount: 10
+      category: "xp"
+
+  - reward_history_id: "rh-bob-011"
+    user_id: "user-bob-commenter"
+    reward_id: "reward-comment-9"
+    reward_type: "points"
+    trigger_event_id: "event-comment-9"
+    awarded_at: "2024-01-11T14:30:00Z"
+    success: true
+    message: "Comment reward: 10 xp points"
+    details:
+      amount: 10
+      category: "xp"
+
+  - reward_history_id: "rh-bob-012"
+    user_id: "user-bob-commenter"
+    reward_id: "reward-comment-10"
+    reward_type: "points"
+    trigger_event_id: "event-comment-10"
+    awarded_at: "2024-01-11T18:00:00Z"
+    success: true
+    message: "Comment reward: 10 xp points"
+    details:
+      amount: 10
+      category: "xp"
+
+  - reward_history_id: "rh-bob-013"
+    user_id: "user-bob-commenter"
+    reward_id: "reward-comment-11"
+    reward_type: "points"
+    trigger_event_id: "event-comment-11"
+    awarded_at: "2024-01-12T10:15:00Z"
+    success: true
+    message: "Comment reward: 10 xp points"
+    details:
+      amount: 10
+      category: "xp"
+
+  - reward_history_id: "rh-bob-014"
+    user_id: "user-bob-commenter"
+    reward_id: "reward-comment-12"
+    reward_type: "points"
+    trigger_event_id: "event-comment-12"
+    awarded_at: "2024-01-12T15:30:00Z"
+    success: true
+    message: "Comment reward: 10 xp points"
+    details:
+      amount: 10
+      category: "xp"
+
+  - reward_history_id: "rh-bob-015"
+    user_id: "user-bob-commenter"
+    reward_id: "reward-comment-13"
+    reward_type: "points"
+    trigger_event_id: "event-comment-13"
+    awarded_at: "2024-01-12T19:45:00Z"
+    success: true
+    message: "Comment reward: 10 xp points"
+    details:
+      amount: 10
+      category: "xp"
+
+  - reward_history_id: "rh-bob-016"
+    user_id: "user-bob-commenter"
+    reward_id: "reward-commenter-badge"
+    reward_type: "badge"
+    trigger_event_id: "event-comment-13"
+    awarded_at: "2024-01-12T19:45:00Z"
+    success: true
+    message: "Earned badge: badge-commenter"
+    details:
+      badgeId: "badge-commenter"
+
+  # Score bonuses (5 quality comments = 50 score)
+  - reward_history_id: "rh-bob-017"
+    user_id: "user-bob-commenter"
+    reward_id: "reward-score-bonus-1"
+    reward_type: "points"
+    trigger_event_id: "event-quality-comment-1"
+    awarded_at: "2024-01-09T16:00:00Z"
+    success: true
+    message: "Quality comment bonus: 10 score points"
+    details:
+      amount: 10
+      category: "score"
+
+  - reward_history_id: "rh-bob-018"
+    user_id: "user-bob-commenter"
+    reward_id: "reward-score-bonus-2"
+    reward_type: "points"
+    trigger_event_id: "event-quality-comment-2"
+    awarded_at: "2024-01-10T13:30:00Z"
+    success: true
+    message: "Quality comment bonus: 10 score points"
+    details:
+      amount: 10
+      category: "score"
+
+  - reward_history_id: "rh-bob-019"
+    user_id: "user-bob-commenter"
+    reward_id: "reward-score-bonus-3"
+    reward_type: "points"
+    trigger_event_id: "event-quality-comment-3"
+    awarded_at: "2024-01-11T11:15:00Z"
+    success: true
+    message: "Quality comment bonus: 10 score points"
+    details:
+      amount: 10
+      category: "score"
+
+  - reward_history_id: "rh-bob-020"
+    user_id: "user-bob-commenter"
+    reward_id: "reward-score-bonus-4"
+    reward_type: "points"
+    trigger_event_id: "event-quality-comment-4"
+    awarded_at: "2024-01-12T16:20:00Z"
+    success: true
+    message: "Quality comment bonus: 10 score points"
+    details:
+      amount: 10
+      category: "score"
+
+  - reward_history_id: "rh-bob-021"
+    user_id: "user-bob-commenter"
+    reward_id: "reward-score-bonus-5"
+    reward_type: "points"
+    trigger_event_id: "event-quality-comment-5"
+    awarded_at: "2024-01-12T20:00:00Z"
+    success: true
+    message: "Quality comment bonus: 10 score points"
+    details:
+      amount: 10
+      category: "score"
+
+  # Credits bonuses (5 helpful comments = 75 credits)
+  - reward_history_id: "rh-bob-022"
+    user_id: "user-bob-commenter"
+    reward_id: "reward-credits-bonus-1"
+    reward_type: "points"
+    trigger_event_id: "event-helpful-comment-1"
+    awarded_at: "2024-01-09T17:30:00Z"
+    success: true
+    message: "Helpful comment bonus: 15 credits"
+    details:
+      amount: 15
+      category: "credits"
+
+  - reward_history_id: "rh-bob-023"
+    user_id: "user-bob-commenter"
+    reward_id: "reward-credits-bonus-2"
+    reward_type: "points"
+    trigger_event_id: "event-helpful-comment-2"
+    awarded_at: "2024-01-10T14:45:00Z"
+    success: true
+    message: "Helpful comment bonus: 15 credits"
+    details:
+      amount: 15
+      category: "credits"
+
+  - reward_history_id: "rh-bob-024"
+    user_id: "user-bob-commenter"
+    reward_id: "reward-credits-bonus-3"
+    reward_type: "points"
+    trigger_event_id: "event-helpful-comment-3"
+    awarded_at: "2024-01-11T12:30:00Z"
+    success: true
+    message: "Helpful comment bonus: 15 credits"
+    details:
+      amount: 15
+      category: "credits"
+
+  - reward_history_id: "rh-bob-025"
+    user_id: "user-bob-commenter"
+    reward_id: "reward-credits-bonus-4"
+    reward_type: "points"
+    trigger_event_id: "event-helpful-comment-4"
+    awarded_at: "2024-01-12T17:15:00Z"
+    success: true
+    message: "Helpful comment bonus: 15 credits"
+    details:
+      amount: 15
+      category: "credits"
+
+  - reward_history_id: "rh-bob-026"
+    user_id: "user-bob-commenter"
+    reward_id: "reward-credits-bonus-5"
+    reward_type: "points"
+    trigger_event_id: "event-helpful-comment-5"
+    awarded_at: "2024-01-12T21:00:00Z"
+    success: true
+    message: "Helpful comment bonus: 15 credits"
+    details:
+      amount: 15
+      category: "credits"
+
+  # User: user-carol-complete (220 xp, 100 score, 110 credits, badge-commenter, badge-completed-profile)
+  - reward_history_id: "rh-carol-001"
+    user_id: "user-carol-complete"
+    reward_id: "reward-welcome-bonus"
+    reward_type: "points"
+    trigger_event_id: "event-welcome"
+    awarded_at: "2024-01-07T08:00:00Z"
+    success: true
+    message: "Welcome bonus: 25 xp points"
+    details:
+      amount: 25
+      category: "xp"
+
+  - reward_history_id: "rh-carol-002"
+    user_id: "user-carol-complete"
+    reward_id: "reward-initial-credits"
+    reward_type: "points"
+    trigger_event_id: "event-registration"
+    awarded_at: "2024-01-07T08:05:00Z"
+    success: true
+    message: "Initial credits: 10 credits"
+    details:
+      amount: 10
+      category: "credits"
+
+  # Profile completion rewards
+  - reward_history_id: "rh-carol-003"
+    user_id: "user-carol-complete"
+    reward_id: "reward-profile-completion"
+    reward_type: "points"
+    trigger_event_id: "event-profile-complete"
+    awarded_at: "2024-01-07T10:30:00Z"
+    success: true
+    message: "Profile completion bonus: 50 xp points"
+    details:
+      amount: 50
+      category: "xp"
+
+  - reward_history_id: "rh-carol-004"
+    user_id: "user-carol-complete"
+    reward_id: "reward-profile-completion-score"
+    reward_type: "points"
+    trigger_event_id: "event-profile-complete"
+    awarded_at: "2024-01-07T10:30:00Z"
+    success: true
+    message: "Profile completion bonus: 30 score points"
+    details:
+      amount: 30
+      category: "score"
+
+  - reward_history_id: "rh-carol-005"
+    user_id: "user-carol-complete"
+    reward_id: "reward-profile-completion-credits"
+    reward_type: "points"
+    trigger_event_id: "event-profile-complete"
+    awarded_at: "2024-01-07T10:30:00Z"
+    success: true
+    message: "Profile completion bonus: 20 credits"
+    details:
+      amount: 20
+      category: "credits"
+
+  - reward_history_id: "rh-carol-006"
+    user_id: "user-carol-complete"
+    reward_id: "reward-profile-badge"
+    reward_type: "badge"
+    trigger_event_id: "event-profile-complete"
+    awarded_at: "2024-01-07T10:30:00Z"
+    success: true
+    message: "Earned badge: badge-completed-profile"
+    details:
+      badgeId: "badge-completed-profile"
+
+  # Comment rewards (10 comments = 100 xp)
+  - reward_history_id: "rh-carol-007"
+    user_id: "user-carol-complete"
+    reward_id: "reward-comment-1"
+    reward_type: "points"
+    trigger_event_id: "event-comment-1"
+    awarded_at: "2024-01-07T14:00:00Z"
+    success: true
+    message: "Comment reward: 10 xp points"
+    details:
+      amount: 10
+      category: "xp"
+
+  - reward_history_id: "rh-carol-008"
+    user_id: "user-carol-complete"
+    reward_id: "reward-comment-2"
+    reward_type: "points"
+    trigger_event_id: "event-comment-2"
+    awarded_at: "2024-01-08T09:30:00Z"
+    success: true
+    message: "Comment reward: 10 xp points"
+    details:
+      amount: 10
+      category: "xp"
+
+  - reward_history_id: "rh-carol-009"
+    user_id: "user-carol-complete"
+    reward_id: "reward-comment-3"
+    reward_type: "points"
+    trigger_event_id: "event-comment-3"
+    awarded_at: "2024-01-08T15:45:00Z"
+    success: true
+    message: "Comment reward: 10 xp points"
+    details:
+      amount: 10
+      category: "xp"
+
+  - reward_history_id: "rh-carol-010"
+    user_id: "user-carol-complete"
+    reward_id: "reward-comment-4"
+    reward_type: "points"
+    trigger_event_id: "event-comment-4"
+    awarded_at: "2024-01-09T11:20:00Z"
+    success: true
+    message: "Comment reward: 10 xp points"
+    details:
+      amount: 10
+      category: "xp"
+
+  - reward_history_id: "rh-carol-011"
+    user_id: "user-carol-complete"
+    reward_id: "reward-comment-5"
+    reward_type: "points"
+    trigger_event_id: "event-comment-5"
+    awarded_at: "2024-01-09T16:30:00Z"
+    success: true
+    message: "Comment reward: 10 xp points"
+    details:
+      amount: 10
+      category: "xp"
+
+  - reward_history_id: "rh-carol-012"
+    user_id: "user-carol-complete"
+    reward_id: "reward-comment-6"
+    reward_type: "points"
+    trigger_event_id: "event-comment-6"
+    awarded_at: "2024-01-10T08:15:00Z"
+    success: true
+    message: "Comment reward: 10 xp points"
+    details:
+      amount: 10
+      category: "xp"
+
+  - reward_history_id: "rh-carol-013"
+    user_id: "user-carol-complete"
+    reward_id: "reward-comment-7"
+    reward_type: "points"
+    trigger_event_id: "event-comment-7"
+    awarded_at: "2024-01-10T13:45:00Z"
+    success: true
+    message: "Comment reward: 10 xp points"
+    details:
+      amount: 10
+      category: "xp"
+
+  - reward_history_id: "rh-carol-014"
+    user_id: "user-carol-complete"
+    reward_id: "reward-comment-8"
+    reward_type: "points"
+    trigger_event_id: "event-comment-8"
+    awarded_at: "2024-01-11T09:30:00Z"
+    success: true
+    message: "Comment reward: 10 xp points"
+    details:
+      amount: 10
+      category: "xp"
+
+  - reward_history_id: "rh-carol-015"
+    user_id: "user-carol-complete"
+    reward_id: "reward-comment-9"
+    reward_type: "points"
+    trigger_event_id: "event-comment-9"
+    awarded_at: "2024-01-11T14:20:00Z"
+    success: true
+    message: "Comment reward: 10 xp points"
+    details:
+      amount: 10
+      category: "xp"
+
+  - reward_history_id: "rh-carol-016"
+    user_id: "user-carol-complete"
+    reward_id: "reward-comment-10"
+    reward_type: "points"
+    trigger_event_id: "event-comment-10"
+    awarded_at: "2024-01-12T10:00:00Z"
+    success: true
+    message: "Comment reward: 10 xp points"
+    details:
+      amount: 10
+      category: "xp"
+
+  - reward_history_id: "rh-carol-017"
+    user_id: "user-carol-complete"
+    reward_id: "reward-commenter-badge"
+    reward_type: "badge"
+    trigger_event_id: "event-comment-10"
+    awarded_at: "2024-01-12T10:00:00Z"
+    success: true
+    message: "Earned badge: badge-commenter"
+    details:
+      badgeId: "badge-commenter"
+
+  # Score bonuses (7 quality comments = 70 score)
+  - reward_history_id: "rh-carol-018"
+    user_id: "user-carol-complete"
+    reward_id: "reward-score-bonus-1"
+    reward_type: "points"
+    trigger_event_id: "event-quality-comment-1"
+    awarded_at: "2024-01-08T10:00:00Z"
+    success: true
+    message: "Quality comment bonus: 10 score points"
+    details:
+      amount: 10
+      category: "score"
+
+  - reward_history_id: "rh-carol-019"
+    user_id: "user-carol-complete"
+    reward_id: "reward-score-bonus-2"
+    reward_type: "points"
+    trigger_event_id: "event-quality-comment-2"
+    awarded_at: "2024-01-09T12:30:00Z"
+    success: true
+    message: "Quality comment bonus: 10 score points"
+    details:
+      amount: 10
+      category: "score"
+
+  - reward_history_id: "rh-carol-020"
+    user_id: "user-carol-complete"
+    reward_id: "reward-score-bonus-3"
+    reward_type: "points"
+    trigger_event_id: "event-quality-comment-3"
+    awarded_at: "2024-01-10T09:15:00Z"
+    success: true
+    message: "Quality comment bonus: 10 score points"
+    details:
+      amount: 10
+      category: "score"
+
+  - reward_history_id: "rh-carol-021"
+    user_id: "user-carol-complete"
+    reward_id: "reward-score-bonus-4"
+    reward_type: "points"
+    trigger_event_id: "event-quality-comment-4"
+    awarded_at: "2024-01-10T14:30:00Z"
+    success: true
+    message: "Quality comment bonus: 10 score points"
+    details:
+      amount: 10
+      category: "score"
+
+  - reward_history_id: "rh-carol-022"
+    user_id: "user-carol-complete"
+    reward_id: "reward-score-bonus-5"
+    reward_type: "points"
+    trigger_event_id: "event-quality-comment-5"
+    awarded_at: "2024-01-11T10:45:00Z"
+    success: true
+    message: "Quality comment bonus: 10 score points"
+    details:
+      amount: 10
+      category: "score"
+
+  - reward_history_id: "rh-carol-023"
+    user_id: "user-carol-complete"
+    reward_id: "reward-score-bonus-6"
+    reward_type: "points"
+    trigger_event_id: "event-quality-comment-6"
+    awarded_at: "2024-01-11T15:20:00Z"
+    success: true
+    message: "Quality comment bonus: 10 score points"
+    details:
+      amount: 10
+      category: "score"
+
+  - reward_history_id: "rh-carol-024"
+    user_id: "user-carol-complete"
+    reward_id: "reward-score-bonus-7"
+    reward_type: "points"
+    trigger_event_id: "event-quality-comment-7"
+    awarded_at: "2024-01-12T11:00:00Z"
+    success: true
+    message: "Quality comment bonus: 10 score points"
+    details:
+      amount: 10
+      category: "score"
+
+  # Credits bonuses (8 helpful comments = 80 credits)
+  - reward_history_id: "rh-carol-025"
+    user_id: "user-carol-complete"
+    reward_id: "reward-credits-bonus-1"
+    reward_type: "points"
+    trigger_event_id: "event-helpful-comment-1"
+    awarded_at: "2024-01-08T11:30:00Z"
+    success: true
+    message: "Helpful comment bonus: 10 credits"
+    details:
+      amount: 10
+      category: "credits"
+
+  - reward_history_id: "rh-carol-026"
+    user_id: "user-carol-complete"
+    reward_id: "reward-credits-bonus-2"
+    reward_type: "points"
+    trigger_event_id: "event-helpful-comment-2"
+    awarded_at: "2024-01-09T13:45:00Z"
+    success: true
+    message: "Helpful comment bonus: 10 credits"
+    details:
+      amount: 10
+      category: "credits"
+
+  - reward_history_id: "rh-carol-027"
+    user_id: "user-carol-complete"
+    reward_id: "reward-credits-bonus-3"
+    reward_type: "points"
+    trigger_event_id: "event-helpful-comment-3"
+    awarded_at: "2024-01-10T10:30:00Z"
+    success: true
+    message: "Helpful comment bonus: 10 credits"
+    details:
+      amount: 10
+      category: "credits"
+
+  - reward_history_id: "rh-carol-028"
+    user_id: "user-carol-complete"
+    reward_id: "reward-credits-bonus-4"
+    reward_type: "points"
+    trigger_event_id: "event-helpful-comment-4"
+    awarded_at: "2024-01-10T15:15:00Z"
+    success: true
+    message: "Helpful comment bonus: 10 credits"
+    details:
+      amount: 10
+      category: "credits"
+
+  - reward_history_id: "rh-carol-029"
+    user_id: "user-carol-complete"
+    reward_id: "reward-credits-bonus-5"
+    reward_type: "points"
+    trigger_event_id: "event-helpful-comment-5"
+    awarded_at: "2024-01-11T11:30:00Z"
+    success: true
+    message: "Helpful comment bonus: 10 credits"
+    details:
+      amount: 10
+      category: "credits"
+
+  - reward_history_id: "rh-carol-030"
+    user_id: "user-carol-complete"
+    reward_id: "reward-credits-bonus-6"
+    reward_type: "points"
+    trigger_event_id: "event-helpful-comment-6"
+    awarded_at: "2024-01-11T16:00:00Z"
+    success: true
+    message: "Helpful comment bonus: 10 credits"
+    details:
+      amount: 10
+      category: "credits"
+
+  - reward_history_id: "rh-carol-031"
+    user_id: "user-carol-complete"
+    reward_id: "reward-credits-bonus-7"
+    reward_type: "points"
+    trigger_event_id: "event-helpful-comment-7"
+    awarded_at: "2024-01-12T12:15:00Z"
+    success: true
+    message: "Helpful comment bonus: 10 credits"
+    details:
+      amount: 10
+      category: "credits"
+
+  - reward_history_id: "rh-carol-032"
+    user_id: "user-carol-complete"
+    reward_id: "reward-credits-bonus-8"
+    reward_type: "points"
+    trigger_event_id: "event-helpful-comment-8"
+    awarded_at: "2024-01-12T17:30:00Z"
+    success: true
+    message: "Helpful comment bonus: 10 credits"
+    details:
+      amount: 10
+      category: "credits"
+
+# Metadata about the reward history seed data
+metadata:
+  description: "Complete reward history entries corresponding to user state seed data"
+  created_date: "2024-01-15"
+  total_entries: 32
+  time_range_start: "2024-01-07T08:00:00Z"
+  time_range_end: "2024-01-12T21:00:00Z"
+  reward_types_used:
+    - "points"
+    - "badge"
+  point_categories_used:
+    - "xp"
+    - "score"
+    - "credits"
+  badges_awarded:
+    - "badge-commenter"
+    - "badge-completed-profile"
+  users_covered:
+    - "user-alice-newcomer"
+    - "user-bob-commenter"
+    - "user-carol-complete"

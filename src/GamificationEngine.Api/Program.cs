@@ -89,6 +89,7 @@ builder.Services.AddScoped<IEntityManagementService, EntityManagementService>();
 builder.Services.AddScoped<IWebhookService, WebhookService>();
 builder.Services.AddScoped<IDatabaseSeederService, DatabaseSeederService>();
 builder.Services.AddScoped<IUserStateSeederService, UserStateSeederService>();
+builder.Services.AddScoped<RewardHistorySeederService>();
 builder.Services.AddScoped<IConfigurationLoader, YamlConfigurationLoader>();
 
 // Register infrastructure services
@@ -96,6 +97,7 @@ builder.Services.AddSingleton<IEventRepository, EventRepository>();
 builder.Services.AddSingleton<IEventQueue, InMemoryEventQueue>();
 builder.Services.AddSingleton<ILeaderboardRepository, InMemoryLeaderboardRepository>();
 builder.Services.AddSingleton<IUserStateRepository, InMemoryUserStateRepository>();
+builder.Services.AddSingleton<IRewardHistoryRepository, InMemoryRewardHistoryRepository>();
 builder.Services.AddSingleton<IBadgeRepository, InMemoryBadgeRepository>();
 builder.Services.AddSingleton<ITrophyRepository, InMemoryTrophyRepository>();
 builder.Services.AddSingleton<ILevelRepository, InMemoryLevelRepository>();
@@ -231,6 +233,45 @@ public partial class Program
             else
             {
                 Console.WriteLine($"⚠️ UserState seed file not found at: {userStateSeedPath}");
+            }
+
+            // Seed RewardHistory data
+            var rewardHistorySeedPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "reward-history-seed-data.yml");
+            if (!File.Exists(rewardHistorySeedPath))
+            {
+                // Try alternative path
+                rewardHistorySeedPath = Path.Combine(Directory.GetCurrentDirectory(), "reward-history-seed-data.yml");
+            }
+
+            // Try absolute path from project root
+            if (!File.Exists(rewardHistorySeedPath))
+            {
+                var projectRoot = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "..", ".."));
+                rewardHistorySeedPath = Path.Combine(projectRoot, "reward-history-seed-data.yml");
+            }
+
+            if (File.Exists(rewardHistorySeedPath))
+            {
+                Console.WriteLine($"📁 Found RewardHistory seed file at: {rewardHistorySeedPath}");
+                using var rewardHistoryScope = app.Services.CreateScope();
+                var rewardHistorySeeder = rewardHistoryScope.ServiceProvider.GetRequiredService<RewardHistorySeederService>();
+                var rewardHistoryResult = await rewardHistorySeeder.SeedIfEmptyAsync(rewardHistorySeedPath);
+                if (rewardHistoryResult.IsSuccess && rewardHistoryResult.Value)
+                {
+                    Console.WriteLine("✅ RewardHistory data seeded successfully.");
+                }
+                else if (rewardHistoryResult.IsSuccess && !rewardHistoryResult.Value)
+                {
+                    Console.WriteLine("ℹ️ RewardHistory data already exists, skipping seeding.");
+                }
+                else
+                {
+                    Console.WriteLine($"⚠️ Failed to seed RewardHistory data: {rewardHistoryResult.Error}");
+                }
+            }
+            else
+            {
+                Console.WriteLine($"⚠️ RewardHistory seed file not found at: {rewardHistorySeedPath}");
             }
         }
         catch (Exception ex)

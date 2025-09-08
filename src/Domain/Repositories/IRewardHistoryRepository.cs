@@ -47,4 +47,23 @@ public interface IRewardHistoryRepository
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Collection of reward history records</returns>
     Task<IEnumerable<RewardHistory>> GetByUserIdAndDateRangeAsync(string userId, DateTimeOffset startDate, DateTimeOffset endDate, int limit = 100, int offset = 0, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Gets all reward histories for a specific time range (used for leaderboard filtering)
+    /// </summary>
+    /// <param name="startDate">Start date for the range</param>
+    /// <param name="endDate">End date for the range</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Collection of reward history records</returns>
+    Task<IEnumerable<RewardHistory>> GetByDateRangeAsync(DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Gets reward histories for multiple users within a time range (used for leaderboard filtering)
+    /// </summary>
+    /// <param name="userIds">The user IDs to retrieve history for</param>
+    /// <param name="startDate">Start date for the range</param>
+    /// <param name="endDate">End date for the range</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Collection of reward history records</returns>
+    Task<IEnumerable<RewardHistory>> GetByUserIdsAndDateRangeAsync(IEnumerable<string> userIds, DateTimeOffset startDate, DateTimeOffset endDate, CancellationToken cancellationToken = default);
 }

@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using GamificationEngine.Domain.Events;
+using GamificationEngine.Domain.Rewards;
 using GamificationEngine.Domain.Users;
 
 namespace GamificationEngine.Infrastructure.Storage.EntityFramework;
@@ -15,6 +16,7 @@ public class GamificationEngineDbContext : DbContext
 
     public DbSet<Event> Events { get; set; }
     public DbSet<UserState> UserStates { get; set; }
+    public DbSet<RewardHistory> RewardHistories { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -68,6 +70,34 @@ public class GamificationEngineDbContext : DbContext
                     v => System.Text.Json.JsonSerializer.Serialize(v, (System.Text.Json.JsonSerializerOptions?)null),
                     v => System.Text.Json.JsonSerializer.Deserialize<HashSet<string>>(v, (System.Text.Json.JsonSerializerOptions?)null) ?? new HashSet<string>())
                 .HasColumnType("jsonb");
+        });
+
+        // Configure RewardHistory entity
+        modelBuilder.Entity<RewardHistory>(entity =>
+        {
+            entity.HasKey(e => e.RewardHistoryId);
+            entity.Property(e => e.RewardHistoryId).HasMaxLength(50);
+            entity.Property(e => e.UserId).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.RewardId).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.RewardType).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.TriggerEventId).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.AwardedAt).IsRequired();
+            entity.Property(e => e.Success).IsRequired();
+            entity.Property(e => e.Message).HasMaxLength(500);
+
+            // Store details as JSON for flexibility
+            entity.Property(e => e.Details)
+                .HasConversion(
+                    v => System.Text.Json.JsonSerializer.Serialize(v, (System.Text.Json.JsonSerializerOptions?)null),
+                    v => System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, object>>(v, (System.Text.Json.JsonSerializerOptions?)null) ?? new Dictionary<string, object>())
+                .HasColumnType("jsonb");
+
+            // Indexes for performance
+            entity.HasIndex(e => e.UserId);
+            entity.HasIndex(e => e.RewardType);
+            entity.HasIndex(e => e.AwardedAt);
+            entity.HasIndex(e => new { e.UserId, e.RewardType });
+            entity.HasIndex(e => new { e.UserId, e.AwardedAt });
         });
     }
 }

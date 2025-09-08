@@ -338,6 +338,47 @@ public class RewardExecutionService : IRewardExecutionService
     {
         try
         {
+            // Create enhanced details that include reward-specific information for leaderboard filtering
+            var details = new Dictionary<string, object>(reward.Parameters.ToDictionary(kvp => kvp.Key, kvp => kvp.Value));
+
+            // Add reward-specific details based on type
+            switch (reward.Type.ToLowerInvariant())
+            {
+                case "points":
+                    if (reward is PointsReward pointsReward)
+                    {
+                        details["amount"] = pointsReward.GetPointsAmount();
+                        details["category"] = pointsReward.GetCategory();
+                    }
+                    break;
+
+                case "badge":
+                    if (reward is BadgeReward badgeReward)
+                    {
+                        details["badgeId"] = badgeReward.GetBadgeId();
+                    }
+                    break;
+
+                case "trophy":
+                    if (reward is TrophyReward trophyReward)
+                    {
+                        details["trophyId"] = trophyReward.GetTrophyId();
+                    }
+                    break;
+
+                case "penalty":
+                    if (reward is PenaltyReward penaltyReward)
+                    {
+                        details["penaltyType"] = penaltyReward.GetPenaltyType();
+                        details["targetId"] = penaltyReward.GetTargetId();
+                        if (penaltyReward.GetAmount().HasValue)
+                        {
+                            details["amount"] = penaltyReward.GetAmount().Value;
+                        }
+                    }
+                    break;
+            }
+
             var rewardHistory = new RewardHistory(
                 Guid.NewGuid().ToString(),
                 userId,
@@ -347,7 +388,7 @@ public class RewardExecutionService : IRewardExecutionService
                 DateTimeOffset.UtcNow,
                 success,
                 message,
-                reward.Parameters.ToDictionary(kvp => kvp.Key, kvp => kvp.Value));
+                details);
 
             await _rewardHistoryRepository.StoreAsync(rewardHistory, cancellationToken);
         }

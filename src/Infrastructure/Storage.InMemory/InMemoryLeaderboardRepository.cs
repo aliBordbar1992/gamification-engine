@@ -1,5 +1,6 @@
 using GamificationEngine.Domain.Leaderboards;
 using GamificationEngine.Domain.Repositories;
+using GamificationEngine.Domain.Rewards;
 using GamificationEngine.Domain.Users;
 
 namespace GamificationEngine.Infrastructure.Storage.InMemory;
@@ -10,11 +11,13 @@ namespace GamificationEngine.Infrastructure.Storage.InMemory;
 public class InMemoryLeaderboardRepository : ILeaderboardRepository
 {
     private readonly IUserStateRepository _userStateRepository;
+    private readonly IRewardHistoryRepository _rewardHistoryRepository;
     private readonly Dictionary<string, LeaderboardResult> _cache = new();
 
-    public InMemoryLeaderboardRepository(IUserStateRepository userStateRepository)
+    public InMemoryLeaderboardRepository(IUserStateRepository userStateRepository, IRewardHistoryRepository rewardHistoryRepository)
     {
         _userStateRepository = userStateRepository ?? throw new ArgumentNullException(nameof(userStateRepository));
+        _rewardHistoryRepository = rewardHistoryRepository ?? throw new ArgumentNullException(nameof(rewardHistoryRepository));
     }
 
     public async Task<LeaderboardResult> GetLeaderboardAsync(LeaderboardQuery query, CancellationToken cancellationToken = default)
@@ -99,14 +102,40 @@ public class InMemoryLeaderboardRepository : ILeaderboardRepository
 
     private async Task<LeaderboardResult> GenerateLeaderboardAsync(LeaderboardQuery query, CancellationToken cancellationToken)
     {
-        // Get all user states
-        var allUsers = await GetAllUserStatesAsync(cancellationToken);
+        // For time-based filtering, we need to calculate rewards earned within the time range
+        if (query.TimeRange != TimeRange.AllTime)
+        {
+            return await GenerateTimeFilteredLeaderboardAsync(query, cancellationToken);
+        }
 
-        // Filter users based on time range if needed
-        var filteredUsers = await FilterUsersByTimeRangeAsync(allUsers, query, cancellationToken);
+        // For "alltime", use the existing logic with current user states
+        var allUsers = await GetAllUserStatesAsync(cancellationToken);
+        var entries = GenerateEntries(allUsers, query);
+        var rankedEntries = RankEntries(entries, query);
+
+        // Calculate pagination info
+        var totalCount = rankedEntries.Count;
+        var totalPages = (int)Math.Ceiling((double)totalCount / query.PageSize);
+
+        return new LeaderboardResult(query, rankedEntries, totalCount, totalPages);
+    }
+
+    private async Task<LeaderboardResult> GenerateTimeFilteredLeaderboardAsync(LeaderboardQuery query, CancellationToken cancellationToken)
+    {
+        // Get reward history for the time range
+        var rewardHistories = await _rewardHistoryRepository.GetByDateRangeAsync(
+            query.StartDate,
+            query.EndDate,
+            cancellationToken);
+
+        // Filter to only successful rewards
+        var successfulRewards = rewardHistories.Where(rh => rh.Success).ToList();
+
+        // Calculate aggregated values for each user within the time range
+        var userAggregates = CalculateUserAggregatesForTimeRange(successfulRewards, query);
 
         // Generate entries based on leaderboard type
-        var entries = GenerateEntries(filteredUsers, query);
+        var entries = GenerateEntriesFromAggregates(userAggregates, query);
 
         // Sort and rank entries
         var rankedEntries = RankEntries(entries, query);
@@ -123,12 +152,107 @@ public class InMemoryLeaderboardRepository : ILeaderboardRepository
         return await _userStateRepository.GetAllAsync(cancellationToken);
     }
 
-    private async Task<IEnumerable<UserState>> FilterUsersByTimeRangeAsync(IEnumerable<UserState> users, LeaderboardQuery query, CancellationToken cancellationToken)
+    private Dictionary<string, UserTimeRangeAggregate> CalculateUserAggregatesForTimeRange(IEnumerable<RewardHistory> rewards, LeaderboardQuery query)
     {
-        // For time-based filtering, we would need to check when users earned their points/badges/trophies
-        // This would require additional data structures or queries to the reward history
-        // For now, we'll return all users
-        return users;
+        var userAggregates = new Dictionary<string, UserTimeRangeAggregate>();
+
+        foreach (var reward in rewards)
+        {
+            if (!userAggregates.ContainsKey(reward.UserId))
+            {
+                userAggregates[reward.UserId] = new UserTimeRangeAggregate(reward.UserId);
+            }
+
+            var aggregate = userAggregates[reward.UserId];
+
+            switch (reward.RewardType.ToLowerInvariant())
+            {
+                case "points":
+                    if (reward.Details.TryGetValue("amount", out var amountObj) &&
+                        reward.Details.TryGetValue("category", out var categoryObj))
+                    {
+                        var amount = Convert.ToInt64(amountObj);
+                        var category = categoryObj.ToString() ?? "default";
+                        aggregate.AddPoints(category, amount);
+                    }
+                    break;
+
+                case "badge":
+                    if (reward.Details.TryGetValue("badgeId", out var badgeIdObj))
+                    {
+                        var badgeId = badgeIdObj.ToString() ?? "";
+                        aggregate.AddBadge(badgeId);
+                    }
+                    break;
+
+                case "trophy":
+                    if (reward.Details.TryGetValue("trophyId", out var trophyIdObj))
+                    {
+                        var trophyId = trophyIdObj.ToString() ?? "";
+                        aggregate.AddTrophy(trophyId);
+                    }
+                    break;
+
+                case "penalty":
+                    if (reward.Details.TryGetValue("penaltyType", out var penaltyTypeObj) &&
+                        reward.Details.TryGetValue("amount", out var penaltyAmountObj))
+                    {
+                        var penaltyType = penaltyTypeObj.ToString() ?? "";
+                        var penaltyAmount = Convert.ToInt64(penaltyAmountObj);
+
+                        if (penaltyType == "points" && reward.Details.TryGetValue("targetId", out var targetIdObj))
+                        {
+                            var category = targetIdObj.ToString() ?? "default";
+                            aggregate.AddPoints(category, -penaltyAmount); // Negative for penalty
+                        }
+                    }
+                    break;
+            }
+        }
+
+        return userAggregates;
+    }
+
+    private IEnumerable<LeaderboardEntry> GenerateEntriesFromAggregates(Dictionary<string, UserTimeRangeAggregate> userAggregates, LeaderboardQuery query)
+    {
+        return query.Type switch
+        {
+            LeaderboardType.Points => GeneratePointsEntriesFromAggregates(userAggregates, query.Category!),
+            LeaderboardType.Badges => GenerateBadgesEntriesFromAggregates(userAggregates),
+            LeaderboardType.Trophies => GenerateTrophiesEntriesFromAggregates(userAggregates),
+            LeaderboardType.Level => GenerateLevelEntriesFromAggregates(userAggregates, query.Category!),
+            _ => throw new ArgumentException($"Unsupported leaderboard type: {query.Type}")
+        };
+    }
+
+    private IEnumerable<LeaderboardEntry> GeneratePointsEntriesFromAggregates(Dictionary<string, UserTimeRangeAggregate> userAggregates, string category)
+    {
+        return userAggregates.Values
+            .Where(aggregate => aggregate.PointsByCategory.ContainsKey(category))
+            .Select(aggregate => new LeaderboardEntry(aggregate.UserId, aggregate.PointsByCategory[category], 1))
+            .Where(entry => entry.Points > 0);
+    }
+
+    private IEnumerable<LeaderboardEntry> GenerateBadgesEntriesFromAggregates(Dictionary<string, UserTimeRangeAggregate> userAggregates)
+    {
+        return userAggregates.Values
+            .Where(aggregate => aggregate.Badges.Count > 0)
+            .Select(aggregate => new LeaderboardEntry(aggregate.UserId, aggregate.Badges.Count, 1));
+    }
+
+    private IEnumerable<LeaderboardEntry> GenerateTrophiesEntriesFromAggregates(Dictionary<string, UserTimeRangeAggregate> userAggregates)
+    {
+        return userAggregates.Values
+            .Where(aggregate => aggregate.Trophies.Count > 0)
+            .Select(aggregate => new LeaderboardEntry(aggregate.UserId, aggregate.Trophies.Count, 1));
+    }
+
+    private IEnumerable<LeaderboardEntry> GenerateLevelEntriesFromAggregates(Dictionary<string, UserTimeRangeAggregate> userAggregates, string category)
+    {
+        return userAggregates.Values
+            .Where(aggregate => aggregate.PointsByCategory.ContainsKey(category))
+            .Select(aggregate => new LeaderboardEntry(aggregate.UserId, aggregate.PointsByCategory[category], 1))
+            .Where(entry => entry.Points > 0);
     }
 
     private IEnumerable<LeaderboardEntry> GenerateEntries(IEnumerable<UserState> users, LeaderboardQuery query)
