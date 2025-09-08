@@ -27,7 +27,7 @@ Area of Impact:
 Tasks:
 * [x] Rules: list/search/filter; details page with read‑only JSON/YAML view.
 * [x] Entities: lists (Badges, Trophies, Levels, Point Categories) + details (read‑only).
-* [ ] Users: ID lookup; show points by category, badges, trophies, level.
+* [x] Users: ID lookup; show points by category, badges, trophies, level.
 * [ ] Leaderboards: query by category + time range; table + optional mini chart.
 * [ ] Implement API clients and query hooks for all above using existing engine endpoints.
 
