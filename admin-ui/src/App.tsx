@@ -165,6 +165,16 @@ function App() {
                 }
               />
               <Route
+                path="/users/:id"
+                element={
+                  <RouteGuard>
+                    <MainLayout>
+                      <Users />
+                    </MainLayout>
+                  </RouteGuard>
+                }
+              />
+              <Route
                 path="/leaderboards"
                 element={
                   <RouteGuard>

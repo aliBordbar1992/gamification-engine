@@ -1,46 +1,81 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
   Card,
-  Row,
-  Col,
   Typography,
   Tag,
   Space,
-  Statistic,
-  List,
-  Avatar,
+  Button,
+  Tabs,
+  Row,
+  Col,
+  Descriptions,
   Badge,
   Divider,
-  Empty,
   Spin,
+  Alert,
 } from 'antd'
 import {
-  TrophyOutlined,
-  StarOutlined,
-  CrownOutlined,
-  FireOutlined,
+  ArrowLeftOutlined,
+  CopyOutlined,
   UserOutlined,
-  GiftOutlined,
+  TrophyOutlined,
+  CrownOutlined,
+  StarOutlined,
 } from '@ant-design/icons'
+import { useNavigate } from 'react-router-dom'
+import { useUserState } from '@/hooks/useUsers'
 import type { UserStateDto } from '@/api/generated/models'
 
-const { Title, Text } = Typography
+const { Title, Text, Paragraph } = Typography
+const { TabPane } = Tabs
 
 interface UserDetailsProps {
-  userState: UserStateDto
-  isLoading?: boolean
+  userId: string
 }
 
-const UserDetails: React.FC<UserDetailsProps> = ({ userState, isLoading }) => {
+const UserDetails: React.FC<UserDetailsProps> = ({ userId }) => {
+  const navigate = useNavigate()
+  const { data: userState, isLoading, error } = useUserState(userId)
+  const [activeTab, setActiveTab] = useState('overview')
+
+  const handleBack = () => {
+    navigate('/users')
+  }
+
+  const handleCopyJson = () => {
+    if (userState) {
+      navigator.clipboard.writeText(JSON.stringify(userState, null, 2))
+    }
+  }
+
+  if (error) {
+    return (
+      <Card>
+        <Alert
+          message="Error loading user details"
+          description={error.message || 'Failed to fetch user data'}
+          type="error"
+          showIcon
+        />
+        <Button
+          type="primary"
+          icon={<ArrowLeftOutlined />}
+          onClick={handleBack}
+          style={{ marginTop: 16 }}
+        >
+          Back to Users
+        </Button>
+      </Card>
+    )
+  }
+
   if (isLoading) {
     return (
       <Card>
-        <div style={{ textAlign: 'center', padding: '40px' }}>
-          <Spin size="large" />
-          <div style={{ marginTop: 16 }}>
-            <Text>Loading user data...</Text>
-          </div>
-        </div>
+        <Spin
+          size="large"
+          style={{ display: 'block', textAlign: 'center', padding: '50px' }}
+        />
       </Card>
     )
   }
@@ -48,253 +83,234 @@ const UserDetails: React.FC<UserDetailsProps> = ({ userState, isLoading }) => {
   if (!userState) {
     return (
       <Card>
-        <Empty
-          description="No user data found"
-          image={Empty.PRESENTED_IMAGE_SIMPLE}
+        <Alert
+          message="User not found"
+          description={`No data found for user: ${userId}`}
+          type="warning"
+          showIcon
         />
+        <Button
+          type="primary"
+          icon={<ArrowLeftOutlined />}
+          onClick={handleBack}
+          style={{ marginTop: 16 }}
+        >
+          Back to Users
+        </Button>
       </Card>
     )
   }
 
-  const {
-    userId,
-    pointsByCategory,
-    badges,
-    trophies,
-    currentLevelsByCategory,
-  } = userState
-
-  const totalPoints = pointsByCategory
-    ? Object.values(pointsByCategory).reduce((sum, points) => sum + points, 0)
+  // Calculate total points from categories
+  const totalPoints = userState.pointsByCategory
+    ? Object.values(userState.pointsByCategory).reduce(
+        (sum, points) => sum + (points || 0),
+        0
+      )
     : 0
 
-  const pointsEntries = pointsByCategory ? Object.entries(pointsByCategory) : []
-  const levelsEntries = currentLevelsByCategory
-    ? Object.entries(currentLevelsByCategory)
-    : []
+  // Get the highest level from currentLevelsByCategory
+  const currentLevel = userState.currentLevelsByCategory
+    ? Object.values(userState.currentLevelsByCategory)[0] // Get first level (assuming single category for now)
+    : null
 
   return (
     <div>
-      {/* User Header */}
+      {/* Header */}
       <Card style={{ marginBottom: 16 }}>
-        <Row align="middle" gutter={16}>
+        <Row justify="space-between" align="middle">
           <Col>
-            <Avatar size={64} icon={<UserOutlined />} />
-          </Col>
-          <Col flex="auto">
-            <Title level={3} style={{ margin: 0 }}>
-              {userId}
-            </Title>
-            <Text type="secondary">Gamification Profile</Text>
+            <Space>
+              <Button
+                type="text"
+                icon={<ArrowLeftOutlined />}
+                onClick={handleBack}
+              >
+                Back to Users
+              </Button>
+              <Divider type="vertical" />
+              <Title level={2} style={{ margin: 0 }}>
+                <UserOutlined style={{ marginRight: 8 }} />
+                {userId}
+              </Title>
+            </Space>
           </Col>
           <Col>
-            <Statistic
-              title="Total Points"
-              value={totalPoints}
-              prefix={<FireOutlined />}
-              valueStyle={{ color: '#1890ff' }}
-            />
+            <Space>
+              <Button icon={<CopyOutlined />} onClick={handleCopyJson}>
+                Copy JSON
+              </Button>
+            </Space>
           </Col>
         </Row>
       </Card>
 
-      <Row gutter={16}>
-        {/* Points by Category */}
-        <Col span={12}>
-          <Card
-            title={
-              <Space>
-                <FireOutlined />
-                Points by Category
-              </Space>
-            }
-            style={{ marginBottom: 16 }}
-          >
-            {pointsEntries.length > 0 ? (
-              <List
-                dataSource={pointsEntries}
-                renderItem={([category, points]) => (
-                  <List.Item>
-                    <List.Item.Meta
-                      title={category}
-                      description={`${points.toLocaleString()} points`}
-                    />
-                    <div>
-                      <Statistic
-                        value={points}
-                        valueStyle={{ fontSize: '18px', color: '#52c41a' }}
-                      />
-                    </div>
-                  </List.Item>
-                )}
-              />
-            ) : (
-              <Empty
-                description="No points data available"
-                image={Empty.PRESENTED_IMAGE_SIMPLE}
-              />
-            )}
+      {/* Stats Cards */}
+      <Row gutter={16} style={{ marginBottom: 24 }}>
+        <Col span={6}>
+          <Card>
+            <div style={{ textAlign: 'center' }}>
+              <Title level={3} style={{ margin: 0, color: '#1890ff' }}>
+                {totalPoints.toLocaleString()}
+              </Title>
+              <Text type="secondary">Total Points</Text>
+            </div>
           </Card>
         </Col>
-
-        {/* Current Levels */}
-        <Col span={12}>
-          <Card
-            title={
-              <Space>
-                <CrownOutlined />
-                Current Levels
-              </Space>
-            }
-            style={{ marginBottom: 16 }}
-          >
-            {levelsEntries.length > 0 ? (
-              <List
-                dataSource={levelsEntries}
-                renderItem={([category, level]) => (
-                  <List.Item>
-                    <List.Item.Meta
-                      title={category}
-                      description={level.description || 'Level progression'}
-                    />
-                    <div>
-                      <Tag color="blue" style={{ fontSize: '14px' }}>
-                        {level.name || `${category} Level`}
-                      </Tag>
-                    </div>
-                  </List.Item>
-                )}
-              />
-            ) : (
-              <Empty
-                description="No level data available"
-                image={Empty.PRESENTED_IMAGE_SIMPLE}
-              />
-            )}
+        <Col span={6}>
+          <Card>
+            <div style={{ textAlign: 'center' }}>
+              <Title level={3} style={{ margin: 0, color: '#faad14' }}>
+                {userState.badges?.length || 0}
+              </Title>
+              <Text type="secondary">Badges</Text>
+            </div>
+          </Card>
+        </Col>
+        <Col span={6}>
+          <Card>
+            <div style={{ textAlign: 'center' }}>
+              <Title level={3} style={{ margin: 0, color: '#722ed1' }}>
+                {userState.trophies?.length || 0}
+              </Title>
+              <Text type="secondary">Trophies</Text>
+            </div>
+          </Card>
+        </Col>
+        <Col span={6}>
+          <Card>
+            <div style={{ textAlign: 'center' }}>
+              <Title level={3} style={{ margin: 0, color: '#52c41a' }}>
+                {currentLevel?.name || 'No Level'}
+              </Title>
+              <Text type="secondary">Current Level</Text>
+            </div>
           </Card>
         </Col>
       </Row>
 
-      <Row gutter={16}>
-        {/* Badges */}
-        <Col span={12}>
-          <Card
-            title={
-              <Space>
-                <StarOutlined />
-                Badges ({badges?.length || 0})
-              </Space>
-            }
-            style={{ marginBottom: 16 }}
-          >
-            {badges && badges.length > 0 ? (
-              <List
-                dataSource={badges}
-                renderItem={(badge) => (
-                  <List.Item>
-                    <List.Item.Meta
-                      avatar={
-                        <Avatar
-                          icon={<StarOutlined />}
-                          style={{ backgroundColor: '#faad14' }}
-                        />
-                      }
-                      title={badge.name}
-                      description={badge.description}
-                    />
-                    <Tag color="gold">Badge</Tag>
-                  </List.Item>
-                )}
-              />
-            ) : (
-              <Empty
-                description="No badges earned yet"
-                image={Empty.PRESENTED_IMAGE_SIMPLE}
-              />
-            )}
-          </Card>
-        </Col>
-
-        {/* Trophies */}
-        <Col span={12}>
-          <Card
-            title={
-              <Space>
-                <TrophyOutlined />
-                Trophies ({trophies?.length || 0})
-              </Space>
-            }
-            style={{ marginBottom: 16 }}
-          >
-            {trophies && trophies.length > 0 ? (
-              <List
-                dataSource={trophies}
-                renderItem={(trophy) => (
-                  <List.Item>
-                    <List.Item.Meta
-                      avatar={
-                        <Avatar
-                          icon={<TrophyOutlined />}
-                          style={{ backgroundColor: '#722ed1' }}
-                        />
-                      }
-                      title={trophy.name}
-                      description={trophy.description}
-                    />
-                    <Tag color="purple">Trophy</Tag>
-                  </List.Item>
-                )}
-              />
-            ) : (
-              <Empty
-                description="No trophies earned yet"
-                image={Empty.PRESENTED_IMAGE_SIMPLE}
-              />
-            )}
-          </Card>
-        </Col>
-      </Row>
-
-      {/* Summary Stats */}
+      {/* Details Tabs */}
       <Card>
-        <Title level={4}>
-          <GiftOutlined style={{ marginRight: 8 }} />
-          Summary
-        </Title>
-        <Row gutter={16}>
-          <Col span={6}>
-            <Statistic
-              title="Total Points"
-              value={totalPoints}
-              prefix={<FireOutlined />}
-              valueStyle={{ color: '#1890ff' }}
-            />
-          </Col>
-          <Col span={6}>
-            <Statistic
-              title="Badges Earned"
-              value={badges?.length || 0}
-              prefix={<StarOutlined />}
-              valueStyle={{ color: '#faad14' }}
-            />
-          </Col>
-          <Col span={6}>
-            <Statistic
-              title="Trophies Won"
-              value={trophies?.length || 0}
-              prefix={<TrophyOutlined />}
-              valueStyle={{ color: '#722ed1' }}
-            />
-          </Col>
-          <Col span={6}>
-            <Statistic
-              title="Categories"
-              value={pointsEntries.length}
-              prefix={<CrownOutlined />}
-              valueStyle={{ color: '#52c41a' }}
-            />
-          </Col>
-        </Row>
+        <Tabs activeKey={activeTab} onChange={setActiveTab}>
+          <TabPane tab="Overview" key="overview">
+            <Row gutter={24}>
+              <Col span={12}>
+                <Title level={4}>User Information</Title>
+                <Descriptions column={1} size="small">
+                  <Descriptions.Item label="User ID">
+                    <Text code>{userId}</Text>
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Total Points">
+                    <Text strong style={{ color: '#1890ff' }}>
+                      {totalPoints.toLocaleString()}
+                    </Text>
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Current Level">
+                    <Space>
+                      <StarOutlined style={{ color: '#52c41a' }} />
+                      <Text strong>{currentLevel?.name || 'No Level'}</Text>
+                      {currentLevel?.minPoints && (
+                        <Text type="secondary">
+                          (Min: {currentLevel.minPoints.toLocaleString()} pts)
+                        </Text>
+                      )}
+                    </Space>
+                  </Descriptions.Item>
+                </Descriptions>
+              </Col>
+              <Col span={12}>
+                <Title level={4}>Points by Category</Title>
+                {userState.pointsByCategory &&
+                Object.keys(userState.pointsByCategory).length > 0 ? (
+                  <Space wrap>
+                    {Object.entries(userState.pointsByCategory).map(
+                      ([category, points]) => (
+                        <Tag key={category} color="blue">
+                          {category}: {points?.toLocaleString() || 0}
+                        </Tag>
+                      )
+                    )}
+                  </Space>
+                ) : (
+                  <Text type="secondary">No category points</Text>
+                )}
+              </Col>
+            </Row>
+          </TabPane>
+
+          <TabPane tab="Badges" key="badges">
+            <Title level={4}>
+              <TrophyOutlined style={{ marginRight: 8 }} />
+              Earned Badges ({userState.badges?.length || 0})
+            </Title>
+            {userState.badges && userState.badges.length > 0 ? (
+              <Row gutter={16}>
+                {userState.badges.map((badge, index) => (
+                  <Col span={8} key={index} style={{ marginBottom: 16 }}>
+                    <Card size="small">
+                      <Space direction="vertical" style={{ width: '100%' }}>
+                        <Text strong>{badge.name || badge.id}</Text>
+                        {badge.description && (
+                          <Text type="secondary" style={{ fontSize: '12px' }}>
+                            {badge.description}
+                          </Text>
+                        )}
+                        <Tag color="green">Badge</Tag>
+                      </Space>
+                    </Card>
+                  </Col>
+                ))}
+              </Row>
+            ) : (
+              <Text type="secondary">No badges earned yet</Text>
+            )}
+          </TabPane>
+
+          <TabPane tab="Trophies" key="trophies">
+            <Title level={4}>
+              <CrownOutlined style={{ marginRight: 8 }} />
+              Earned Trophies ({userState.trophies?.length || 0})
+            </Title>
+            {userState.trophies && userState.trophies.length > 0 ? (
+              <Row gutter={16}>
+                {userState.trophies.map((trophy, index) => (
+                  <Col span={8} key={index} style={{ marginBottom: 16 }}>
+                    <Card size="small">
+                      <Space direction="vertical" style={{ width: '100%' }}>
+                        <Text strong>{trophy.name || trophy.id}</Text>
+                        {trophy.description && (
+                          <Text type="secondary" style={{ fontSize: '12px' }}>
+                            {trophy.description}
+                          </Text>
+                        )}
+                        <Tag color="purple">Trophy</Tag>
+                      </Space>
+                    </Card>
+                  </Col>
+                ))}
+              </Row>
+            ) : (
+              <Text type="secondary">No trophies earned yet</Text>
+            )}
+          </TabPane>
+
+          <TabPane tab="Raw Data" key="raw">
+            <Title level={4}>Raw User State Data</Title>
+            <Card>
+              <pre
+                style={{
+                  background: '#f5f5f5',
+                  padding: '16px',
+                  borderRadius: '6px',
+                  overflow: 'auto',
+                  maxHeight: '400px',
+                }}
+              >
+                {JSON.stringify(userState, null, 2)}
+              </pre>
+            </Card>
+          </TabPane>
+        </Tabs>
       </Card>
     </div>
   )

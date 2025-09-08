@@ -150,13 +150,13 @@ const RulesList: React.FC<RulesListProps> = ({ onViewRule }) => {
       width: 120,
       render: (_: unknown, record: RuleDto) => (
         <Space>
-          <Tooltip title="View Details">
-            <Button
-              type="text"
-              icon={<EyeOutlined />}
-              onClick={() => handleViewRule(record)}
-            />
-          </Tooltip>
+          <Button
+            type="link"
+            icon={<EyeOutlined />}
+            onClick={() => handleViewRule(record)}
+          >
+            View
+          </Button>
         </Space>
       ),
     },
