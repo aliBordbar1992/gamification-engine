@@ -29,6 +29,8 @@ public class RulesController : ControllerBase
     /// </summary>
     /// <returns>Collection of all rules</returns>
     [HttpGet]
+    [ProducesResponseType(typeof(IEnumerable<RuleDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetAllRules()
     {
         var result = await _ruleManagementService.GetAllRulesAsync();
@@ -44,6 +46,8 @@ public class RulesController : ControllerBase
     /// </summary>
     /// <returns>Collection of active rules</returns>
     [HttpGet("active")]
+    [ProducesResponseType(typeof(IEnumerable<RuleDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetActiveRules()
     {
         var result = await _ruleManagementService.GetActiveRulesAsync();
@@ -60,6 +64,8 @@ public class RulesController : ControllerBase
     /// <param name="eventType">The event type</param>
     /// <returns>Collection of rules for the event type</returns>
     [HttpGet("trigger/{eventType}")]
+    [ProducesResponseType(typeof(IEnumerable<RuleDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetRulesByTrigger(string eventType)
     {
         var result = await _ruleManagementService.GetRulesByTriggerAsync(eventType);
@@ -76,6 +82,9 @@ public class RulesController : ControllerBase
     /// <param name="id">The rule ID</param>
     /// <returns>The rule if found</returns>
     [HttpGet("{id}")]
+    [ProducesResponseType(typeof(RuleDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetRuleById(string id)
     {
         var result = await _ruleManagementService.GetRuleByIdAsync(id);
@@ -95,6 +104,8 @@ public class RulesController : ControllerBase
     /// <param name="dto">The rule creation data</param>
     /// <returns>The created rule</returns>
     [HttpPost]
+    [ProducesResponseType(typeof(RuleDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreateRule([FromBody] CreateRuleDto dto)
     {
         var result = await _ruleManagementService.CreateRuleAsync(dto);
@@ -112,6 +123,9 @@ public class RulesController : ControllerBase
     /// <param name="dto">The rule update data</param>
     /// <returns>The updated rule</returns>
     [HttpPut("{id}")]
+    [ProducesResponseType(typeof(RuleDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> UpdateRule(string id, [FromBody] UpdateRuleDto dto)
     {
         var result = await _ruleManagementService.UpdateRuleAsync(id, dto);
@@ -131,6 +145,9 @@ public class RulesController : ControllerBase
     /// <param name="id">The rule ID</param>
     /// <returns>True if deleted successfully</returns>
     [HttpDelete("{id}")]
+    [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> DeleteRule(string id)
     {
         var result = await _ruleManagementService.DeleteRuleAsync(id);
@@ -150,6 +167,9 @@ public class RulesController : ControllerBase
     /// <param name="id">The rule ID</param>
     /// <returns>True if activated successfully</returns>
     [HttpPost("{id}/activate")]
+    [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> ActivateRule(string id)
     {
         var result = await _ruleManagementService.ActivateRuleAsync(id);
@@ -169,6 +189,9 @@ public class RulesController : ControllerBase
     /// <param name="id">The rule ID</param>
     /// <returns>True if deactivated successfully</returns>
     [HttpPost("{id}/deactivate")]
+    [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> DeactivateRule(string id)
     {
         var result = await _ruleManagementService.DeactivateRuleAsync(id);

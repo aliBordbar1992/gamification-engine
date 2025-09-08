@@ -23,6 +23,8 @@ public class WebhooksController : ControllerBase
     /// </summary>
     /// <returns>Collection of registered webhooks</returns>
     [HttpGet]
+    [ProducesResponseType(typeof(IEnumerable<WebhookDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetAllWebhooks()
     {
         var result = await _webhookService.GetAllWebhooksAsync();
@@ -39,6 +41,8 @@ public class WebhooksController : ControllerBase
     /// <param name="eventType">The event type</param>
     /// <returns>Collection of webhooks for the event type</returns>
     [HttpGet("event-type/{eventType}")]
+    [ProducesResponseType(typeof(IEnumerable<WebhookDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetWebhooksByEventType(string eventType)
     {
         var result = await _webhookService.GetWebhooksByEventTypeAsync(eventType);
@@ -55,6 +59,9 @@ public class WebhooksController : ControllerBase
     /// <param name="id">The webhook ID</param>
     /// <returns>The webhook if found</returns>
     [HttpGet("{id}")]
+    [ProducesResponseType(typeof(WebhookDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetWebhookById(string id)
     {
         var result = await _webhookService.GetWebhookByIdAsync(id);
@@ -74,6 +81,8 @@ public class WebhooksController : ControllerBase
     /// <param name="dto">The webhook registration data</param>
     /// <returns>The registered webhook</returns>
     [HttpPost]
+    [ProducesResponseType(typeof(WebhookDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> RegisterWebhook([FromBody] RegisterWebhookDto dto)
     {
         var result = await _webhookService.RegisterWebhookAsync(dto);
@@ -91,6 +100,9 @@ public class WebhooksController : ControllerBase
     /// <param name="dto">The webhook update data</param>
     /// <returns>The updated webhook</returns>
     [HttpPut("{id}")]
+    [ProducesResponseType(typeof(WebhookDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> UpdateWebhook(string id, [FromBody] UpdateWebhookDto dto)
     {
         var result = await _webhookService.UpdateWebhookAsync(id, dto);
@@ -110,6 +122,9 @@ public class WebhooksController : ControllerBase
     /// <param name="id">The webhook ID</param>
     /// <returns>True if deleted successfully</returns>
     [HttpDelete("{id}")]
+    [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> DeleteWebhook(string id)
     {
         var result = await _webhookService.DeleteWebhookAsync(id);
@@ -129,6 +144,9 @@ public class WebhooksController : ControllerBase
     /// <param name="id">The webhook ID</param>
     /// <returns>Test result</returns>
     [HttpPost("{id}/test")]
+    [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> TestWebhook(string id)
     {
         var result = await _webhookService.TestWebhookAsync(id);

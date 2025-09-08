@@ -23,6 +23,8 @@ public class LevelsController : ControllerBase
     /// </summary>
     /// <returns>Collection of levels</returns>
     [HttpGet]
+    [ProducesResponseType(typeof(IEnumerable<LevelDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetAll()
     {
         var result = await _entityManagementService.GetAllLevelsAsync();
@@ -39,6 +41,8 @@ public class LevelsController : ControllerBase
     /// <param name="category">The point category</param>
     /// <returns>Collection of levels for the category</returns>
     [HttpGet("category/{category}")]
+    [ProducesResponseType(typeof(IEnumerable<LevelDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetByCategory(string category)
     {
         var result = await _entityManagementService.GetLevelsByCategoryAsync(category);
@@ -55,6 +59,9 @@ public class LevelsController : ControllerBase
     /// <param name="id">The level ID</param>
     /// <returns>The level if found</returns>
     [HttpGet("{id}")]
+    [ProducesResponseType(typeof(LevelDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetById(string id)
     {
         var result = await _entityManagementService.GetLevelByIdAsync(id);
@@ -74,6 +81,8 @@ public class LevelsController : ControllerBase
     /// <param name="request">The level data</param>
     /// <returns>The created level</returns>
     [HttpPost]
+    [ProducesResponseType(typeof(LevelDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Create([FromBody] CreateLevelRequest request)
     {
         if (!ModelState.IsValid)
@@ -102,6 +111,9 @@ public class LevelsController : ControllerBase
     /// <param name="request">The updated level data</param>
     /// <returns>The updated level</returns>
     [HttpPut("{id}")]
+    [ProducesResponseType(typeof(LevelDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Update(string id, [FromBody] UpdateLevelRequest request)
     {
         if (!ModelState.IsValid)
@@ -131,6 +143,9 @@ public class LevelsController : ControllerBase
     /// <param name="id">The level ID</param>
     /// <returns>Success status</returns>
     [HttpDelete("{id}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Delete(string id)
     {
         var result = await _entityManagementService.DeleteLevelAsync(id);

@@ -23,6 +23,8 @@ public class TrophiesController : ControllerBase
     /// </summary>
     /// <returns>Collection of trophies</returns>
     [HttpGet]
+    [ProducesResponseType(typeof(IEnumerable<TrophyDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetAll()
     {
         var result = await _entityManagementService.GetAllTrophiesAsync();
@@ -38,6 +40,8 @@ public class TrophiesController : ControllerBase
     /// </summary>
     /// <returns>Collection of visible trophies</returns>
     [HttpGet("visible")]
+    [ProducesResponseType(typeof(IEnumerable<TrophyDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetVisible()
     {
         var result = await _entityManagementService.GetVisibleTrophiesAsync();
@@ -54,6 +58,9 @@ public class TrophiesController : ControllerBase
     /// <param name="id">The trophy ID</param>
     /// <returns>The trophy if found</returns>
     [HttpGet("{id}")]
+    [ProducesResponseType(typeof(TrophyDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetById(string id)
     {
         var result = await _entityManagementService.GetTrophyByIdAsync(id);
@@ -73,6 +80,8 @@ public class TrophiesController : ControllerBase
     /// <param name="request">The trophy data</param>
     /// <returns>The created trophy</returns>
     [HttpPost]
+    [ProducesResponseType(typeof(TrophyDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Create([FromBody] CreateTrophyRequest request)
     {
         if (!ModelState.IsValid)
@@ -102,6 +111,9 @@ public class TrophiesController : ControllerBase
     /// <param name="request">The updated trophy data</param>
     /// <returns>The updated trophy</returns>
     [HttpPut("{id}")]
+    [ProducesResponseType(typeof(TrophyDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Update(string id, [FromBody] UpdateTrophyRequest request)
     {
         if (!ModelState.IsValid)
@@ -132,6 +144,9 @@ public class TrophiesController : ControllerBase
     /// <param name="id">The trophy ID</param>
     /// <returns>Success status</returns>
     [HttpDelete("{id}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Delete(string id)
     {
         var result = await _entityManagementService.DeleteTrophyAsync(id);

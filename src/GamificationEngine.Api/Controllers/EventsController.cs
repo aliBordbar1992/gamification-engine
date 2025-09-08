@@ -26,6 +26,8 @@ public class EventsController : ControllerBase
     /// <param name="request">The event data</param>
     /// <returns>Result of the ingestion operation</returns>
     [HttpPost]
+    [ProducesResponseType(typeof(EventDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> IngestEvent([FromBody] IngestEventRequest request)
     {
         if (!ModelState.IsValid)
@@ -62,6 +64,8 @@ public class EventsController : ControllerBase
     /// <param name="offset">Number of events to skip (default: 0)</param>
     /// <returns>Collection of events for the user</returns>
     [HttpGet("user/{userId:minlength(1)}")]
+    [ProducesResponseType(typeof(IEnumerable<EventDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetUserEvents(string userId, [FromQuery] int limit = 100, [FromQuery] int offset = 0)
     {
         var result = await _eventIngestionService.GetUserEventsAsync(userId, limit, offset);
@@ -80,6 +84,8 @@ public class EventsController : ControllerBase
     /// <param name="offset">Number of events to skip (default: 0)</param>
     /// <returns>Collection of events of the specified type</returns>
     [HttpGet("type/{eventType:minlength(1)}")]
+    [ProducesResponseType(typeof(IEnumerable<EventDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetEventsByType(string eventType, [FromQuery] int limit = 100, [FromQuery] int offset = 0)
     {
         var result = await _eventIngestionService.GetEventsByTypeAsync(eventType, limit, offset);
@@ -96,6 +102,8 @@ public class EventsController : ControllerBase
     /// <param name="eventId">The event ID</param>
     /// <returns>The event if found</returns>
     [HttpGet("{eventId}")]
+    [ProducesResponseType(typeof(EventDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status501NotImplemented)]
     public IActionResult GetEvent(string eventId)
     {
         // This would require adding a method to the service, but for now we'll return not implemented

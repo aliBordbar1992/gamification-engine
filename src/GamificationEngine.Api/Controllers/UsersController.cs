@@ -24,6 +24,8 @@ public class UsersController : ControllerBase
     /// <param name="userId">The user ID</param>
     /// <returns>Complete user state</returns>
     [HttpGet("{userId}/state")]
+    [ProducesResponseType(typeof(UserStateDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetUserState(string userId)
     {
         var result = await _userStateService.GetUserStateAsync(userId);
@@ -40,6 +42,8 @@ public class UsersController : ControllerBase
     /// <param name="userId">The user ID</param>
     /// <returns>User points by category</returns>
     [HttpGet("{userId}/points")]
+    [ProducesResponseType(typeof(Dictionary<string, long>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetUserPoints(string userId)
     {
         var result = await _userStateService.GetUserPointsAsync(userId);
@@ -57,6 +61,8 @@ public class UsersController : ControllerBase
     /// <param name="category">The point category</param>
     /// <returns>User points for the category</returns>
     [HttpGet("{userId}/points/{category}")]
+    [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetUserPointsForCategory(string userId, string category)
     {
         var result = await _userStateService.GetUserPointsForCategoryAsync(userId, category);
@@ -73,6 +79,8 @@ public class UsersController : ControllerBase
     /// <param name="userId">The user ID</param>
     /// <returns>Collection of user badges</returns>
     [HttpGet("{userId}/badges")]
+    [ProducesResponseType(typeof(IEnumerable<BadgeDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetUserBadges(string userId)
     {
         var result = await _userStateService.GetUserBadgesAsync(userId);
@@ -89,6 +97,8 @@ public class UsersController : ControllerBase
     /// <param name="userId">The user ID</param>
     /// <returns>Collection of user trophies</returns>
     [HttpGet("{userId}/trophies")]
+    [ProducesResponseType(typeof(IEnumerable<TrophyDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetUserTrophies(string userId)
     {
         var result = await _userStateService.GetUserTrophiesAsync(userId);
@@ -106,6 +116,8 @@ public class UsersController : ControllerBase
     /// <param name="category">The point category</param>
     /// <returns>Current level for the category</returns>
     [HttpGet("{userId}/levels/{category}")]
+    [ProducesResponseType(typeof(LevelDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetUserCurrentLevel(string userId, string category)
     {
         var result = await _userStateService.GetUserCurrentLevelAsync(userId, category);
@@ -122,6 +134,8 @@ public class UsersController : ControllerBase
     /// <param name="userId">The user ID</param>
     /// <returns>Current levels by category</returns>
     [HttpGet("{userId}/levels")]
+    [ProducesResponseType(typeof(Dictionary<string, LevelDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetUserCurrentLevels(string userId)
     {
         var result = await _userStateService.GetUserCurrentLevelsAsync(userId);
@@ -140,6 +154,8 @@ public class UsersController : ControllerBase
     /// <param name="pageSize">Number of entries per page (1-1000)</param>
     /// <returns>User reward history</returns>
     [HttpGet("{userId}/rewards/history")]
+    [ProducesResponseType(typeof(UserRewardHistoryDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetUserRewardHistory(string userId, [FromQuery] int page = 1, [FromQuery] int pageSize = 50)
     {
         var result = await _userStateService.GetUserRewardHistoryAsync(userId, page, pageSize);

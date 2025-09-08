@@ -124,7 +124,7 @@ if (app.Environment.IsDevelopment())
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Gamification Engine API v1");
         c.RoutePrefix = "swagger"; // Set Swagger UI at /swagger
         c.DocumentTitle = "Gamification Engine API Documentation";
-        c.DefaultModelsExpandDepth(-1); // Hide models section by default
+        //c.DefaultModelsExpandDepth(-1); // Hide models section by default
         c.DisplayRequestDuration();
     });
     app.MapOpenApi();

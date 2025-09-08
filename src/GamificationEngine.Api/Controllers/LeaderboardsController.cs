@@ -28,6 +28,8 @@ public class LeaderboardsController : ControllerBase
     /// <param name="pageSize">Number of entries per page (1-1000)</param>
     /// <returns>Leaderboard data</returns>
     [HttpGet]
+    [ProducesResponseType(typeof(LeaderboardDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetLeaderboard(
         [FromQuery] string type,
         [FromQuery] string? category = null,
@@ -61,6 +63,8 @@ public class LeaderboardsController : ControllerBase
     /// <param name="pageSize">Number of entries per page (1-1000)</param>
     /// <returns>Points leaderboard data</returns>
     [HttpGet("points/{category}")]
+    [ProducesResponseType(typeof(LeaderboardDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetPointsLeaderboard(
         string category,
         [FromQuery] string timeRange = "alltime",
@@ -83,6 +87,8 @@ public class LeaderboardsController : ControllerBase
     /// <param name="pageSize">Number of entries per page (1-1000)</param>
     /// <returns>Badges leaderboard data</returns>
     [HttpGet("badges")]
+    [ProducesResponseType(typeof(LeaderboardDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetBadgesLeaderboard(
         [FromQuery] string timeRange = "alltime",
         [FromQuery] int page = 1,
@@ -104,6 +110,8 @@ public class LeaderboardsController : ControllerBase
     /// <param name="pageSize">Number of entries per page (1-1000)</param>
     /// <returns>Trophies leaderboard data</returns>
     [HttpGet("trophies")]
+    [ProducesResponseType(typeof(LeaderboardDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetTrophiesLeaderboard(
         [FromQuery] string timeRange = "alltime",
         [FromQuery] int page = 1,
@@ -126,6 +134,8 @@ public class LeaderboardsController : ControllerBase
     /// <param name="pageSize">Number of entries per page (1-1000)</param>
     /// <returns>Levels leaderboard data</returns>
     [HttpGet("levels/{category}")]
+    [ProducesResponseType(typeof(LeaderboardDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetLevelsLeaderboard(
         string category,
         [FromQuery] string timeRange = "alltime",
@@ -149,6 +159,8 @@ public class LeaderboardsController : ControllerBase
     /// <param name="timeRange">Time range (daily, weekly, monthly, alltime)</param>
     /// <returns>User rank information</returns>
     [HttpGet("user/{userId}/rank")]
+    [ProducesResponseType(typeof(UserRankDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetUserRank(
         string userId,
         [FromQuery] string type,
@@ -180,6 +192,8 @@ public class LeaderboardsController : ControllerBase
     /// <param name="timeRange">Time range (daily, weekly, monthly, alltime)</param>
     /// <returns>Success status</returns>
     [HttpPost("refresh")]
+    [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> RefreshCache(
         [FromQuery] string type,
         [FromQuery] string? category = null,

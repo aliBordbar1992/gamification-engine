@@ -23,6 +23,8 @@ public class PointCategoriesController : ControllerBase
     /// </summary>
     /// <returns>Collection of point categories</returns>
     [HttpGet]
+    [ProducesResponseType(typeof(IEnumerable<PointCategoryDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetAll()
     {
         var result = await _entityManagementService.GetAllPointCategoriesAsync();
@@ -39,6 +41,9 @@ public class PointCategoriesController : ControllerBase
     /// <param name="id">The point category ID</param>
     /// <returns>The point category if found</returns>
     [HttpGet("{id}")]
+    [ProducesResponseType(typeof(PointCategoryDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetById(string id)
     {
         var result = await _entityManagementService.GetPointCategoryByIdAsync(id);
@@ -58,6 +63,8 @@ public class PointCategoriesController : ControllerBase
     /// <param name="request">The point category data</param>
     /// <returns>The created point category</returns>
     [HttpPost]
+    [ProducesResponseType(typeof(PointCategoryDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Create([FromBody] CreatePointCategoryRequest request)
     {
         if (!ModelState.IsValid)
@@ -86,6 +93,9 @@ public class PointCategoriesController : ControllerBase
     /// <param name="request">The updated point category data</param>
     /// <returns>The updated point category</returns>
     [HttpPut("{id}")]
+    [ProducesResponseType(typeof(PointCategoryDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Update(string id, [FromBody] UpdatePointCategoryRequest request)
     {
         if (!ModelState.IsValid)
@@ -115,6 +125,9 @@ public class PointCategoriesController : ControllerBase
     /// <param name="id">The point category ID</param>
     /// <returns>Success status</returns>
     [HttpDelete("{id}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Delete(string id)
     {
         var result = await _entityManagementService.DeletePointCategoryAsync(id);

@@ -23,6 +23,8 @@ public class BadgesController : ControllerBase
     /// </summary>
     /// <returns>Collection of badges</returns>
     [HttpGet]
+    [ProducesResponseType(typeof(IEnumerable<BadgeDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetAll()
     {
         var result = await _entityManagementService.GetAllBadgesAsync();
@@ -38,6 +40,8 @@ public class BadgesController : ControllerBase
     /// </summary>
     /// <returns>Collection of visible badges</returns>
     [HttpGet("visible")]
+    [ProducesResponseType(typeof(IEnumerable<BadgeDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetVisible()
     {
         var result = await _entityManagementService.GetVisibleBadgesAsync();
@@ -54,6 +58,9 @@ public class BadgesController : ControllerBase
     /// <param name="id">The badge ID</param>
     /// <returns>The badge if found</returns>
     [HttpGet("{id}")]
+    [ProducesResponseType(typeof(BadgeDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetById(string id)
     {
         var result = await _entityManagementService.GetBadgeByIdAsync(id);
@@ -73,6 +80,8 @@ public class BadgesController : ControllerBase
     /// <param name="request">The badge data</param>
     /// <returns>The created badge</returns>
     [HttpPost]
+    [ProducesResponseType(typeof(BadgeDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Create([FromBody] CreateBadgeRequest request)
     {
         if (!ModelState.IsValid)
@@ -102,6 +111,9 @@ public class BadgesController : ControllerBase
     /// <param name="request">The updated badge data</param>
     /// <returns>The updated badge</returns>
     [HttpPut("{id}")]
+    [ProducesResponseType(typeof(BadgeDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Update(string id, [FromBody] UpdateBadgeRequest request)
     {
         if (!ModelState.IsValid)
@@ -132,6 +144,9 @@ public class BadgesController : ControllerBase
     /// <param name="id">The badge ID</param>
     /// <returns>Success status</returns>
     [HttpDelete("{id}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Delete(string id)
     {
         var result = await _entityManagementService.DeleteBadgeAsync(id);
