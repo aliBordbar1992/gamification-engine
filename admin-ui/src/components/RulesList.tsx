@@ -15,11 +15,8 @@ import {
 } from 'antd'
 import { FilterOutlined, EyeOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
-import { useRules } from '@/hooks/useGeneratedRules'
-import type { CreateRuleDto } from '@/api/generated/models'
-
-// Type aliases for better readability
-type Rule = CreateRuleDto
+import { useRules } from '@/hooks/useRules'
+import type { RewardDto, RuleDto } from '@/api/generated/models'
 
 // Filter and search types
 export interface RulesFilters {
@@ -33,7 +30,7 @@ const { Search } = Input
 const { Option } = Select
 
 interface RulesListProps {
-  onViewRule?: (rule: Rule) => void
+  onViewRule?: (rule: RuleDto) => void
 }
 
 const RulesList: React.FC<RulesListProps> = ({ onViewRule }) => {
@@ -43,7 +40,7 @@ const RulesList: React.FC<RulesListProps> = ({ onViewRule }) => {
 
   const { data: rules = [], isLoading, error } = useRules()
 
-  const handleViewRule = (rule: Rule) => {
+  const handleViewRule = (rule: RuleDto) => {
     if (onViewRule) {
       onViewRule(rule)
     } else {
@@ -51,7 +48,7 @@ const RulesList: React.FC<RulesListProps> = ({ onViewRule }) => {
     }
   }
 
-  const handleFilterChange = (key: keyof RulesFilters, value: any) => {
+  const handleFilterChange = (key: keyof RulesFilters, value: boolean) => {
     setFilters((prev) => ({
       ...prev,
       [key]: value,
@@ -68,7 +65,7 @@ const RulesList: React.FC<RulesListProps> = ({ onViewRule }) => {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
-      render: (name: string, record: Rule) => (
+      render: (name: string, record: RuleDto) => (
         <div>
           <Text strong>{name}</Text>
           <br />
@@ -122,7 +119,7 @@ const RulesList: React.FC<RulesListProps> = ({ onViewRule }) => {
       title: 'Rewards',
       dataIndex: 'rewards',
       key: 'rewards',
-      render: (rewards: any[]) => (
+      render: (rewards: RewardDto[]) => (
         <Space wrap>
           {rewards.slice(0, 2).map((reward, index) => (
             <Tag key={index} color="green">
@@ -151,7 +148,7 @@ const RulesList: React.FC<RulesListProps> = ({ onViewRule }) => {
       title: 'Actions',
       key: 'actions',
       width: 120,
-      render: (_: any, record: Rule) => (
+      render: (_: unknown, record: RuleDto) => (
         <Space>
           <Tooltip title="View Details">
             <Button
@@ -167,7 +164,7 @@ const RulesList: React.FC<RulesListProps> = ({ onViewRule }) => {
 
   const stats = useMemo(() => {
     const total = rules.length
-    const active = rules.filter((rule) => rule.isActive).length
+    const active = rules.filter((rule: RuleDto) => rule.isActive).length
     const inactive = total - active
     return { total, active, inactive }
   }, [rules])

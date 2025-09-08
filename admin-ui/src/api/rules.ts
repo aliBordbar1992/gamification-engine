@@ -1,22 +1,5 @@
-import apiClient from './client'
-import type {
-  CreateRuleDto,
-  UpdateRuleDto,
-  CreateBadgeDto,
-  CreateTrophyDto,
-  CreatePointCategoryDto,
-  CreateLevelDto,
-} from './generated/models'
-import { mockRules } from '../test/mockRules'
-
-// Type aliases for better readability
-type Rule = CreateRuleDto
-type CreateRule = CreateRuleDto
-type UpdateRule = UpdateRuleDto
-type Badge = CreateBadgeDto
-type Trophy = CreateTrophyDto
-type PointCategory = CreatePointCategoryDto
-type Level = CreateLevelDto
+import type { RuleDto, CreateRuleDto, UpdateRuleDto } from './generated/models'
+import { RulesApiInstance } from './generated-client'
 
 // Filter and search types
 export interface RulesFilters {
@@ -34,116 +17,55 @@ export interface RulesListParams {
 // Rules API
 export const rulesApi = {
   // Get all rules
-  getAllRules: async (): Promise<Rule[]> => {
-    try {
-      const response = await apiClient.get('/rules')
-      return response.data
-    } catch (error) {
-      console.warn('API not available, using mock data:', error)
-      return mockRules
-    }
+  getAllRules: async (): Promise<RuleDto[]> => {
+    const response = await RulesApiInstance().apiRulesGet()
+    return response.data
   },
 
   // Get active rules only
-  getActiveRules: async (): Promise<Rule[]> => {
-    const response = await apiClient.get('/rules/active')
+  getActiveRules: async (): Promise<RuleDto[]> => {
+    const response = await RulesApiInstance().apiRulesActiveGet()
     return response.data
   },
 
   // Get rules by trigger event type
-  getRulesByTrigger: async (eventType: string): Promise<Rule[]> => {
-    const response = await apiClient.get(`/rules/trigger/${eventType}`)
+  getRulesByTrigger: async (eventType: string): Promise<RuleDto[]> => {
+    const response = await RulesApiInstance().apiRulesTriggerEventTypeGet(
+      eventType
+    )
     return response.data
   },
 
   // Get specific rule by ID
-  getRuleById: async (id: string): Promise<Rule> => {
-    try {
-      const response = await apiClient.get(`/rules/${id}`)
-      return response.data
-    } catch (error) {
-      console.warn('API not available, using mock data:', error)
-      const mockRule = mockRules.find((rule) => rule.id === id)
-      if (!mockRule) {
-        throw new Error(`Rule with id ${id} not found`)
-      }
-      return mockRule
-    }
+  getRuleById: async (id: string): Promise<RuleDto> => {
+    const response = await RulesApiInstance().apiRulesIdGet(id)
+    return response.data
   },
 
   // Create a new rule
-  createRule: async (rule: CreateRule): Promise<Rule> => {
-    const response = await apiClient.post('/rules', rule)
+  createRule: async (rule: CreateRuleDto): Promise<RuleDto> => {
+    const response = await RulesApiInstance().apiRulesPost(rule)
     return response.data
   },
 
   // Update an existing rule
-  updateRule: async (id: string, rule: UpdateRule): Promise<Rule> => {
-    const response = await apiClient.put(`/rules/${id}`, rule)
+  updateRule: async (id: string, rule: UpdateRuleDto): Promise<RuleDto> => {
+    const response = await RulesApiInstance().apiRulesIdPut(id, rule)
     return response.data
   },
 
   // Activate a rule
   activateRule: async (id: string): Promise<void> => {
-    await apiClient.post(`/rules/${id}/activate`)
+    await RulesApiInstance().apiRulesIdActivatePost(id)
   },
 
   // Deactivate a rule
   deactivateRule: async (id: string): Promise<void> => {
-    await apiClient.post(`/rules/${id}/deactivate`)
+    await RulesApiInstance().apiRulesIdDeactivatePost(id)
   },
 
   // Delete a rule
   deleteRule: async (id: string): Promise<void> => {
-    await apiClient.delete(`/rules/${id}`)
-  },
-}
-
-// Entity APIs
-export const entitiesApi = {
-  // Point Categories
-  getPointCategories: async (): Promise<PointCategory[]> => {
-    const response = await apiClient.get('/rules/entities/point-categories')
-    return response.data
-  },
-
-  getPointCategoryById: async (id: string): Promise<PointCategory> => {
-    const response = await apiClient.get(
-      `/rules/entities/point-categories/${id}`
-    )
-    return response.data
-  },
-
-  // Badges
-  getBadges: async (): Promise<Badge[]> => {
-    const response = await apiClient.get('/rules/entities/badges')
-    return response.data
-  },
-
-  getBadgeById: async (id: string): Promise<Badge> => {
-    const response = await apiClient.get(`/rules/entities/badges/${id}`)
-    return response.data
-  },
-
-  // Trophies
-  getTrophies: async (): Promise<Trophy[]> => {
-    const response = await apiClient.get('/rules/entities/trophies')
-    return response.data
-  },
-
-  getTrophyById: async (id: string): Promise<Trophy> => {
-    const response = await apiClient.get(`/rules/entities/trophies/${id}`)
-    return response.data
-  },
-
-  // Levels
-  getLevels: async (): Promise<Level[]> => {
-    const response = await apiClient.get('/rules/entities/levels')
-    return response.data
-  },
-
-  getLevelById: async (id: string): Promise<Level> => {
-    const response = await apiClient.get(`/rules/entities/levels/${id}`)
-    return response.data
+    await RulesApiInstance().apiRulesIdDelete(id)
   },
 }

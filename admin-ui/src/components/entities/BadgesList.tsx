@@ -3,10 +3,7 @@ import { Tag } from 'antd'
 import { CheckCircleOutlined, EyeInvisibleOutlined } from '@ant-design/icons'
 import EntityList from '../EntityList'
 import { useBadges } from '@/hooks/useEntities'
-import type { CreateBadgeDto } from '@/api/generated/models'
-
-// Type alias for better readability
-type Badge = CreateBadgeDto
+import type { BadgeDto } from '@/api/generated/models'
 
 interface BadgesListProps {
   onViewDetails: (id: string) => void
@@ -20,7 +17,8 @@ const BadgesList: React.FC<BadgesListProps> = ({ onViewDetails }) => {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
-      sorter: (a: Badge, b: Badge) => a.name.localeCompare(b.name),
+      sorter: (a: BadgeDto, b: BadgeDto) =>
+        a.name?.localeCompare(b.name ?? '') ?? 0,
     },
     {
       title: 'Description',
@@ -47,7 +45,12 @@ const BadgesList: React.FC<BadgesListProps> = ({ onViewDetails }) => {
   return (
     <EntityList
       title="Badges"
-      data={badges}
+      data={badges.map((badge: BadgeDto | undefined) => ({
+        id: badge?.id ?? '',
+        name: badge?.name ?? '',
+        description: badge?.description ?? '',
+        visible: badge?.visible ?? false,
+      }))}
       loading={isLoading}
       error={error}
       columns={columns}

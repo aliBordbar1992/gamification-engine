@@ -3,6 +3,19 @@
 
 import { Configuration } from './generated/configuration'
 import apiClient from './client' // Your existing axios instance
+import type {
+  BadgesApiInterface,
+  LevelsApiInterface,
+  RulesApiInterface,
+  TrophiesApiInterface,
+  PointCategoriesApiInterface,
+} from './generated/api'
+import { BadgesApi } from './generated/apis/badges-api'
+import { TrophiesApi } from './generated/apis/trophies-api'
+import { LevelsApi } from './generated/apis/levels-api'
+import { RulesApi } from './generated/apis/rules-api'
+import { PointCategoriesApi } from './generated/apis/point-categories-api'
+import type { AxiosInstance } from 'axios'
 
 // Create configuration for the generated API client
 export const apiConfiguration = new Configuration({
@@ -14,22 +27,37 @@ export const apiConfiguration = new Configuration({
 })
 
 // Export configured API instances
-export { RulesApi } from './generated/apis/rules-api'
-export { BadgesApi } from './generated/apis/badges-api'
-export { TrophiesApi } from './generated/apis/trophies-api'
-export { LevelsApi } from './generated/apis/levels-api'
-export { PointCategoriesApi } from './generated/apis/point-categories-api'
-export { UsersApi } from './generated/apis/users-api'
-export { EventsApi } from './generated/apis/events-api'
-export { LeaderboardsApi } from './generated/apis/leaderboards-api'
-export { WebhooksApi } from './generated/apis/webhooks-api'
 
 // Export all models/DTOs
 export * from '@/api/generated/models'
 
 // Helper function to create API instances with your axios client
 export function createApiInstance<
-  T extends new (configuration?: any, basePath?: string, axios?: any) => any
+  T extends new (
+    configuration?: Configuration,
+    basePath?: string,
+    axios?: AxiosInstance
+  ) => unknown
 >(ApiClass: T): InstanceType<T> {
   return new ApiClass(apiConfiguration, undefined, apiClient) as InstanceType<T>
+}
+
+export function RulesApiInstance(): RulesApiInterface {
+  return createApiInstance(RulesApi)
+}
+
+export function BadgesApiInstance(): BadgesApiInterface {
+  return createApiInstance(BadgesApi)
+}
+
+export function TrophiesApiInstance(): TrophiesApiInterface {
+  return createApiInstance(TrophiesApi)
+}
+
+export function LevelsApiInstance(): LevelsApiInterface {
+  return createApiInstance(LevelsApi)
+}
+
+export function PointCategoriesApiInstance(): PointCategoriesApiInterface {
+  return createApiInstance(PointCategoriesApi)
 }

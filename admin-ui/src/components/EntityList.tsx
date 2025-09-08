@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card, Table, Tag, Button, Space, Typography, Spin, Alert } from 'antd'
+import { Card, Table, Button, Space, Typography, Alert } from 'antd'
 import { EyeOutlined } from '@ant-design/icons'
 import type { ColumnsType } from 'antd/es/table'
 
@@ -8,8 +8,8 @@ const { Title, Text } = Typography
 export interface EntityListItem {
   id: string
   name: string
-  description: string
-  [key: string]: any
+  description: string | undefined
+  [key: string]: string | number | boolean | object | undefined
 }
 
 interface EntityListProps {
@@ -83,7 +83,7 @@ const EntityList: React.FC<EntityListProps> = ({
           pageSize: 10,
           showSizeChanger: true,
           showQuickJumper: true,
-          showTotal: (total, range) =>
+          showTotal: (total: number, range: [number, number]) =>
             `${range[0]}-${range[1]} of ${total} items`,
         }}
         locale={{

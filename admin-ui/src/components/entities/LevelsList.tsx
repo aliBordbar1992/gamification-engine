@@ -2,10 +2,7 @@ import React from 'react'
 import { Tag } from 'antd'
 import EntityList from '../EntityList'
 import { useLevels } from '@/hooks/useEntities'
-import type { CreateLevelDto } from '@/api/generated/models'
-
-// Type alias for better readability
-type Level = CreateLevelDto
+import type { LevelDto } from '@/api/generated/models'
 
 interface LevelsListProps {
   onViewDetails: (id: string) => void
@@ -19,13 +16,8 @@ const LevelsList: React.FC<LevelsListProps> = ({ onViewDetails }) => {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
-      sorter: (a: Level, b: Level) => a.name.localeCompare(b.name),
-    },
-    {
-      title: 'Description',
-      dataIndex: 'description',
-      key: 'description',
-      ellipsis: true,
+      sorter: (a: LevelDto, b: LevelDto) =>
+        a.name?.localeCompare(b.name ?? '') ?? 0,
     },
     {
       title: 'Category',
@@ -39,10 +31,11 @@ const LevelsList: React.FC<LevelsListProps> = ({ onViewDetails }) => {
       dataIndex: 'minPoints',
       key: 'minPoints',
       width: 120,
-      sorter: (a: Level, b: Level) => a.minPoints - b.minPoints,
-      render: (points: number) => (
+      sorter: (a: LevelDto, b: LevelDto) =>
+        a.minPoints ? (b.minPoints ? a.minPoints - b.minPoints : 1) : -1,
+      render: (points: number | undefined) => (
         <span style={{ fontFamily: 'monospace' }}>
-          {points.toLocaleString()}
+          {points?.toLocaleString() ?? ''}
         </span>
       ),
     },
@@ -51,7 +44,13 @@ const LevelsList: React.FC<LevelsListProps> = ({ onViewDetails }) => {
   return (
     <EntityList
       title="Levels"
-      data={levels}
+      data={levels.map((level: LevelDto | undefined) => ({
+        id: level?.id ?? '',
+        name: level?.name ?? '',
+        description: undefined,
+        category: level?.category ?? '',
+        minPoints: level?.minPoints ?? 0,
+      }))}
       loading={isLoading}
       error={error}
       columns={columns}

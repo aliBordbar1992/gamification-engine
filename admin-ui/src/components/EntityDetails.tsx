@@ -7,7 +7,6 @@ import {
   Typography,
   Spin,
   Alert,
-  Tag,
 } from 'antd'
 import { ArrowLeftOutlined } from '@ant-design/icons'
 
@@ -82,7 +81,13 @@ const EntityDetails: React.FC<EntityDetailsProps> = ({
         <Title level={2}>{title}</Title>
       </div>
 
-      <Descriptions bordered column={{ xs: 1, sm: 2, md: 3 }} items={data} />
+      <Descriptions bordered column={{ xs: 1, sm: 2, md: 3 }}>
+        {data.map((item, index) => (
+          <Descriptions.Item key={index} label={item.label} span={item.span}>
+            {item.value}
+          </Descriptions.Item>
+        ))}
+      </Descriptions>
     </Card>
   )
 }

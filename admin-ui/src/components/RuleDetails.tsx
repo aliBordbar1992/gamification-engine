@@ -10,29 +10,24 @@ import {
   Col,
   Descriptions,
   Badge,
-  Tooltip,
   Divider,
 } from 'antd'
 import {
   ArrowLeftOutlined,
   CopyOutlined,
-  PlayCircleOutlined,
-  PauseCircleOutlined,
   EditOutlined,
 } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
-import { useRule } from '@/hooks/useGeneratedRules'
-import type { CreateRuleDto } from '@/api/generated/models'
-
-// Type alias for better readability
-type Rule = CreateRuleDto
+import { useRule } from '@/hooks/useRules'
+import type { RuleDto, ConditionDto } from '@/api/generated/models'
+import type { RewardDto } from '@/api/generated/models'
 
 const { Title, Text, Paragraph } = Typography
 const { TabPane } = Tabs
 
 interface RuleDetailsProps {
   ruleId: string
-  onEdit?: (rule: Rule) => void
+  onEdit?: (rule: RuleDto) => void
 }
 
 const RuleDetails: React.FC<RuleDetailsProps> = ({ ruleId, onEdit }) => {
@@ -58,14 +53,14 @@ const RuleDetails: React.FC<RuleDetailsProps> = ({ ruleId, onEdit }) => {
     }
   }
 
-  const convertToYaml = (obj: any, indent = 0): string => {
+  const convertToYaml = (obj: RuleDto, indent = 0): string => {
     const spaces = '  '.repeat(indent)
     let yaml = ''
 
     for (const [key, value] of Object.entries(obj)) {
       if (Array.isArray(value)) {
         yaml += `${spaces}${key}:\n`
-        value.forEach((item, index) => {
+        value.forEach((item) => {
           if (typeof item === 'object' && item !== null) {
             yaml += `${spaces}  - ${key === 'triggers' ? item : ''}\n`
             if (key !== 'triggers') {
@@ -184,11 +179,11 @@ const RuleDetails: React.FC<RuleDetailsProps> = ({ ruleId, onEdit }) => {
                       />
                     </Descriptions.Item>
                     <Descriptions.Item label="Created">
-                      {new Date(rule.createdAt).toLocaleString()}
+                      {new Date(rule.createdAt ?? '').toLocaleString()}
                     </Descriptions.Item>
                     {rule.updatedAt && (
                       <Descriptions.Item label="Updated">
-                        {new Date(rule.updatedAt).toLocaleString()}
+                        {new Date(rule.updatedAt ?? '').toLocaleString()}
                       </Descriptions.Item>
                     )}
                   </Descriptions>
@@ -197,7 +192,7 @@ const RuleDetails: React.FC<RuleDetailsProps> = ({ ruleId, onEdit }) => {
               <Col span={12}>
                 <Card title="Triggers" size="small">
                   <Space wrap>
-                    {rule.triggers.map((trigger) => (
+                    {rule.triggers?.map((trigger: string) => (
                       <Tag key={trigger} color="blue">
                         {trigger}
                       </Tag>
@@ -210,34 +205,41 @@ const RuleDetails: React.FC<RuleDetailsProps> = ({ ruleId, onEdit }) => {
             <Row gutter={24} style={{ marginTop: 16 }}>
               <Col span={12}>
                 <Card title="Conditions" size="small">
-                  {rule.conditions.length > 0 ? (
+                  {rule.conditions && rule.conditions.length > 0 ? (
                     <Space direction="vertical" style={{ width: '100%' }}>
-                      {rule.conditions.map((condition, index) => (
-                        <Card
-                          key={index}
-                          size="small"
-                          style={{ backgroundColor: '#fafafa' }}
-                        >
-                          <Text strong>{condition.type}</Text>
-                          {Object.keys(condition.parameters).length > 0 && (
-                            <div style={{ marginTop: 8 }}>
-                              <Text type="secondary">Parameters:</Text>
-                              <pre
-                                style={{
-                                  marginTop: 4,
-                                  fontSize: '12px',
-                                  backgroundColor: '#fff',
-                                  padding: 8,
-                                  borderRadius: 4,
-                                  border: '1px solid #d9d9d9',
-                                }}
-                              >
-                                {JSON.stringify(condition.parameters, null, 2)}
-                              </pre>
-                            </div>
-                          )}
-                        </Card>
-                      ))}
+                      {rule.conditions?.map(
+                        (condition: ConditionDto, index: number) => (
+                          <Card
+                            key={index}
+                            size="small"
+                            style={{ backgroundColor: '#fafafa' }}
+                          >
+                            <Text strong>{condition.type}</Text>
+                            {condition.parameters &&
+                              Object.keys(condition.parameters).length > 0 && (
+                                <div style={{ marginTop: 8 }}>
+                                  <Text type="secondary">Parameters:</Text>
+                                  <pre
+                                    style={{
+                                      marginTop: 4,
+                                      fontSize: '12px',
+                                      backgroundColor: '#fff',
+                                      padding: 8,
+                                      borderRadius: 4,
+                                      border: '1px solid #d9d9d9',
+                                    }}
+                                  >
+                                    {JSON.stringify(
+                                      condition.parameters,
+                                      null,
+                                      2
+                                    )}
+                                  </pre>
+                                </div>
+                              )}
+                          </Card>
+                        )
+                      )}
                     </Space>
                   ) : (
                     <Text type="secondary">No conditions defined</Text>
@@ -246,9 +248,9 @@ const RuleDetails: React.FC<RuleDetailsProps> = ({ ruleId, onEdit }) => {
               </Col>
               <Col span={12}>
                 <Card title="Rewards" size="small">
-                  {rule.rewards.length > 0 ? (
+                  {rule.rewards && rule.rewards.length > 0 ? (
                     <Space direction="vertical" style={{ width: '100%' }}>
-                      {rule.rewards.map((reward, index) => (
+                      {rule.rewards.map((reward: RewardDto, index: number) => (
                         <Card
                           key={index}
                           size="small"
@@ -261,23 +263,24 @@ const RuleDetails: React.FC<RuleDetailsProps> = ({ ruleId, onEdit }) => {
                               <Text type="secondary">({reward.amount})</Text>
                             )}
                           </Space>
-                          {Object.keys(reward.parameters).length > 0 && (
-                            <div style={{ marginTop: 8 }}>
-                              <Text type="secondary">Parameters:</Text>
-                              <pre
-                                style={{
-                                  marginTop: 4,
-                                  fontSize: '12px',
-                                  backgroundColor: '#fff',
-                                  padding: 8,
-                                  borderRadius: 4,
-                                  border: '1px solid #d9d9d9',
-                                }}
-                              >
-                                {JSON.stringify(reward.parameters, null, 2)}
-                              </pre>
-                            </div>
-                          )}
+                          {reward.parameters &&
+                            Object.keys(reward.parameters).length > 0 && (
+                              <div style={{ marginTop: 8 }}>
+                                <Text type="secondary">Parameters:</Text>
+                                <pre
+                                  style={{
+                                    marginTop: 4,
+                                    fontSize: '12px',
+                                    backgroundColor: '#fff',
+                                    padding: 8,
+                                    borderRadius: 4,
+                                    border: '1px solid #d9d9d9',
+                                  }}
+                                >
+                                  {JSON.stringify(reward.parameters, null, 2)}
+                                </pre>
+                              </div>
+                            )}
                         </Card>
                       ))}
                     </Space>

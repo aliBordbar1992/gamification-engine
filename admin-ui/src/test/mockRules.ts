@@ -99,11 +99,15 @@ export const mockBadges = [
     id: 'first-comment',
     name: 'First Comment',
     description: 'Awarded for first comment',
+    image: '/images/badges/first-comment.png',
+    visible: true,
   },
   {
     id: 'veteran',
     name: 'Veteran',
     description: 'Awarded for long-term participation',
+    image: '/images/badges/veteran.png',
+    visible: true,
   },
 ]
 

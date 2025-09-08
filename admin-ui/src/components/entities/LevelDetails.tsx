@@ -3,10 +3,6 @@ import { Tag } from 'antd'
 import EntityDetails from '../EntityDetails'
 import { useLevel } from '@/hooks/useEntities'
 import type { EntityDetailsItem } from '../EntityDetails'
-import type { CreateLevelDto } from '@/api/generated/models'
-
-// Type alias for better readability
-type Level = CreateLevelDto
 
 interface LevelDetailsProps {
   id: string
@@ -20,18 +16,13 @@ const LevelDetails: React.FC<LevelDetailsProps> = ({ id, onBack }) => {
     ? [
         {
           label: 'ID',
-          value: level.id,
+          value: level.id ?? '',
           span: 1,
         },
         {
           label: 'Name',
-          value: level.name,
+          value: level.name ?? '',
           span: 2,
-        },
-        {
-          label: 'Description',
-          value: level.description,
-          span: 3,
         },
         {
           label: 'Category',
@@ -48,7 +39,7 @@ const LevelDetails: React.FC<LevelDetailsProps> = ({ id, onBack }) => {
                 fontWeight: 'bold',
               }}
             >
-              {level.minPoints.toLocaleString()}
+              {level.minPoints?.toLocaleString() ?? ''}
             </span>
           ),
           span: 2,
