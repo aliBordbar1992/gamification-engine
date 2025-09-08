@@ -79,6 +79,25 @@ Ready to proceed to Phase 2 - Read-Only Operations (Safe by Default)
 - TypeScript interfaces for all entity types
 - Responsive design with proper loading and error states
 
+### Recently Completed Tasks:
+- ✅ Users: ID lookup; show points by category, badges, trophies, level
+- ✅ Leaderboards: implement API endpoints provided by backend; show with table + mini chart
+
+### Leaderboards Implementation Details:
+- ✅ Leaderboards page with comprehensive functionality
+- ✅ Leaderboard table component with rank icons and formatting
+- ✅ Leaderboard chart component with statistics display
+- ✅ Leaderboard selector with type, category, and time range filters
+- ✅ Leaderboard API integration with all backend endpoints
+- ✅ React Query hooks for leaderboard data management
+- ✅ Pagination support for large leaderboards
+- ✅ Refresh functionality for cache invalidation
+- ✅ Support for different leaderboard types (points, badges, trophies, levels)
+- ✅ Time range filtering (daily, weekly, monthly, all-time)
+- ✅ Category-based filtering for points and levels leaderboards
+- ✅ User rank lookup functionality
+- ✅ Responsive design with proper loading and error states
+- ✅ Integration with existing navigation and routing
+
 ### Remaining Tasks:
-- [ ] Users: ID lookup; show points by category, badges, trophies, level
-- [ ] Leaderboards: query by category + time range; table + optional mini chart
+- [ ] Complete Phase 2 by ensuring all API clients and query hooks are implemented

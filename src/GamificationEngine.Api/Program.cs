@@ -83,6 +83,7 @@ builder.Services.AddOpenApi();
 // Register application services
 builder.Services.AddScoped<IEventIngestionService, EventIngestionService>();
 builder.Services.AddScoped<IUserStateService, UserStateService>();
+builder.Services.AddScoped<ILeaderboardService, LeaderboardService>();
 builder.Services.AddScoped<IRuleManagementService, RuleManagementService>();
 builder.Services.AddScoped<IEntityManagementService, EntityManagementService>();
 builder.Services.AddScoped<IWebhookService, WebhookService>();
@@ -93,6 +94,7 @@ builder.Services.AddScoped<IConfigurationLoader, YamlConfigurationLoader>();
 // Register infrastructure services
 builder.Services.AddSingleton<IEventRepository, EventRepository>();
 builder.Services.AddSingleton<IEventQueue, InMemoryEventQueue>();
+builder.Services.AddSingleton<ILeaderboardRepository, InMemoryLeaderboardRepository>();
 builder.Services.AddSingleton<IUserStateRepository, InMemoryUserStateRepository>();
 builder.Services.AddSingleton<IBadgeRepository, InMemoryBadgeRepository>();
 builder.Services.AddSingleton<ITrophyRepository, InMemoryTrophyRepository>();

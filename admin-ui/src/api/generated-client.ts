@@ -10,6 +10,7 @@ import type {
   TrophiesApiInterface,
   PointCategoriesApiInterface,
   UsersApiInterface,
+  LeaderboardsApiInterface,
 } from './generated/api'
 import { BadgesApi } from './generated/apis/badges-api'
 import { TrophiesApi } from './generated/apis/trophies-api'
@@ -17,6 +18,7 @@ import { LevelsApi } from './generated/apis/levels-api'
 import { RulesApi } from './generated/apis/rules-api'
 import { PointCategoriesApi } from './generated/apis/point-categories-api'
 import { UsersApi } from './generated/apis/users-api'
+import { LeaderboardsApi } from './generated/apis/leaderboards-api'
 import type { AxiosInstance } from 'axios'
 
 // Create configuration for the generated API client
@@ -66,4 +68,8 @@ export function PointCategoriesApiInstance(): PointCategoriesApiInterface {
 
 export function UsersApiInstance(): UsersApiInterface {
   return createApiInstance(UsersApi)
+}
+
+export function LeaderboardsApiInstance(): LeaderboardsApiInterface {
+  return createApiInstance(LeaderboardsApi)
 }
