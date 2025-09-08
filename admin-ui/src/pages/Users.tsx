@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
-import { Typography, Space, Alert } from 'antd'
+import { Typography, Space, Divider } from 'antd'
 import { UserOutlined } from '@ant-design/icons'
 import UserLookup from '@/components/users/UserLookup'
 import UserDetails from '@/components/users/UserDetails'
+import UsersList from '@/components/users/UsersList'
 import { useUserState } from '@/hooks/useUsers'
 
 const { Title } = Typography
@@ -13,16 +14,11 @@ const Users: React.FC = () => {
   const { 
     data: userState, 
     isLoading, 
-    error,
-    refetch 
+    error
   } = useUserState(selectedUserId || '')
 
   const handleUserFound = (userId: string) => {
     setSelectedUserId(userId)
-  }
-
-  const handleClearUser = () => {
-    setSelectedUserId(null)
   }
 
   return (
@@ -34,9 +30,13 @@ const Users: React.FC = () => {
             User Management
           </Title>
           <Typography.Text type="secondary">
-            Look up user gamification data including points, badges, trophies, and levels.
+            Browse all users or look up specific user gamification data including points, badges, trophies, and levels.
           </Typography.Text>
         </div>
+
+        <UsersList onUserSelect={handleUserFound} />
+
+        <Divider />
 
         <UserLookup 
           onUserFound={handleUserFound}
@@ -44,7 +44,7 @@ const Users: React.FC = () => {
           error={error?.message}
         />
 
-        {selectedUserId && (
+        {selectedUserId && userState && (
           <div>
             <UserDetails 
               userState={userState}

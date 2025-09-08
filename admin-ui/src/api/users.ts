@@ -4,8 +4,10 @@ import type {
   BadgeDto,
   TrophyDto,
   LevelDto,
+  UserSummariesDto,
 } from './generated/models'
 import { UsersApiInstance } from './generated-client'
+import apiClient from './client'
 
 // Users API
 export const usersApi = {
@@ -75,6 +77,18 @@ export const usersApi = {
       userId,
       page,
       pageSize
+    )
+    return response.data
+  },
+
+  // Get summarized list of all users with pagination
+  getUsers: async (
+    page: number = 1,
+    pageSize: number = 20
+  ): Promise<UserSummariesDto> => {
+    // Workaround for malformed URL issue in generated client
+    const response = await apiClient.get(
+      `/api/Users?page=${page}&pageSize=${pageSize}`
     )
     return response.data
   },

@@ -4,6 +4,7 @@ import { usersApi } from '@/api/users'
 // Query keys
 export const usersKeys = {
   all: ['users'] as const,
+  list: (page?: number, pageSize?: number) => [...usersKeys.all, 'list', page, pageSize] as const,
   state: (userId: string) => [...usersKeys.all, 'state', userId] as const,
   points: (userId: string) => [...usersKeys.all, 'points', userId] as const,
   pointsByCategory: (userId: string, category: string) =>
@@ -18,6 +19,16 @@ export const usersKeys = {
 }
 
 // User hooks
+export const useUsers = (page: number = 1, pageSize: number = 20) => {
+  return useQuery({
+    queryKey: usersKeys.list(page, pageSize),
+    queryFn: async () => {
+      return await usersApi.getUsers(page, pageSize)
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  })
+}
+
 export const useUserState = (userId: string) => {
   return useQuery({
     queryKey: usersKeys.state(userId),
