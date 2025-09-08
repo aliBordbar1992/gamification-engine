@@ -17,6 +17,7 @@ import {
   UserOutlined,
   TrophyOutlined,
   CrownOutlined,
+  HistoryOutlined,
 } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
 import { useUsers } from '@/hooks/useUsers'
@@ -32,9 +33,13 @@ const { Search } = Input
 
 interface UsersListProps {
   onViewUser?: (user: UserSummaryDto) => void
+  onViewRewardHistory?: (user: UserSummaryDto) => void
 }
 
-const UsersList: React.FC<UsersListProps> = ({ onViewUser }) => {
+const UsersList: React.FC<UsersListProps> = ({
+  onViewUser,
+  onViewRewardHistory,
+}) => {
   const navigate = useNavigate()
   const [filters, setFilters] = useState<UsersFilters>({})
   const [searchText, setSearchText] = useState('')
@@ -48,6 +53,12 @@ const UsersList: React.FC<UsersListProps> = ({ onViewUser }) => {
       onViewUser(user)
     } else {
       navigate(`/users/${user.userId}`)
+    }
+  }
+
+  const handleViewRewardHistory = (user: UserSummaryDto) => {
+    if (onViewRewardHistory) {
+      onViewRewardHistory(user)
     }
   }
 
@@ -148,7 +159,7 @@ const UsersList: React.FC<UsersListProps> = ({ onViewUser }) => {
     {
       title: 'Actions',
       key: 'actions',
-      width: 120,
+      width: 180,
       render: (_: unknown, record: UserSummaryDto) => (
         <Space>
           <Button
@@ -157,6 +168,13 @@ const UsersList: React.FC<UsersListProps> = ({ onViewUser }) => {
             onClick={() => handleViewUser(record)}
           >
             View
+          </Button>
+          <Button
+            type="link"
+            icon={<HistoryOutlined />}
+            onClick={() => handleViewRewardHistory(record)}
+          >
+            History
           </Button>
         </Space>
       ),

@@ -73,10 +73,9 @@ export const usersApi = {
     page: number = 1,
     pageSize: number = 20
   ): Promise<UserRewardHistoryDto> => {
-    const response = await UsersApiInstance().apiUsersUserIdRewardsHistoryGet(
-      userId,
-      page,
-      pageSize
+    // Workaround for malformed URL issue in generated client
+    const response = await apiClient.get(
+      `/api/Users/${userId}/rewards/history?page=${page}&pageSize=${pageSize}`
     )
     return response.data
   },

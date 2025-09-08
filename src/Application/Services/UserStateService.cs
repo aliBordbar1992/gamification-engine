@@ -14,17 +14,20 @@ public class UserStateService : IUserStateService
     private readonly IBadgeRepository _badgeRepository;
     private readonly ITrophyRepository _trophyRepository;
     private readonly ILevelRepository _levelRepository;
+    private readonly IRewardHistoryRepository _rewardHistoryRepository;
 
     public UserStateService(
         IUserStateRepository userStateRepository,
         IBadgeRepository badgeRepository,
         ITrophyRepository trophyRepository,
-        ILevelRepository levelRepository)
+        ILevelRepository levelRepository,
+        IRewardHistoryRepository rewardHistoryRepository)
     {
         _userStateRepository = userStateRepository ?? throw new ArgumentNullException(nameof(userStateRepository));
         _badgeRepository = badgeRepository ?? throw new ArgumentNullException(nameof(badgeRepository));
         _trophyRepository = trophyRepository ?? throw new ArgumentNullException(nameof(trophyRepository));
         _levelRepository = levelRepository ?? throw new ArgumentNullException(nameof(levelRepository));
+        _rewardHistoryRepository = rewardHistoryRepository ?? throw new ArgumentNullException(nameof(rewardHistoryRepository));
     }
 
     public async Task<Result<UserStateDto, string>> GetUserStateAsync(string userId, CancellationToken cancellationToken = default)
@@ -267,14 +270,38 @@ public class UserStateService : IUserStateService
             if (pageSize < 1 || pageSize > 1000)
                 return Result<UserRewardHistoryDto, string>.Failure("Page size must be between 1 and 1000");
 
-            // TODO: Implement reward history repository and logic
-            // For now, return empty history
-            var totalPages = (int)Math.Ceiling(0.0 / pageSize);
+            // Calculate pagination
+            var offset = (page - 1) * pageSize;
+
+            // Get reward history from repository
+            var rewardHistories = await _rewardHistoryRepository.GetByUserIdAsync(userId, pageSize, offset, cancellationToken);
+            var rewardHistoriesList = rewardHistories.ToList();
+
+            // Get total count for pagination (we need to get all records to count them)
+            // Note: This is not optimal for large datasets, but the repository interface doesn't provide a count method
+            var allRewardHistories = await _rewardHistoryRepository.GetByUserIdAsync(userId, int.MaxValue, 0, cancellationToken);
+            var totalCount = allRewardHistories.Count();
+            var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+
+            // Convert to DTOs
+            var entries = rewardHistoriesList.Select(rh => new UserRewardHistoryEntryDto
+            {
+                Id = rh.RewardHistoryId,
+                UserId = rh.UserId,
+                RewardType = rh.RewardType,
+                RewardId = rh.RewardId,
+                RewardName = GetRewardName(rh.RewardId, rh.RewardType),
+                PointsAmount = ExtractPointsAmount(rh),
+                PointCategory = ExtractPointCategory(rh),
+                AwardedAt = rh.AwardedAt.DateTime,
+                TriggerEventType = ExtractTriggerEventType(rh.TriggerEventId),
+                TriggerEventId = rh.TriggerEventId
+            }).ToList();
 
             return Result<UserRewardHistoryDto, string>.Success(new UserRewardHistoryDto
             {
-                Entries = new List<UserRewardHistoryEntryDto>(),
-                TotalCount = 0,
+                Entries = entries,
+                TotalCount = totalCount,
                 Page = page,
                 PageSize = pageSize,
                 TotalPages = totalPages
@@ -351,6 +378,112 @@ public class UserStateService : IUserStateService
             TrophyCount = trophies.IsSuccess ? trophies.Value.Count() : 0,
             PointsByCategory = userState.PointsByCategory.ToDictionary(kvp => kvp.Key, kvp => kvp.Value),
             CurrentLevelsByCategory = currentLevels.IsSuccess ? currentLevels.Value : new Dictionary<string, LevelDto>()
+        };
+    }
+
+    /// <summary>
+    /// Gets a human-readable name for a reward based on its ID and type
+    /// </summary>
+    private static string GetRewardName(string rewardId, string rewardType)
+    {
+        return rewardType.ToLower() switch
+        {
+            "points" => GetPointsRewardName(rewardId),
+            "badge" => GetBadgeRewardName(rewardId),
+            "trophy" => GetTrophyRewardName(rewardId),
+            _ => rewardId
+        };
+    }
+
+    /// <summary>
+    /// Gets a human-readable name for points rewards
+    /// </summary>
+    private static string GetPointsRewardName(string rewardId)
+    {
+        return rewardId switch
+        {
+            "reward-welcome-bonus" => "Welcome Bonus",
+            "reward-initial-credits" => "Initial Credits",
+            "reward-profile-completion" => "Profile Completion",
+            "reward-profile-completion-score" => "Profile Completion Score",
+            "reward-profile-completion-credits" => "Profile Completion Credits",
+            var id when id.StartsWith("reward-comment-") => "Comment Reward",
+            var id when id.StartsWith("reward-score-bonus-") => "Quality Comment Bonus",
+            var id when id.StartsWith("reward-credits-bonus-") => "Helpful Comment Bonus",
+            _ => rewardId
+        };
+    }
+
+    /// <summary>
+    /// Gets a human-readable name for badge rewards
+    /// </summary>
+    private static string GetBadgeRewardName(string rewardId)
+    {
+        return rewardId switch
+        {
+            "reward-commenter-badge" => "Commenter Badge",
+            "reward-profile-badge" => "Profile Completion Badge",
+            _ => rewardId
+        };
+    }
+
+    /// <summary>
+    /// Gets a human-readable name for trophy rewards
+    /// </summary>
+    private static string GetTrophyRewardName(string rewardId)
+    {
+        return rewardId; // For now, just return the ID
+    }
+
+    /// <summary>
+    /// Extracts the points amount from reward history details
+    /// </summary>
+    private static long? ExtractPointsAmount(Domain.Rewards.RewardHistory rewardHistory)
+    {
+        if (rewardHistory.Details.TryGetValue("amount", out var amountObj))
+        {
+            return amountObj switch
+            {
+                long l => l,
+                int i => i,
+                string s when long.TryParse(s, out var parsedLong) => parsedLong,
+                string s when int.TryParse(s, out var parsedInt) => parsedInt,
+                _ => null
+            };
+        }
+        return null;
+    }
+
+    /// <summary>
+    /// Extracts the point category from reward history details
+    /// </summary>
+    private static string? ExtractPointCategory(Domain.Rewards.RewardHistory rewardHistory)
+    {
+        if (rewardHistory.Details.TryGetValue("category", out var categoryObj))
+        {
+            return categoryObj switch
+            {
+                string s => s,
+                _ => categoryObj?.ToString()
+            };
+        }
+        return null;
+    }
+
+    /// <summary>
+    /// Extracts the trigger event type from the trigger event ID
+    /// </summary>
+    private static string? ExtractTriggerEventType(string triggerEventId)
+    {
+        return triggerEventId switch
+        {
+            "event-welcome" => "Welcome",
+            "event-registration" => "Registration",
+            "event-profile-complete" => "Profile Complete",
+            var id when id.StartsWith("event-comment-") => "Comment",
+            var id when id.StartsWith("event-quality-comment-") => "Quality Comment",
+            var id when id.StartsWith("event-helpful-comment-") => "Helpful Comment",
+            _ => null
         };
     }
 }
