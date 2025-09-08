@@ -14,4 +14,12 @@ public interface IDatabaseSeederService
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Result indicating success and whether seeding was performed</returns>
     Task<Result<bool, string>> SeedIfEmptyAsync(string configurationPath, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Seeds UserState data from seed file if repository is empty
+    /// </summary>
+    /// <param name="userStateSeedFilePath">Path to the UserState seed file</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Result indicating success and whether seeding was performed</returns>
+    Task<Result<bool, string>> SeedUserStatesIfEmptyAsync(string userStateSeedFilePath, CancellationToken cancellationToken = default);
 }

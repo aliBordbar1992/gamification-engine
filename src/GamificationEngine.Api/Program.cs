@@ -87,6 +87,7 @@ builder.Services.AddScoped<IRuleManagementService, RuleManagementService>();
 builder.Services.AddScoped<IEntityManagementService, EntityManagementService>();
 builder.Services.AddScoped<IWebhookService, WebhookService>();
 builder.Services.AddScoped<IDatabaseSeederService, DatabaseSeederService>();
+builder.Services.AddScoped<IUserStateSeederService, UserStateSeederService>();
 builder.Services.AddScoped<IConfigurationLoader, YamlConfigurationLoader>();
 
 // Register infrastructure services
@@ -191,6 +192,43 @@ public partial class Program
             else
             {
                 Console.WriteLine($"⚠️ Configuration file not found at: {configPath}");
+            }
+
+            // Seed UserState data
+            var userStateSeedPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "userstate-seed-data.yml");
+            if (!File.Exists(userStateSeedPath))
+            {
+                // Try alternative path
+                userStateSeedPath = Path.Combine(Directory.GetCurrentDirectory(), "userstate-seed-data.yml");
+            }
+
+            // Try absolute path from project root
+            if (!File.Exists(userStateSeedPath))
+            {
+                var projectRoot = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "..", ".."));
+                userStateSeedPath = Path.Combine(projectRoot, "userstate-seed-data.yml");
+            }
+
+            if (File.Exists(userStateSeedPath))
+            {
+                Console.WriteLine($"📁 Found UserState seed file at: {userStateSeedPath}");
+                var userStateResult = await seeder.SeedUserStatesIfEmptyAsync(userStateSeedPath);
+                if (userStateResult.IsSuccess && userStateResult.Value)
+                {
+                    Console.WriteLine("✅ UserState data seeded successfully.");
+                }
+                else if (userStateResult.IsSuccess && !userStateResult.Value)
+                {
+                    Console.WriteLine("ℹ️ UserState data already exists, skipping seeding.");
+                }
+                else
+                {
+                    Console.WriteLine($"⚠️ Failed to seed UserState data: {userStateResult.Error}");
+                }
+            }
+            else
+            {
+                Console.WriteLine($"⚠️ UserState seed file not found at: {userStateSeedPath}");
             }
         }
         catch (Exception ex)

@@ -75,4 +75,13 @@ public interface IUserStateService
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>User reward history</returns>
     Task<Result<UserRewardHistoryDto, string>> GetUserRewardHistoryAsync(string userId, int page = 1, int pageSize = 50, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Gets summarized list of all users with pagination
+    /// </summary>
+    /// <param name="page">Page number (1-based)</param>
+    /// <param name="pageSize">Number of entries per page (1-1000)</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Paginated user summaries</returns>
+    Task<Result<UserSummariesDto, string>> GetUserSummariesAsync(int page = 1, int pageSize = 50, CancellationToken cancellationToken = default);
 }

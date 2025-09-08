@@ -48,4 +48,11 @@ public class CachedUserStateRepository : IUserStateRepository
         await _cacheService.SetAsync(cacheKey, userState, _defaultCacheExpiration, cancellationToken);
     }
 
+    public async Task<IEnumerable<UserState>> GetAllAsync(CancellationToken cancellationToken = default)
+    {
+        // For GetAllAsync, we don't cache the entire list as it could be large and change frequently
+        // We just delegate to the inner repository
+        return await _innerRepository.GetAllAsync(cancellationToken);
+    }
+
 }

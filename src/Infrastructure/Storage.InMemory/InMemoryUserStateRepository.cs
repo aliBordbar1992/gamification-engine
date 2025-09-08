@@ -21,4 +21,9 @@ public class InMemoryUserStateRepository : IUserStateRepository
         _userStates[userState.UserId] = userState;
         return Task.CompletedTask;
     }
+
+    public Task<IEnumerable<UserState>> GetAllAsync(CancellationToken cancellationToken = default)
+    {
+        return Task.FromResult<IEnumerable<UserState>>(_userStates.Values);
+    }
 }

@@ -1,0 +1,199 @@
+# UserState Seed Data
+# This file contains fake user data for seeding the gamification engine database
+# This data is separate from configuration as it represents actual user states,
+# not engine configuration settings.
+
+# Sample users with various gamification states
+users:
+  # New user - just started
+  - user_id: "user-alice-newcomer"
+    points_by_category:
+      xp: 25
+      score: 0
+      credits: 10
+    badges: []
+    trophies: []
+
+  # Active commenter - earned comment points and badge
+  - user_id: "user-bob-commenter"
+    points_by_category:
+      xp: 150
+      score: 50
+      credits: 75
+    badges:
+      - "badge-commenter"
+    trophies: []
+
+  # Profile completion enthusiast
+  - user_id: "user-carol-complete"
+    points_by_category:
+      xp: 220
+      score: 100
+      credits: 110
+    badges:
+      - "badge-commenter"
+      - "badge-completed-profile"
+    trophies: []
+
+  # Special offer buyer - completed the sequence
+  - user_id: "user-david-buyer"
+    points_by_category:
+      xp: 300
+      score: 200
+      credits: 150
+    badges:
+      - "badge-commenter"
+      - "badge-completed-profile"
+      - "badge-special-offer-buyer"
+    trophies: []
+
+  # Power user - multiple purchases, approaching badge collector
+  - user_id: "user-eve-poweruser"
+    points_by_category:
+      xp: 850
+      score: 650
+      credits: 325
+    badges:
+      - "badge-commenter"
+      - "badge-completed-profile"
+      - "badge-special-offer-buyer"
+      - "badge-bronze-medallion"
+    trophies: []
+
+  # Bookaholic - read many books
+  - user_id: "user-frank-reader"
+    points_by_category:
+      xp: 1200
+      score: 800
+      credits: 400
+    badges:
+      - "badge-commenter"
+      - "badge-completed-profile"
+      - "badge-bookaholic"
+    trophies: []
+
+  # Badge collector - earned trophy
+  - user_id: "user-grace-collector"
+    points_by_category:
+      xp: 2100
+      score: 1500
+      credits: 750
+    badges:
+      - "badge-commenter"
+      - "badge-completed-profile"
+      - "badge-special-offer-buyer"
+      - "badge-bronze-medallion"
+      - "badge-bookaholic"
+      - "badge-streak-crusher"
+    trophies:
+      - "trophy-badge-collector"
+
+  # High-level user - legendary status
+  - user_id: "user-henry-legendary"
+    points_by_category:
+      xp: 4000
+      score: 3000
+      credits: 1500
+    badges:
+      - "badge-commenter"
+      - "badge-completed-profile"
+      - "badge-special-offer-buyer"
+      - "badge-bronze-medallion"
+      - "badge-bookaholic"
+      - "badge-streak-crusher"
+    trophies:
+      - "trophy-badge-collector"
+
+  # User with penalties - received dislikes
+  - user_id: "user-iris-penalized"
+    points_by_category:
+      xp: 450 # Had more but lost points due to dislikes
+      score: 200
+      credits: 100
+    badges:
+      - "badge-commenter"
+      - "badge-completed-profile"
+    trophies: []
+
+  # Dispute user - has pending disputes
+  - user_id: "user-jack-disputed"
+    points_by_category:
+      xp: 300 # Lost points due to pending disputes
+      score: 150
+      credits: 75
+    badges:
+      - "badge-commenter"
+    trophies: []
+
+  # Test user for leaderboard testing
+  - user_id: "user-kate-leaderboard"
+    points_by_category:
+      xp: 5000
+      score: 4500
+      credits: 2250
+    badges:
+      - "badge-commenter"
+      - "badge-completed-profile"
+      - "badge-special-offer-buyer"
+      - "badge-bronze-medallion"
+      - "badge-bookaholic"
+      - "badge-streak-crusher"
+    trophies:
+      - "trophy-badge-collector"
+
+  # Another high scorer for leaderboard
+  - user_id: "user-luke-competitor"
+    points_by_category:
+      xp: 4800
+      score: 4200
+      credits: 2100
+    badges:
+      - "badge-commenter"
+      - "badge-completed-profile"
+      - "badge-special-offer-buyer"
+      - "badge-bronze-medallion"
+      - "badge-bookaholic"
+    trophies:
+      - "trophy-badge-collector"
+
+  # Simulation user for testing
+  - user_id: "sim-user-01"
+    points_by_category:
+      xp: 100
+      score: 50
+      credits: 25
+    badges:
+      - "badge-commenter"
+    trophies: []
+
+# Metadata about the seed data
+metadata:
+  description: "Sample user states for gamification engine testing and demonstration"
+  created_date: "2024-01-15"
+  total_users: 13
+  point_categories_used:
+    - "xp"
+    - "score"
+    - "credits"
+  badges_used:
+    - "badge-commenter"
+    - "badge-completed-profile"
+    - "badge-special-offer-buyer"
+    - "badge-bronze-medallion"
+    - "badge-bookaholic"
+    - "badge-streak-crusher"
+  trophies_used:
+    - "trophy-badge-collector"
+  scenarios_covered:
+    - "new_user"
+    - "commenter"
+    - "profile_completion"
+    - "special_offer_buyer"
+    - "power_user"
+    - "bookaholic"
+    - "badge_collector"
+    - "legendary_user"
+    - "penalized_user"
+    - "disputed_user"
+    - "leaderboard_competitors"
+    - "simulation_user"

@@ -19,6 +19,7 @@ public sealed class DatabaseSeederService : IDatabaseSeederService
     private readonly ILevelRepository _levelRepository;
     private readonly IRuleRepository _ruleRepository;
     private readonly IConfigurationLoader _configurationLoader;
+    private readonly IUserStateSeederService _userStateSeederService;
     private readonly ConditionFactory _conditionFactory;
     private readonly RewardFactory _rewardFactory;
 
@@ -28,7 +29,8 @@ public sealed class DatabaseSeederService : IDatabaseSeederService
         ITrophyRepository trophyRepository,
         ILevelRepository levelRepository,
         IRuleRepository ruleRepository,
-        IConfigurationLoader configurationLoader)
+        IConfigurationLoader configurationLoader,
+        IUserStateSeederService userStateSeederService)
     {
         _pointCategoryRepository = pointCategoryRepository ?? throw new ArgumentNullException(nameof(pointCategoryRepository));
         _badgeRepository = badgeRepository ?? throw new ArgumentNullException(nameof(badgeRepository));
@@ -36,6 +38,7 @@ public sealed class DatabaseSeederService : IDatabaseSeederService
         _levelRepository = levelRepository ?? throw new ArgumentNullException(nameof(levelRepository));
         _ruleRepository = ruleRepository ?? throw new ArgumentNullException(nameof(ruleRepository));
         _configurationLoader = configurationLoader ?? throw new ArgumentNullException(nameof(configurationLoader));
+        _userStateSeederService = userStateSeederService ?? throw new ArgumentNullException(nameof(userStateSeederService));
         _conditionFactory = new ConditionFactory();
         _rewardFactory = new RewardFactory();
     }
@@ -274,5 +277,43 @@ public sealed class DatabaseSeederService : IDatabaseSeederService
         // For now, return as-is. In a more sophisticated implementation,
         // we might want to validate and transform the parameters based on type
         return parameters;
+    }
+
+    /// <summary>
+    /// Seeds UserState data from seed file if repository is empty
+    /// </summary>
+    /// <param name="userStateSeedFilePath">Path to the UserState seed file</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Result indicating success and whether seeding was performed</returns>
+    public async Task<Result<bool, string>> SeedUserStatesIfEmptyAsync(string userStateSeedFilePath, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            if (!File.Exists(userStateSeedFilePath))
+            {
+                return Result.Failure<bool, string>($"UserState seed file not found: {userStateSeedFilePath}");
+            }
+
+            var result = await _userStateSeederService.SeedIfEmptyAsync(userStateSeedFilePath, cancellationToken);
+            if (!result.IsSuccess)
+            {
+                return Result.Failure<bool, string>($"Failed to seed UserState data: {result.Error}");
+            }
+
+            if (result.Value)
+            {
+                Console.WriteLine("✅ UserState seeding completed.");
+            }
+            else
+            {
+                Console.WriteLine("ℹ️ UserState data already exists, skipping seeding.");
+            }
+
+            return Result.Success<bool, string>(result.Value);
+        }
+        catch (Exception ex)
+        {
+            return Result.Failure<bool, string>($"Error seeding UserState data: {ex.Message}");
+        }
     }
 }

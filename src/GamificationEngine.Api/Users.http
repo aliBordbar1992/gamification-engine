@@ -60,3 +60,21 @@ GET https://localhost:7000/api/users/nonexistent/state
 Accept: application/json
 
 ###
+
+### Get summarized list of all users (paginated)
+GET https://localhost:7000/api/users?page=1&pageSize=10
+Accept: application/json
+
+###
+
+### Get summarized list of all users with default pagination
+GET https://localhost:7000/api/users
+Accept: application/json
+
+###
+
+### Test pagination with different page sizes
+GET https://localhost:7000/api/users?page=2&pageSize=5
+Accept: application/json
+
+###

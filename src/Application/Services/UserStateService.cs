@@ -285,4 +285,72 @@ public class UserStateService : IUserStateService
             return Result<UserRewardHistoryDto, string>.Failure($"Failed to get user reward history: {ex.Message}");
         }
     }
+
+    public async Task<Result<UserSummariesDto, string>> GetUserSummariesAsync(int page = 1, int pageSize = 50, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            // Validate pagination parameters
+            if (page < 1)
+                return Result<UserSummariesDto, string>.Failure("Page must be greater than 0");
+
+            if (pageSize < 1 || pageSize > 1000)
+                return Result<UserSummariesDto, string>.Failure("Page size must be between 1 and 1000");
+
+            // Get all user states
+            var allUserStates = await _userStateRepository.GetAllAsync(cancellationToken);
+            var userStatesList = allUserStates.ToList();
+
+            // Calculate pagination
+            var totalCount = userStatesList.Count;
+            var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+            var skip = (page - 1) * pageSize;
+            var paginatedUserStates = userStatesList.Skip(skip).Take(pageSize);
+
+            // Convert to summaries
+            var userSummaries = new List<UserSummaryDto>();
+            foreach (var userState in paginatedUserStates)
+            {
+                var summary = await CreateUserSummaryAsync(userState, cancellationToken);
+                userSummaries.Add(summary);
+            }
+
+            var result = new UserSummariesDto
+            {
+                Users = userSummaries,
+                TotalCount = totalCount,
+                Page = page,
+                PageSize = pageSize,
+                TotalPages = totalPages,
+                HasNextPage = page < totalPages,
+                HasPreviousPage = page > 1
+            };
+
+            return Result<UserSummariesDto, string>.Success(result);
+        }
+        catch (Exception ex)
+        {
+            return Result<UserSummariesDto, string>.Failure($"Failed to get user summaries: {ex.Message}");
+        }
+    }
+
+    private async Task<UserSummaryDto> CreateUserSummaryAsync(Domain.Users.UserState userState, CancellationToken cancellationToken)
+    {
+        // Get badge and trophy details
+        var badges = await GetUserBadgesAsync(userState.UserId, cancellationToken);
+        var trophies = await GetUserTrophiesAsync(userState.UserId, cancellationToken);
+        var currentLevels = await GetUserCurrentLevelsAsync(userState.UserId, cancellationToken);
+
+        var totalPoints = userState.PointsByCategory.Values.Sum();
+
+        return new UserSummaryDto
+        {
+            UserId = userState.UserId,
+            TotalPoints = totalPoints,
+            BadgeCount = badges.IsSuccess ? badges.Value.Count() : 0,
+            TrophyCount = trophies.IsSuccess ? trophies.Value.Count() : 0,
+            PointsByCategory = userState.PointsByCategory.ToDictionary(kvp => kvp.Key, kvp => kvp.Value),
+            CurrentLevelsByCategory = currentLevels.IsSuccess ? currentLevels.Value : new Dictionary<string, LevelDto>()
+        };
+    }
 }

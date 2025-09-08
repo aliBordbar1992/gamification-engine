@@ -165,4 +165,23 @@ public class UsersController : ControllerBase
 
         return BadRequest(new { error = result.Error });
     }
+
+    /// <summary>
+    /// Gets summarized list of all users with pagination
+    /// </summary>
+    /// <param name="page">Page number (1-based)</param>
+    /// <param name="pageSize">Number of entries per page (1-1000)</param>
+    /// <returns>Paginated user summaries</returns>
+    [HttpGet]
+    [ProducesResponseType(typeof(UserSummariesDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetUserSummaries([FromQuery] int page = 1, [FromQuery] int pageSize = 50)
+    {
+        var result = await _userStateService.GetUserSummariesAsync(page, pageSize);
+
+        if (result.IsSuccess && result.Value != null)
+            return Ok(result.Value);
+
+        return BadRequest(new { error = result.Error });
+    }
 }
