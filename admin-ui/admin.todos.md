@@ -29,7 +29,7 @@ Tasks:
 * [x] Entities: lists (Badges, Trophies, Levels, Point Categories) + details (read‑only).
 * [x] Users: ID lookup; show points by category, badges, trophies, level.
 * [x] Leaderboards: implement API endpoints provided by backed; show with table + mini chart.
-* [ ] Implement API clients and query hooks for all above using existing engine endpoints.
+* [x] Implement API clients and query hooks for all above using existing engine endpoints.
 
 Deliverables:
 - Operators can browse rules, entities, users, and leaderboards without side effects.
