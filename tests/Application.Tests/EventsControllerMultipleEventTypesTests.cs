@@ -4,6 +4,7 @@ using GamificationEngine.Application.Abstractions;
 using GamificationEngine.Application.DTOs;
 using GamificationEngine.Domain.Events;
 using GamificationEngine.Domain.Errors;
+using GamificationEngine.Domain.Repositories;
 using GamificationEngine.Shared;
 using Moq;
 using Shouldly;
@@ -14,12 +15,14 @@ namespace GamificationEngine.Application.Tests;
 public class EventsControllerMultipleEventTypesTests
 {
     private readonly Mock<IEventIngestionService> _mockEventIngestionService;
+    private readonly Mock<IEventDefinitionRepository> _mockEventDefinitionRepository;
     private readonly EventsController _controller;
 
     public EventsControllerMultipleEventTypesTests()
     {
         _mockEventIngestionService = new Mock<IEventIngestionService>();
-        _controller = new EventsController(_mockEventIngestionService.Object);
+        _mockEventDefinitionRepository = new Mock<IEventDefinitionRepository>();
+        _controller = new EventsController(_mockEventIngestionService.Object, _mockEventDefinitionRepository.Object);
     }
 
     private static void AssertEventsEqual(Event expected, object? actual)

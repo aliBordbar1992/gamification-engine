@@ -13,11 +13,16 @@ public class EventIngestionService : IEventIngestionService
 {
     private readonly IEventRepository _eventRepository;
     private readonly IEventQueue _eventQueue;
+    private readonly IEventValidationService _eventValidationService;
 
-    public EventIngestionService(IEventRepository eventRepository, IEventQueue eventQueue)
+    public EventIngestionService(
+        IEventRepository eventRepository,
+        IEventQueue eventQueue,
+        IEventValidationService eventValidationService)
     {
         _eventRepository = eventRepository ?? throw new ArgumentNullException(nameof(eventRepository));
         _eventQueue = eventQueue ?? throw new ArgumentNullException(nameof(eventQueue));
+        _eventValidationService = eventValidationService ?? throw new ArgumentNullException(nameof(eventValidationService));
     }
 
     public async Task<Result<Event, DomainError>> IngestEventAsync(Event @event)
@@ -26,6 +31,11 @@ public class EventIngestionService : IEventIngestionService
         {
             if (@event == null)
                 return Result<Event, DomainError>.Failure(new InvalidEventError("Event cannot be null"));
+
+            // Validate event against catalog
+            var isValid = await _eventValidationService.ValidateEventAsync(@event);
+            if (!isValid)
+                return Result<Event, DomainError>.Failure(new InvalidEventError($"Event validation failed for event type: {@event.EventType}"));
 
             // Enqueue the event for asynchronous processing
             var enqueueResult = await _eventQueue.EnqueueAsync(@event);

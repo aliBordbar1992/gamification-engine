@@ -18,6 +18,7 @@ public sealed class DatabaseSeederService : IDatabaseSeederService
     private readonly ITrophyRepository _trophyRepository;
     private readonly ILevelRepository _levelRepository;
     private readonly IRuleRepository _ruleRepository;
+    private readonly IEventDefinitionRepository _eventDefinitionRepository;
     private readonly IConfigurationLoader _configurationLoader;
     private readonly IUserStateSeederService _userStateSeederService;
     private readonly RewardHistorySeederService _rewardHistorySeederService;
@@ -30,6 +31,7 @@ public sealed class DatabaseSeederService : IDatabaseSeederService
         ITrophyRepository trophyRepository,
         ILevelRepository levelRepository,
         IRuleRepository ruleRepository,
+        IEventDefinitionRepository eventDefinitionRepository,
         IConfigurationLoader configurationLoader,
         IUserStateSeederService userStateSeederService,
         RewardHistorySeederService rewardHistorySeederService)
@@ -39,6 +41,7 @@ public sealed class DatabaseSeederService : IDatabaseSeederService
         _trophyRepository = trophyRepository ?? throw new ArgumentNullException(nameof(trophyRepository));
         _levelRepository = levelRepository ?? throw new ArgumentNullException(nameof(levelRepository));
         _ruleRepository = ruleRepository ?? throw new ArgumentNullException(nameof(ruleRepository));
+        _eventDefinitionRepository = eventDefinitionRepository ?? throw new ArgumentNullException(nameof(eventDefinitionRepository));
         _configurationLoader = configurationLoader ?? throw new ArgumentNullException(nameof(configurationLoader));
         _userStateSeederService = userStateSeederService ?? throw new ArgumentNullException(nameof(userStateSeederService));
         _rewardHistorySeederService = rewardHistorySeederService ?? throw new ArgumentNullException(nameof(rewardHistorySeederService));
@@ -85,6 +88,11 @@ public sealed class DatabaseSeederService : IDatabaseSeederService
 
             // Seed levels
             await SeedLevelsAsync(config.Levels, cancellationToken);
+
+            // Seed event definitions
+            Console.WriteLine($"🔧 Seeding {config.Events.Count} event definitions...");
+            await SeedEventDefinitionsAsync(config.Events, cancellationToken);
+            Console.WriteLine("✅ Event definitions seeding completed.");
 
             // Seed rules
             Console.WriteLine($"🔧 Seeding {config.Rules.Count} rules...");
@@ -190,6 +198,26 @@ public sealed class DatabaseSeederService : IDatabaseSeederService
                     levelConfig.Criteria.MinPoints);
 
                 await _levelRepository.AddAsync(level, cancellationToken);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Seeds event definitions from configuration
+    /// </summary>
+    private async Task SeedEventDefinitionsAsync(IEnumerable<Application.Configuration.EventDefinition> eventDefinitions, CancellationToken cancellationToken)
+    {
+        foreach (var eventDefinitionConfig in eventDefinitions)
+        {
+            var exists = await _eventDefinitionRepository.ExistsAsync(eventDefinitionConfig.Id, cancellationToken);
+            if (!exists)
+            {
+                var eventDefinition = new Domain.Entities.EventDefinition(
+                    eventDefinitionConfig.Id,
+                    eventDefinitionConfig.Description,
+                    eventDefinitionConfig.PayloadSchema);
+
+                await _eventDefinitionRepository.AddAsync(eventDefinition, cancellationToken);
             }
         }
     }

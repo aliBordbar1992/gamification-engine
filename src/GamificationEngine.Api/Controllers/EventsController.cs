@@ -4,6 +4,7 @@ using GamificationEngine.Domain.Events;
 using GamificationEngine.Shared;
 using GamificationEngine.Application.Abstractions;
 using GamificationEngine.Application.DTOs;
+using GamificationEngine.Domain.Repositories;
 namespace GamificationEngine.Api.Controllers;
 
 /// <summary>
@@ -14,10 +15,14 @@ namespace GamificationEngine.Api.Controllers;
 public class EventsController : ControllerBase
 {
     private readonly IEventIngestionService _eventIngestionService;
+    private readonly IEventDefinitionRepository _eventDefinitionRepository;
 
-    public EventsController(IEventIngestionService eventIngestionService)
+    public EventsController(
+        IEventIngestionService eventIngestionService,
+        IEventDefinitionRepository eventDefinitionRepository)
     {
         _eventIngestionService = eventIngestionService ?? throw new ArgumentNullException(nameof(eventIngestionService));
+        _eventDefinitionRepository = eventDefinitionRepository ?? throw new ArgumentNullException(nameof(eventDefinitionRepository));
     }
 
     /// <summary>
@@ -97,6 +102,33 @@ public class EventsController : ControllerBase
     }
 
     /// <summary>
+    /// Retrieves the event catalog with all available event definitions
+    /// </summary>
+    /// <returns>Collection of event definitions</returns>
+    [HttpGet("catalog")]
+    [ProducesResponseType(typeof(IEnumerable<EventDefinitionDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetEventCatalog()
+    {
+        try
+        {
+            var eventDefinitions = await _eventDefinitionRepository.GetAllAsync();
+            var eventDefinitionDtos = eventDefinitions.Select(ed => new EventDefinitionDto
+            {
+                Id = ed.Id,
+                Description = ed.Description,
+                PayloadSchema = ed.PayloadSchema
+            });
+
+            return Ok(eventDefinitionDtos);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { error = $"Failed to retrieve event catalog: {ex.Message}" });
+        }
+    }
+
+    /// <summary>
     /// Retrieves an event by its ID
     /// </summary>
     /// <param name="eventId">The event ID</param>
@@ -144,4 +176,25 @@ public class IngestEventRequest
     /// Additional attributes for the event
     /// </summary>
     public Dictionary<string, object>? Attributes { get; set; }
+}
+
+/// <summary>
+/// DTO for event definition
+/// </summary>
+public class EventDefinitionDto
+{
+    /// <summary>
+    /// The event definition ID
+    /// </summary>
+    public string Id { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Description of the event
+    /// </summary>
+    public string Description { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Payload schema for the event
+    /// </summary>
+    public IReadOnlyDictionary<string, string> PayloadSchema { get; set; } = new Dictionary<string, string>();
 }

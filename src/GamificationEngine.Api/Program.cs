@@ -80,6 +80,9 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddOpenApi();
 
+// Configure application settings
+builder.Services.Configure<GamificationEngine.Application.Configuration.EngineConfiguration>(builder.Configuration);
+
 // Register application services
 builder.Services.AddScoped<IEventIngestionService, EventIngestionService>();
 builder.Services.AddScoped<IUserStateService, UserStateService>();
@@ -91,6 +94,7 @@ builder.Services.AddScoped<IDatabaseSeederService, DatabaseSeederService>();
 builder.Services.AddScoped<IUserStateSeederService, UserStateSeederService>();
 builder.Services.AddScoped<RewardHistorySeederService>();
 builder.Services.AddScoped<IConfigurationLoader, YamlConfigurationLoader>();
+builder.Services.AddScoped<IEventValidationService, EventValidationService>();
 
 // Register infrastructure services
 builder.Services.AddSingleton<IEventRepository, EventRepository>();
@@ -104,6 +108,7 @@ builder.Services.AddSingleton<ILevelRepository, InMemoryLevelRepository>();
 builder.Services.AddSingleton<IPointCategoryRepository, InMemoryPointCategoryRepository>();
 builder.Services.AddSingleton<IRuleRepository, InMemoryRuleRepository>();
 builder.Services.AddSingleton<IWebhookRepository, InMemoryWebhookRepository>();
+builder.Services.AddSingleton<IEventDefinitionRepository, InMemoryEventDefinitionRepository>();
 
 // Register HTTP client for webhook notifications
 builder.Services.AddHttpClient<IWebhookService, WebhookService>();

@@ -14,13 +14,19 @@ public class EventIngestionMultipleEventTypesIntegrationTests
 {
     private readonly Mock<IEventRepository> _mockEventRepository;
     private readonly Mock<IEventQueue> _mockEventQueue;
+    private readonly Mock<IEventValidationService> _mockEventValidationService;
     private readonly EventIngestionService _service;
 
     public EventIngestionMultipleEventTypesIntegrationTests()
     {
         _mockEventRepository = new Mock<IEventRepository>();
         _mockEventQueue = new Mock<IEventQueue>();
-        _service = new EventIngestionService(_mockEventRepository.Object, _mockEventQueue.Object);
+        _mockEventValidationService = new Mock<IEventValidationService>();
+        _service = new EventIngestionService(_mockEventRepository.Object, _mockEventQueue.Object, _mockEventValidationService.Object);
+
+        // Setup validation service to return true by default
+        _mockEventValidationService.Setup(v => v.ValidateEventAsync(It.IsAny<Event>()))
+            .ReturnsAsync(true);
     }
 
     [Fact]

@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using GamificationEngine.Domain.Events;
 using GamificationEngine.Domain.Rewards;
 using GamificationEngine.Domain.Users;
+using GamificationEngine.Domain.Entities;
 
 namespace GamificationEngine.Infrastructure.Storage.EntityFramework;
 
@@ -17,6 +18,7 @@ public class GamificationEngineDbContext : DbContext
     public DbSet<Event> Events { get; set; }
     public DbSet<UserState> UserStates { get; set; }
     public DbSet<RewardHistory> RewardHistories { get; set; }
+    public DbSet<EventDefinition> EventDefinitions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -98,6 +100,24 @@ public class GamificationEngineDbContext : DbContext
             entity.HasIndex(e => e.AwardedAt);
             entity.HasIndex(e => new { e.UserId, e.RewardType });
             entity.HasIndex(e => new { e.UserId, e.AwardedAt });
+        });
+
+        // Configure EventDefinition entity
+        modelBuilder.Entity<EventDefinition>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).HasMaxLength(100).IsRequired();
+            entity.Property(e => e.Description).HasMaxLength(500).IsRequired();
+
+            // Store payload schema as JSON for flexibility
+            entity.Property(e => e.PayloadSchema)
+                .HasConversion(
+                    v => System.Text.Json.JsonSerializer.Serialize(v, (System.Text.Json.JsonSerializerOptions?)null),
+                    v => System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(v, (System.Text.Json.JsonSerializerOptions?)null) ?? new Dictionary<string, string>())
+                .HasColumnType("jsonb");
+
+            // Index for performance
+            entity.HasIndex(e => e.Id);
         });
     }
 }

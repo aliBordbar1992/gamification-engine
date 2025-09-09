@@ -15,17 +15,20 @@ public sealed class EntityConfigurationLoader : IEntityConfigurationLoader
     private readonly IBadgeRepository _badgeRepository;
     private readonly ITrophyRepository _trophyRepository;
     private readonly ILevelRepository _levelRepository;
+    private readonly IEventDefinitionRepository _eventDefinitionRepository;
 
     public EntityConfigurationLoader(
         IPointCategoryRepository pointCategoryRepository,
         IBadgeRepository badgeRepository,
         ITrophyRepository trophyRepository,
-        ILevelRepository levelRepository)
+        ILevelRepository levelRepository,
+        IEventDefinitionRepository eventDefinitionRepository)
     {
         _pointCategoryRepository = pointCategoryRepository ?? throw new ArgumentNullException(nameof(pointCategoryRepository));
         _badgeRepository = badgeRepository ?? throw new ArgumentNullException(nameof(badgeRepository));
         _trophyRepository = trophyRepository ?? throw new ArgumentNullException(nameof(trophyRepository));
         _levelRepository = levelRepository ?? throw new ArgumentNullException(nameof(levelRepository));
+        _eventDefinitionRepository = eventDefinitionRepository ?? throw new ArgumentNullException(nameof(eventDefinitionRepository));
     }
 
     public async Task<Result<bool, string>> LoadEntitiesFromConfigurationAsync(EngineConfiguration configuration, CancellationToken cancellationToken = default)
@@ -65,6 +68,14 @@ public sealed class EntityConfigurationLoader : IEntityConfigurationLoader
                 var levelResult = await LoadLevelsAsync(configuration.Levels, cancellationToken);
                 if (!levelResult.IsSuccess)
                     return Result.Failure<bool, string>($"Failed to load levels: {levelResult.Error}");
+            }
+
+            // Load event definitions
+            if (configuration.Events?.Any() == true)
+            {
+                var eventDefinitionResult = await LoadEventDefinitionsAsync(configuration.Events, cancellationToken);
+                if (!eventDefinitionResult.IsSuccess)
+                    return Result.Failure<bool, string>($"Failed to load event definitions: {eventDefinitionResult.Error}");
             }
 
             return Result.Success<bool, string>(true);
@@ -239,6 +250,41 @@ public sealed class EntityConfigurationLoader : IEntityConfigurationLoader
         catch (Exception ex)
         {
             return Result.Failure<bool, string>($"Failed to load levels: {ex.Message}");
+        }
+    }
+
+    public async Task<Result<bool, string>> LoadEventDefinitionsAsync(IEnumerable<Application.Configuration.EventDefinition> eventDefinitions, CancellationToken cancellationToken = default)
+    {
+        if (eventDefinitions == null)
+            return Result.Failure<bool, string>("Event definitions cannot be null");
+
+        try
+        {
+            foreach (var configEventDefinition in eventDefinitions)
+            {
+                if (string.IsNullOrWhiteSpace(configEventDefinition.Id) ||
+                    string.IsNullOrWhiteSpace(configEventDefinition.Description))
+                {
+                    return Result.Failure<bool, string>($"Invalid event definition configuration: {configEventDefinition.Id}");
+                }
+
+                var exists = await _eventDefinitionRepository.ExistsAsync(configEventDefinition.Id, cancellationToken);
+                if (!exists)
+                {
+                    var domainEventDefinition = new Domain.Entities.EventDefinition(
+                        configEventDefinition.Id,
+                        configEventDefinition.Description,
+                        configEventDefinition.PayloadSchema);
+
+                    await _eventDefinitionRepository.AddAsync(domainEventDefinition, cancellationToken);
+                }
+            }
+
+            return Result.Success<bool, string>(true);
+        }
+        catch (Exception ex)
+        {
+            return Result.Failure<bool, string>($"Failed to load event definitions: {ex.Message}");
         }
     }
 }

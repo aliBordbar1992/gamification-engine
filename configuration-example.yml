@@ -9,6 +9,10 @@ engine:
   retention:
     events_days: 365 # keep raw events for replay / audit
     rewards_days: 1825 # keep reward history for 5 years
+  event_validation:
+    enabled: true # enable event validation against catalog
+    reject_unknown_events: true # reject events not in catalog
+    validate_payload_schema: true # validate event payload against schema
   processing:
     mode: "hybrid" # "sync" | "async" | "hybrid" (fast rewards sync, heavy tasks async)
     async_queue: "kafka://gamification-events"

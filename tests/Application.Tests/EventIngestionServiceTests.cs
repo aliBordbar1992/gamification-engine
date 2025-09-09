@@ -14,13 +14,15 @@ public class EventIngestionServiceTests
 {
     private readonly Mock<IEventRepository> _mockEventRepository;
     private readonly Mock<IEventQueue> _mockEventQueue;
+    private readonly Mock<IEventValidationService> _mockEventValidationService;
     private readonly EventIngestionService _service;
 
     public EventIngestionServiceTests()
     {
         _mockEventRepository = new Mock<IEventRepository>();
         _mockEventQueue = new Mock<IEventQueue>();
-        _service = new EventIngestionService(_mockEventRepository.Object, _mockEventQueue.Object);
+        _mockEventValidationService = new Mock<IEventValidationService>();
+        _service = new EventIngestionService(_mockEventRepository.Object, _mockEventQueue.Object, _mockEventValidationService.Object);
     }
 
     [Fact]
@@ -35,7 +37,7 @@ public class EventIngestionServiceTests
     {
         // Act & Assert
         Should.Throw<ArgumentNullException>(() =>
-            new EventIngestionService(null!, _mockEventQueue.Object));
+            new EventIngestionService(null!, _mockEventQueue.Object, _mockEventValidationService.Object));
     }
 
     [Fact]
@@ -43,7 +45,15 @@ public class EventIngestionServiceTests
     {
         // Act & Assert
         Should.Throw<ArgumentNullException>(() =>
-            new EventIngestionService(_mockEventRepository.Object, null!));
+            new EventIngestionService(_mockEventRepository.Object, null!, _mockEventValidationService.Object));
+    }
+
+    [Fact]
+    public void Constructor_WithNullEventValidationService_ShouldThrowArgumentNullException()
+    {
+        // Act & Assert
+        Should.Throw<ArgumentNullException>(() =>
+            new EventIngestionService(_mockEventRepository.Object, _mockEventQueue.Object, null!));
     }
 
     [Fact]
@@ -51,6 +61,8 @@ public class EventIngestionServiceTests
     {
         // Arrange
         var @event = new Event("test-1", "TEST_EVENT", "user123", DateTimeOffset.UtcNow);
+        _mockEventValidationService.Setup(v => v.ValidateEventAsync(@event))
+            .ReturnsAsync(true);
         _mockEventQueue.Setup(q => q.EnqueueAsync(@event))
             .ReturnsAsync(Result<bool, DomainError>.Success(true));
 
@@ -60,6 +72,7 @@ public class EventIngestionServiceTests
         // Assert
         result.IsSuccess.ShouldBeTrue();
         result.Value.ShouldBe(@event);
+        _mockEventValidationService.Verify(v => v.ValidateEventAsync(@event), Times.Once);
         _mockEventQueue.Verify(q => q.EnqueueAsync(@event), Times.Once);
         _mockEventRepository.Verify(r => r.StoreAsync(It.IsAny<Event>()), Times.Never);
     }
@@ -78,10 +91,31 @@ public class EventIngestionServiceTests
     }
 
     [Fact]
+    public async Task IngestEventAsync_WhenValidationFails_ShouldReturnFailure()
+    {
+        // Arrange
+        var @event = new Event("test-1", "TEST_EVENT", "user123", DateTimeOffset.UtcNow);
+        _mockEventValidationService.Setup(v => v.ValidateEventAsync(@event))
+            .ReturnsAsync(false);
+
+        // Act
+        var result = await _service.IngestEventAsync(@event);
+
+        // Assert
+        result.IsSuccess.ShouldBeFalse();
+        result.Error.ShouldNotBeNull();
+        result.Error!.Code.ShouldBe("INVALID_EVENT");
+        _mockEventValidationService.Verify(v => v.ValidateEventAsync(@event), Times.Once);
+        _mockEventQueue.Verify(q => q.EnqueueAsync(It.IsAny<Event>()), Times.Never);
+    }
+
+    [Fact]
     public async Task IngestEventAsync_WhenEnqueueFails_ShouldReturnFailure()
     {
         // Arrange
         var @event = new Event("test-1", "TEST_EVENT", "user123", DateTimeOffset.UtcNow);
+        _mockEventValidationService.Setup(v => v.ValidateEventAsync(@event))
+            .ReturnsAsync(true);
         var expectedError = new EventStorageError("Queue is full");
         _mockEventQueue.Setup(q => q.EnqueueAsync(@event))
             .ReturnsAsync(Result<bool, DomainError>.Failure(expectedError));
@@ -92,6 +126,7 @@ public class EventIngestionServiceTests
         // Assert
         result.IsSuccess.ShouldBeFalse();
         result.Error.ShouldBe(expectedError);
+        _mockEventValidationService.Verify(v => v.ValidateEventAsync(@event), Times.Once);
         _mockEventQueue.Verify(q => q.EnqueueAsync(@event), Times.Once);
     }
 

@@ -17,6 +17,7 @@ public sealed class EngineSettings
     public string Version { get; set; } = string.Empty;
     public string Timezone { get; set; } = "UTC";
     public RetentionSettings Retention { get; set; } = new();
+    public EventValidationSettings EventValidation { get; set; } = new();
 }
 
 public sealed class RetentionSettings
@@ -25,10 +26,18 @@ public sealed class RetentionSettings
     public int RewardsDays { get; set; }
 }
 
+public sealed class EventValidationSettings
+{
+    public bool Enabled { get; set; } = true;
+    public bool RejectUnknownEvents { get; set; } = true;
+    public bool ValidatePayloadSchema { get; set; } = true;
+}
+
 public sealed class EventDefinition
 {
     public string Id { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
+    public Dictionary<string, string>? PayloadSchema { get; set; }
 }
 
 public sealed class PointCategory
