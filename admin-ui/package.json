@@ -28,6 +28,7 @@
     "antd": "^5.27.3",
     "axios": "^1.11.0",
     "monaco-editor": "^0.52.2",
+    "monaco-editor-workers": "^0.45.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-hook-form": "^7.62.0",
