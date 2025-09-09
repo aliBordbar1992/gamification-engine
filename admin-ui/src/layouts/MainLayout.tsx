@@ -12,6 +12,7 @@ import {
   BarChartOutlined,
   ExperimentOutlined,
   FileTextOutlined,
+  ThunderboltOutlined,
 } from '@ant-design/icons'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '@/hooks/useAuth'
@@ -39,6 +40,11 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       key: '/rules',
       icon: <FileTextOutlined />,
       label: 'Rules',
+    },
+    {
+      key: '/events',
+      icon: <ThunderboltOutlined />,
+      label: 'Events',
     },
     {
       key: '/entities',

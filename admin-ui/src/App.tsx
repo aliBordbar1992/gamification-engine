@@ -12,6 +12,7 @@ import RouteGuard from '@/components/RouteGuard'
 import {
   Dashboard,
   Rules,
+  Events,
   Entities,
   Badges,
   Trophies,
@@ -90,6 +91,26 @@ function App() {
                   <RouteGuard>
                     <MainLayout>
                       <Rules />
+                    </MainLayout>
+                  </RouteGuard>
+                }
+              />
+              <Route
+                path="/events"
+                element={
+                  <RouteGuard>
+                    <MainLayout>
+                      <Events />
+                    </MainLayout>
+                  </RouteGuard>
+                }
+              />
+              <Route
+                path="/events/:id"
+                element={
+                  <RouteGuard>
+                    <MainLayout>
+                      <Events />
                     </MainLayout>
                   </RouteGuard>
                 }
