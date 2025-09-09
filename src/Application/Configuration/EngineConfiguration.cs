@@ -9,6 +9,7 @@ public sealed class EngineConfiguration
     public List<TrophyDefinition> Trophies { get; set; } = new();
     public List<LevelDefinition> Levels { get; set; } = new();
     public List<RuleDefinition> Rules { get; set; } = new();
+    public SimulationSettings? Simulation { get; set; }
 }
 
 public sealed class EngineSettings
@@ -114,4 +115,17 @@ public sealed class RuleMetadata
     public bool? NotifyPlatform { get; set; }
     public string? NotifyTemplate { get; set; }
     public bool? WebhookOnAward { get; set; }
+}
+
+public sealed class SimulationSettings
+{
+    public bool Enabled { get; set; } = false;
+    public string SandboxUserId { get; set; } = "sim-user-01";
+    public List<SimulationEvent> DefaultEventBatch { get; set; } = new();
+}
+
+public sealed class SimulationEvent
+{
+    public string Event { get; set; } = string.Empty;
+    public Dictionary<string, object> Metadata { get; set; } = new();
 }

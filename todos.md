@@ -271,7 +271,34 @@ Organized into **phases** with clear, testable boundaries so that AI coding tool
 
 ---
 
-### **Phase 11 – Configuration Enforcement & Operationalization**
+### **Phase 11 – Sandbox Dry‑Run with Evaluation Trace**
+
+* [x] **Backend: Trace model and DTOs**
+  * Define `ConditionTrace` with `conditionId`, `type`, `parameters`, `result`, `details`
+  * Define `RuleTrace` with `ruleId`, `name`, `triggerMatched`, `conditions[]`, `predictedRewards[]`
+  * Define `DryRunResponseDto` with `triggerEventId`, `userId`, `rules[]`, `summary`
+* [x] **Backend: Non‑mutating evaluation path**
+  * Add `DryRunRulesAsync(Event)` that evaluates rules without writing state/history
+  * Implement condition tracing (`EvaluateWithTrace`) or a tracer wrapper around `Condition`
+  * Predict reward outcomes without calling `IUserStateRepository.SaveAsync` or `IRewardHistoryRepository.StoreAsync`
+* [x] **Backend: API endpoint**
+  * Add `POST /api/sandbox/dry-run` accepting `IngestEventRequest` shape
+  * Validate event via `IEventValidationService`; return `400` on invalid input
+  * Return `200` with detailed evaluation trace on success
+* [x] **Backend: Wiring and configuration**
+  * Register evaluation services in DI; add dry‑run path implementation
+  * Bind `simulation.enabled` config and conditionally expose the endpoint
+  * Update Swagger with request/response examples
+* [ ] **Backend: Tests**
+  * Unit tests for per‑condition trace outputs across all condition types
+  * Unit tests for rule trace aggregation and reward prediction
+  * API integration tests for `/api/sandbox/dry-run`; assert no writes to `UserState`/`RewardHistory`
+
+**Deliverable:** A safe, non‑persistent dry‑run endpoint and UI that returns a detailed evaluation trace for any event, without modifying user state or reward history.
+
+---
+
+### **Phase 12 – Configuration Enforcement & Operationalization**
 
 * [ ] Implement rule cooldowns and one-time enforcement
   * Add `ICooldownService` and storage (per-user, per-rule) to track last award timestamp and counts
@@ -349,7 +376,7 @@ Organized into **phases** with clear, testable boundaries so that AI coding tool
 
 ---
 
-### **Phase 12 – Testing Platform Consolidation and Quality Gates**
+### **Phase 13 – Testing Platform Consolidation and Quality Gates**
 
 * [ ] Establish test suite baseline and triage
   * Run all test projects with detailed logging and collect failures/flaky tests

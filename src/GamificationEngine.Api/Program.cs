@@ -4,6 +4,7 @@ using GamificationEngine.Domain.Repositories;
 using GamificationEngine.Infrastructure.Storage.InMemory;
 using GamificationEngine.Application.Services;
 using GamificationEngine.Infrastructure.Configuration;
+using GamificationEngine.Application.DTOs;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 
@@ -45,6 +46,43 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 
+    // Add examples for dry-run endpoint
+    c.MapType<DryRunRequestDto>(() => new OpenApiSchema
+    {
+        Type = "object",
+        Properties = new Dictionary<string, OpenApiSchema>
+        {
+            ["eventId"] = new OpenApiSchema { Type = "string", Example = new Microsoft.OpenApi.Any.OpenApiString("optional-event-id") },
+            ["eventType"] = new OpenApiSchema { Type = "string", Example = new Microsoft.OpenApi.Any.OpenApiString("USER_COMMENTED") },
+            ["userId"] = new OpenApiSchema { Type = "string", Example = new Microsoft.OpenApi.Any.OpenApiString("user-123") },
+            ["occurredAt"] = new OpenApiSchema { Type = "string", Format = "date-time", Example = new Microsoft.OpenApi.Any.OpenApiString("2024-01-15T10:30:00Z") },
+            ["attributes"] = new OpenApiSchema
+            {
+                Type = "object",
+                Example = new Microsoft.OpenApi.Any.OpenApiObject
+                {
+                    ["commentId"] = new Microsoft.OpenApi.Any.OpenApiString("comment-456"),
+                    ["postId"] = new Microsoft.OpenApi.Any.OpenApiString("post-789"),
+                    ["text"] = new Microsoft.OpenApi.Any.OpenApiString("Great article!")
+                }
+            }
+        }
+    });
+
+    c.MapType<DryRunResponseDto>(() => new OpenApiSchema
+    {
+        Type = "object",
+        Properties = new Dictionary<string, OpenApiSchema>
+        {
+            ["triggerEventId"] = new OpenApiSchema { Type = "string", Example = new Microsoft.OpenApi.Any.OpenApiString("event-123") },
+            ["userId"] = new OpenApiSchema { Type = "string", Example = new Microsoft.OpenApi.Any.OpenApiString("user-123") },
+            ["eventType"] = new OpenApiSchema { Type = "string", Example = new Microsoft.OpenApi.Any.OpenApiString("USER_COMMENTED") },
+            ["rules"] = new OpenApiSchema { Type = "array", Items = new OpenApiSchema { Type = "object" } },
+            ["summary"] = new OpenApiSchema { Type = "object" },
+            ["evaluatedAt"] = new OpenApiSchema { Type = "string", Format = "date-time" }
+        }
+    });
+
     // Include XML comments for better documentation
     var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
@@ -64,24 +102,59 @@ builder.Services.AddSwaggerGen(c =>
 
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
-        {
-            new OpenApiSecurityScheme
             {
-                Reference = new OpenApiReference
+                new OpenApiSecurityScheme
                 {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "ApiKey"
-                }
-            },
-            new string[] {}
-        }
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "ApiKey"
+                    }
+                },
+                new string[] {}
+            }
     });
 });
 
 builder.Services.AddOpenApi();
 
-// Configure application settings
-builder.Services.Configure<GamificationEngine.Application.Configuration.EngineConfiguration>(builder.Configuration);
+// Load YAML configuration first
+var configPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "configuration-example.yml");
+if (!File.Exists(configPath))
+{
+    configPath = Path.Combine(Directory.GetCurrentDirectory(), "configuration-example.yml");
+}
+if (!File.Exists(configPath))
+{
+    var projectRoot = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "..", ".."));
+    configPath = Path.Combine(projectRoot, "configuration-example.yml");
+}
+
+// Configure application settings with YAML configuration
+if (File.Exists(configPath))
+{
+    var yamlLoader = new YamlConfigurationLoader();
+    var yamlConfigResult = await yamlLoader.LoadFromFileAsync(configPath);
+    if (yamlConfigResult.IsSuccess)
+    {
+        builder.Services.Configure<GamificationEngine.Application.Configuration.EngineConfiguration>(config =>
+        {
+            config.Engine = yamlConfigResult.Value?.Engine ?? new();
+            config.Events = yamlConfigResult.Value?.Events ?? new();
+            config.PointCategories = yamlConfigResult.Value?.PointCategories ?? new();
+            config.Badges = yamlConfigResult.Value?.Badges ?? new();
+            config.Trophies = yamlConfigResult.Value?.Trophies ?? new();
+            config.Levels = yamlConfigResult.Value?.Levels ?? new();
+            config.Rules = yamlConfigResult.Value?.Rules ?? new();
+            config.Simulation = yamlConfigResult.Value?.Simulation;
+        });
+    }
+}
+else
+{
+    // Fallback to appsettings.json if YAML not found
+    builder.Services.Configure<GamificationEngine.Application.Configuration.EngineConfiguration>(builder.Configuration);
+}
 
 // Register application services
 builder.Services.AddScoped<IEventIngestionService, EventIngestionService>();
@@ -95,6 +168,9 @@ builder.Services.AddScoped<IUserStateSeederService, UserStateSeederService>();
 builder.Services.AddScoped<RewardHistorySeederService>();
 builder.Services.AddScoped<IConfigurationLoader, YamlConfigurationLoader>();
 builder.Services.AddScoped<IEventValidationService, EventValidationService>();
+builder.Services.AddScoped<IRewardExecutionService, RewardExecutionService>();
+builder.Services.AddScoped<IRuleEvaluationService, RuleEvaluationService>();
+builder.Services.AddScoped<IDryRunEvaluationService, DryRunEvaluationService>();
 
 // Register infrastructure services
 builder.Services.AddSingleton<IEventRepository, EventRepository>();

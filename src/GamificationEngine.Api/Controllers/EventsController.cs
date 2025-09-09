@@ -5,6 +5,8 @@ using GamificationEngine.Shared;
 using GamificationEngine.Application.Abstractions;
 using GamificationEngine.Application.DTOs;
 using GamificationEngine.Domain.Repositories;
+using GamificationEngine.Application.Configuration;
+using Microsoft.Extensions.Options;
 namespace GamificationEngine.Api.Controllers;
 
 /// <summary>
@@ -16,13 +18,23 @@ public class EventsController : ControllerBase
 {
     private readonly IEventIngestionService _eventIngestionService;
     private readonly IEventDefinitionRepository _eventDefinitionRepository;
+    private readonly IDryRunEvaluationService _dryRunEvaluationService;
+    private readonly SimulationSettings? _simulationSettings;
 
     public EventsController(
         IEventIngestionService eventIngestionService,
-        IEventDefinitionRepository eventDefinitionRepository)
+        IEventDefinitionRepository eventDefinitionRepository,
+        IDryRunEvaluationService dryRunEvaluationService,
+        IOptions<EngineConfiguration> configuration)
     {
         _eventIngestionService = eventIngestionService ?? throw new ArgumentNullException(nameof(eventIngestionService));
         _eventDefinitionRepository = eventDefinitionRepository ?? throw new ArgumentNullException(nameof(eventDefinitionRepository));
+        _dryRunEvaluationService = dryRunEvaluationService ?? throw new ArgumentNullException(nameof(dryRunEvaluationService));
+        _simulationSettings = configuration?.Value?.Simulation;
+
+        // Debug logging
+        Console.WriteLine($"Simulation settings loaded: {_simulationSettings?.Enabled}");
+        Console.WriteLine($"Engine configuration: {configuration?.Value?.Engine?.Id}");
     }
 
     /// <summary>
@@ -140,6 +152,54 @@ public class EventsController : ControllerBase
     {
         // This would require adding a method to the service, but for now we'll return not implemented
         return StatusCode(501, new { message = "Get event by ID not yet implemented" });
+    }
+
+    /// <summary>
+    /// Performs a dry-run evaluation of rules for the given event without executing rewards
+    /// </summary>
+    /// <param name="request">The event data to evaluate</param>
+    /// <returns>Detailed evaluation trace showing which rules would execute and what rewards would be awarded</returns>
+    [HttpPost("sandbox/dry-run")]
+    [ProducesResponseType(typeof(DryRunResponseDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> DryRunEvaluation([FromBody] DryRunRequestDto request)
+    {
+        // Check if simulation is enabled
+        if (_simulationSettings?.Enabled != true)
+            return NotFound(new { error = "Sandbox dry-run functionality is not enabled. Please enable simulation in configuration." });
+
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        try
+        {
+            // Create the event from the request
+            var @event = new Event(
+                request.EventId ?? Guid.NewGuid().ToString(),
+                request.EventType,
+                request.UserId,
+                request.OccurredAt ?? DateTimeOffset.UtcNow,
+                request.Attributes
+            );
+
+            // Perform dry-run evaluation
+            var result = await _dryRunEvaluationService.DryRunRulesAsync(@event);
+
+            if (result.IsSuccess && result.Value != null)
+                return Ok(result.Value);
+
+            return BadRequest(new { error = result.Error?.Message ?? "Failed to perform dry-run evaluation" });
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { error = $"Internal server error during dry-run evaluation: {ex.Message}" });
+        }
     }
 }
 

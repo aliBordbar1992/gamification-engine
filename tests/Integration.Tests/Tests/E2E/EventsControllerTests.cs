@@ -126,7 +126,7 @@ public class EventsControllerTests : EndToEndTestBase
         var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
         // Act
-        var response = await _httpClient.PostAsync("/api/events", content);
+        var response = await HttpClient.PostAsync("/api/events", content);
 
         // Assert
         response.ShouldNotBeNull("HTTP response should not be null");
@@ -149,7 +149,7 @@ public class EventsControllerTests : EndToEndTestBase
         eventDto.Attributes!["commentId"].ToString().ShouldBeEquivalentTo("comment456");
 
         await DatabaseStateAssertionUtilities.AssertEventExistsInDatabase(
-            _dbContext,
+            DbContext,
             eventDto.EventId,
             "user123",
             "USER_COMMENTED");
@@ -176,7 +176,7 @@ public class EventsControllerTests : EndToEndTestBase
         var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
         // Act
-        var response = await _httpClient.PostAsync("/api/events", content);
+        var response = await HttpClient.PostAsync("/api/events", content);
 
         // Assert
         response.ShouldNotBeNull("HTTP response should not be null");
@@ -192,12 +192,12 @@ public class EventsControllerTests : EndToEndTestBase
         eventDto.EventId.ShouldBe(customEventId);
 
         // Verify database persistence if DbContext is available
-        if (_dbContext != null)
+        if (DbContext != null)
         {
             try
             {
                 await DatabaseStateAssertionUtilities.AssertEventExistsInDatabase(
-                    _dbContext,
+                    DbContext,
                     customEventId,
                     "user456",
                     "PRODUCT_PURCHASED");
@@ -223,7 +223,7 @@ public class EventsControllerTests : EndToEndTestBase
         var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
         // Act
-        var response = await _httpClient.PostAsync("/api/events", content);
+        var response = await HttpClient.PostAsync("/api/events", content);
 
         // Assert
         response.ShouldNotBeNull("HTTP response should not be null");
@@ -255,7 +255,7 @@ public class EventsControllerTests : EndToEndTestBase
         var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
         // Act
-        var response = await _httpClient.PostAsync("/api/events", content);
+        var response = await HttpClient.PostAsync("/api/events", content);
 
         // Assert
         response.ShouldNotBeNull("HTTP response should not be null");
@@ -290,7 +290,7 @@ public class EventsControllerTests : EndToEndTestBase
         var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
         // Act
-        var response = await _httpClient.PostAsync("/api/events", content);
+        var response = await HttpClient.PostAsync("/api/events", content);
 
         // Assert
         response.ShouldNotBeNull("HTTP response should not be null");
@@ -308,7 +308,7 @@ public class EventsControllerTests : EndToEndTestBase
         var content = new StringContent(malformedJson, Encoding.UTF8, "application/json");
 
         // Act
-        var response = await _httpClient.PostAsync("/api/events", content);
+        var response = await HttpClient.PostAsync("/api/events", content);
 
         // Assert
         response.ShouldNotBeNull("HTTP response should not be null");
@@ -338,12 +338,12 @@ public class EventsControllerTests : EndToEndTestBase
 
             var jsonContent = JsonSerializer.Serialize(request);
             var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-            var postResponse = await _httpClient.PostAsync("/api/events", content);
+            var postResponse = await HttpClient.PostAsync("/api/events", content);
             postResponse.StatusCode.ShouldBe(HttpStatusCode.Created);
         }
 
         // Act
-        var response = await _httpClient.GetAsync($"/api/events/user/{userId}");
+        var response = await HttpClient.GetAsync($"/api/events/user/{userId}");
 
         // Assert
         response.ShouldNotBeNull("HTTP response should not be null");
@@ -363,11 +363,11 @@ public class EventsControllerTests : EndToEndTestBase
         eventList.ShouldContain(e => e.EventType == "USER_SHARED");
 
         // Verify database state if DbContext is available
-        if (_dbContext != null)
+        if (DbContext != null)
         {
             try
             {
-                await DatabaseStateAssertionUtilities.AssertUserEventCount(_dbContext, userId, 3);
+                await DatabaseStateAssertionUtilities.AssertUserEventCount(DbContext, userId, 3);
             }
             catch (Exception ex)
             {
@@ -392,12 +392,12 @@ public class EventsControllerTests : EndToEndTestBase
 
             var jsonContent = JsonSerializer.Serialize(request);
             var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-            var postResponse = await _httpClient.PostAsync("/api/events", content);
+            var postResponse = await HttpClient.PostAsync("/api/events", content);
             postResponse.StatusCode.ShouldBe(HttpStatusCode.Created);
         }
 
         // Act - Get first 2 events
-        var response1 = await _httpClient.GetAsync($"/api/events/user/{userId}?limit=2&offset=0");
+        var response1 = await HttpClient.GetAsync($"/api/events/user/{userId}?limit=2&offset=0");
 
         // Assert
         response1.ShouldNotBeNull("HTTP response should not be null");
@@ -411,7 +411,7 @@ public class EventsControllerTests : EndToEndTestBase
         events1.Count.ShouldBe(2);
 
         // Act - Get next 2 events
-        var response2 = await _httpClient.GetAsync($"/api/events/user/{userId}?limit=2&offset=2");
+        var response2 = await HttpClient.GetAsync($"/api/events/user/{userId}?limit=2&offset=2");
 
         // Assert
         response2.ShouldNotBeNull("HTTP response should not be null");
@@ -437,7 +437,7 @@ public class EventsControllerTests : EndToEndTestBase
         var userId = "nonexistent_user";
 
         // Act
-        var response = await _httpClient.GetAsync($"/api/events/user/{userId}");
+        var response = await HttpClient.GetAsync($"/api/events/user/{userId}");
 
         // Assert
         response.ShouldNotBeNull("HTTP response should not be null");
@@ -460,14 +460,14 @@ public class EventsControllerTests : EndToEndTestBase
         var userId = "user123";
 
         // Act - Test invalid limit
-        var response1 = await _httpClient.GetAsync($"/api/events/user/{userId}?limit=1001");
+        var response1 = await HttpClient.GetAsync($"/api/events/user/{userId}?limit=1001");
 
         // Assert
         response1.ShouldNotBeNull("HTTP response should not be null");
         response1.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
 
         // Act - Test negative offset
-        var response2 = await _httpClient.GetAsync($"/api/events/user/{userId}?offset=-1");
+        var response2 = await HttpClient.GetAsync($"/api/events/user/{userId}?offset=-1");
 
         // Assert
         response2.ShouldNotBeNull("HTTP response should not be null");
@@ -492,7 +492,7 @@ public class EventsControllerTests : EndToEndTestBase
 
             var jsonContent = JsonSerializer.Serialize(request);
             var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-            var postResponse = await _httpClient.PostAsync("/api/events", content);
+            var postResponse = await HttpClient.PostAsync("/api/events", content);
             postResponse.StatusCode.ShouldBe(HttpStatusCode.Created);
         }
 
@@ -504,11 +504,11 @@ public class EventsControllerTests : EndToEndTestBase
         };
         var differentJson = JsonSerializer.Serialize(differentRequest);
         var differentContent = new StringContent(differentJson, Encoding.UTF8, "application/json");
-        var differentPostResponse = await _httpClient.PostAsync("/api/events", differentContent);
+        var differentPostResponse = await HttpClient.PostAsync("/api/events", differentContent);
         differentPostResponse.StatusCode.ShouldBe(HttpStatusCode.Created);
 
         // Act
-        var response = await _httpClient.GetAsync($"/api/events/type/{eventType}");
+        var response = await HttpClient.GetAsync($"/api/events/type/{eventType}");
 
         // Assert
         response.ShouldNotBeNull("HTTP response should not be null");
@@ -528,11 +528,11 @@ public class EventsControllerTests : EndToEndTestBase
         eventList.ShouldContain(e => e.UserId == "user3");
 
         // Verify database state if DbContext is available
-        if (_dbContext != null)
+        if (DbContext != null)
         {
             try
             {
-                await DatabaseStateAssertionUtilities.AssertEventTypeCount(_dbContext, eventType, 3);
+                await DatabaseStateAssertionUtilities.AssertEventTypeCount(DbContext, eventType, 3);
             }
             catch (Exception ex)
             {
@@ -557,12 +557,12 @@ public class EventsControllerTests : EndToEndTestBase
 
             var jsonContent = JsonSerializer.Serialize(request);
             var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-            var postResponse = await _httpClient.PostAsync("/api/events", content);
+            var postResponse = await HttpClient.PostAsync("/api/events", content);
             postResponse.StatusCode.ShouldBe(HttpStatusCode.Created);
         }
 
         // Act - Get first 2 events
-        var response1 = await _httpClient.GetAsync($"/api/events/type/{eventType}?limit=2&offset=0");
+        var response1 = await HttpClient.GetAsync($"/api/events/type/{eventType}?limit=2&offset=0");
 
         // Assert
         response1.ShouldNotBeNull("HTTP response should not be null");
@@ -576,7 +576,7 @@ public class EventsControllerTests : EndToEndTestBase
         events1.Count.ShouldBe(2);
 
         // Act - Get next 2 events
-        var response2 = await _httpClient.GetAsync($"/api/events/type/{eventType}?limit=2&offset=2");
+        var response2 = await HttpClient.GetAsync($"/api/events/type/{eventType}?limit=2&offset=2");
 
         // Assert
         response2.ShouldNotBeNull("HTTP response should not be null");
@@ -597,7 +597,7 @@ public class EventsControllerTests : EndToEndTestBase
         var eventType = "NONEXISTENT_EVENT_TYPE";
 
         // Act
-        var response = await _httpClient.GetAsync($"/api/events/type/{eventType}");
+        var response = await HttpClient.GetAsync($"/api/events/type/{eventType}");
 
         // Assert
         response.ShouldNotBeNull("HTTP response should not be null");
@@ -620,14 +620,14 @@ public class EventsControllerTests : EndToEndTestBase
         var eventType = "TEST_EVENT";
 
         // Act - Test invalid limit
-        var response1 = await _httpClient.GetAsync($"/api/events/type/{eventType}?limit=1001");
+        var response1 = await HttpClient.GetAsync($"/api/events/type/{eventType}?limit=1001");
 
         // Assert
         response1.ShouldNotBeNull("HTTP response should not be null");
         response1.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
 
         // Act - Test negative offset
-        var response2 = await _httpClient.GetAsync($"/api/events/type/{eventType}?offset=-1");
+        var response2 = await HttpClient.GetAsync($"/api/events/type/{eventType}?offset=-1");
 
         // Assert
         response2.ShouldNotBeNull("HTTP response should not be null");
@@ -641,7 +641,7 @@ public class EventsControllerTests : EndToEndTestBase
         var eventId = "test-event-id";
 
         // Act
-        var response = await _httpClient.GetAsync($"/api/events/{eventId}");
+        var response = await HttpClient.GetAsync($"/api/events/{eventId}");
 
         // Assert
         response.ShouldNotBeNull("HTTP response should not be null");
@@ -681,7 +681,7 @@ public class EventsControllerTests : EndToEndTestBase
         var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
         // Act
-        var response = await _httpClient.PostAsync("/api/events", content);
+        var response = await HttpClient.PostAsync("/api/events", content);
 
         // Assert
         response.ShouldNotBeNull("HTTP response should not be null");
@@ -722,7 +722,7 @@ public class EventsControllerTests : EndToEndTestBase
         var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
         // Act
-        var response = await _httpClient.PostAsync("/api/events", content);
+        var response = await HttpClient.PostAsync("/api/events", content);
 
         // Assert
         response.ShouldNotBeNull("HTTP response should not be null");
@@ -741,6 +741,240 @@ public class EventsControllerTests : EndToEndTestBase
         eventDto.Attributes!["key_99"].ShouldBe("value_99_" + new string('x', 100));
     }
 
+    [Fact]
+    public async Task POST_ApiEventsSandboxDryRun_WithValidEvent_ShouldReturn200WithEvaluationTrace()
+    {
+        // Arrange
+        var request = new
+        {
+            EventType = "USER_COMMENTED",
+            UserId = "user123",
+            OccurredAt = DateTimeOffset.UtcNow,
+            Attributes = new Dictionary<string, object>
+            {
+                { "commentId", "comment456" },
+                { "postId", "post789" },
+                { "length", 150 }
+            }
+        };
+
+        var jsonContent = JsonSerializer.Serialize(request);
+        var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+        // Act
+        var response = await HttpClient.PostAsync("/api/events/sandbox/dry-run", content);
+
+        // Assert
+        response.ShouldNotBeNull("HTTP response should not be null");
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+
+        var responseContent = await response.Content.ReadAsStringAsync();
+        responseContent.ShouldNotBeNullOrEmpty("Response content should not be empty");
+
+        var dryRunResponse = JsonSerializer.Deserialize<DryRunResponseDto>(responseContent, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        });
+
+        dryRunResponse.ShouldNotBeNull("Dry-run response should not be null");
+        dryRunResponse.TriggerEventId.ShouldNotBeNullOrEmpty("Trigger event ID should not be null or empty");
+        dryRunResponse.UserId.ShouldBe("user123");
+        dryRunResponse.EventType.ShouldBe("USER_COMMENTED");
+        dryRunResponse.Rules.ShouldNotBeNull("Rules should not be null");
+        dryRunResponse.Summary.ShouldNotBeNull("Summary should not be null");
+        dryRunResponse.EvaluatedAt.ShouldBeGreaterThan(DateTimeOffset.UtcNow.AddMinutes(-1));
+    }
+
+    [Fact]
+    public async Task POST_ApiEventsSandboxDryRun_WithCustomEventId_ShouldUseProvidedId()
+    {
+        // Arrange
+        var customEventId = "custom-dry-run-event-123";
+        var request = new
+        {
+            EventId = customEventId,
+            EventType = "PRODUCT_PURCHASED",
+            UserId = "user456",
+            Attributes = new Dictionary<string, object>
+            {
+                { "productId", "prod123" },
+                { "amount", 29.99 }
+            }
+        };
+
+        var jsonContent = JsonSerializer.Serialize(request);
+        var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+        // Act
+        var response = await HttpClient.PostAsync("/api/events/sandbox/dry-run", content);
+
+        // Assert
+        response.ShouldNotBeNull("HTTP response should not be null");
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+
+        var responseContent = await response.Content.ReadAsStringAsync();
+        var dryRunResponse = JsonSerializer.Deserialize<DryRunResponseDto>(responseContent, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        });
+
+        dryRunResponse.ShouldNotBeNull("Dry-run response should not be null");
+        dryRunResponse.TriggerEventId.ShouldBe(customEventId);
+    }
+
+    [Fact]
+    public async Task POST_ApiEventsSandboxDryRun_WithoutEventId_ShouldGenerateNewGuid()
+    {
+        // Arrange
+        var request = new
+        {
+            EventType = "USER_LOGIN",
+            UserId = "user789"
+        };
+
+        var jsonContent = JsonSerializer.Serialize(request);
+        var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+        // Act
+        var response = await HttpClient.PostAsync("/api/events/sandbox/dry-run", content);
+
+        // Assert
+        response.ShouldNotBeNull("HTTP response should not be null");
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+
+        var responseContent = await response.Content.ReadAsStringAsync();
+        var dryRunResponse = JsonSerializer.Deserialize<DryRunResponseDto>(responseContent, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        });
+
+        dryRunResponse.ShouldNotBeNull("Dry-run response should not be null");
+        dryRunResponse.TriggerEventId.ShouldNotBeNullOrEmpty("Event ID should not be null or empty");
+        Guid.TryParse(dryRunResponse.TriggerEventId, out _).ShouldBeTrue("Event ID should be a valid GUID");
+    }
+
+    [Fact]
+    public async Task POST_ApiEventsSandboxDryRun_WithoutOccurredAt_ShouldUseCurrentUtcTime()
+    {
+        // Arrange
+        var beforeRequest = DateTimeOffset.UtcNow;
+        var request = new
+        {
+            EventType = "USER_LOGOUT",
+            UserId = "user999"
+        };
+
+        var jsonContent = JsonSerializer.Serialize(request);
+        var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+        // Act
+        var response = await HttpClient.PostAsync("/api/events/sandbox/dry-run", content);
+
+        // Assert
+        response.ShouldNotBeNull("HTTP response should not be null");
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+
+        var responseContent = await response.Content.ReadAsStringAsync();
+        var dryRunResponse = JsonSerializer.Deserialize<DryRunResponseDto>(responseContent, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        });
+
+        dryRunResponse.ShouldNotBeNull("Dry-run response should not be null");
+        dryRunResponse.EvaluatedAt.ShouldBeGreaterThan(beforeRequest);
+        dryRunResponse.EvaluatedAt.ShouldBeLessThan(DateTimeOffset.UtcNow.AddSeconds(5));
+    }
+
+    [Theory]
+    [InlineData("", "USER_COMMENTED", "user123")] // Empty EventType
+    [InlineData("USER_COMMENTED", "", "user123")] // Empty UserId
+    [InlineData(null, "USER_COMMENTED", "user123")] // Null EventType
+    [InlineData("USER_COMMENTED", null, "user123")] // Null UserId
+    public async Task POST_ApiEventsSandboxDryRun_WithInvalidData_ShouldReturn400BadRequest(string eventType, string userId, string expectedValidField)
+    {
+        // Arrange
+        var request = new
+        {
+            EventType = eventType,
+            UserId = userId
+        };
+
+        var jsonContent = JsonSerializer.Serialize(request);
+        var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+        // Act
+        var response = await HttpClient.PostAsync("/api/events/sandbox/dry-run", content);
+
+        // Assert
+        response.ShouldNotBeNull("HTTP response should not be null");
+        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+
+        var responseContent = await response.Content.ReadAsStringAsync();
+        responseContent.ShouldContain("error");
+    }
+
+    [Fact]
+    public async Task POST_ApiEventsSandboxDryRun_WithMalformedJson_ShouldReturn400BadRequest()
+    {
+        // Arrange
+        var malformedJson = "{ \"EventType\": \"USER_COMMENTED\", \"UserId\": \"user123\", }"; // Extra comma
+        var content = new StringContent(malformedJson, Encoding.UTF8, "application/json");
+
+        // Act
+        var response = await HttpClient.PostAsync("/api/events/sandbox/dry-run", content);
+
+        // Assert
+        response.ShouldNotBeNull("HTTP response should not be null");
+        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    public async Task POST_ApiEventsSandboxDryRun_ShouldNotPersistEventToDatabase()
+    {
+        // Arrange
+        var request = new
+        {
+            EventType = "DRY_RUN_TEST_EVENT",
+            UserId = "dry_run_user",
+            Attributes = new Dictionary<string, object>
+            {
+                { "testAttribute", "testValue" }
+            }
+        };
+
+        var jsonContent = JsonSerializer.Serialize(request);
+        var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+        // Act
+        var response = await HttpClient.PostAsync("/api/events/sandbox/dry-run", content);
+
+        // Assert
+        response.ShouldNotBeNull("HTTP response should not be null");
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+
+        var responseContent = await response.Content.ReadAsStringAsync();
+        var dryRunResponse = JsonSerializer.Deserialize<DryRunResponseDto>(responseContent, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        });
+
+        dryRunResponse.ShouldNotBeNull("Dry-run response should not be null");
+
+        // Verify that the event was NOT persisted to the database
+        if (DbContext != null)
+        {
+            try
+            {
+                var eventExists = await DbContext.Events.AnyAsync(e => e.EventType == "DRY_RUN_TEST_EVENT" && e.UserId == "dry_run_user");
+                eventExists.ShouldBeFalse("Dry-run event should not be persisted to database");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Database assertion failed: {ex.Message}");
+            }
+        }
+    }
+
     private class EventDto
     {
         public string EventId { get; set; } = string.Empty;
@@ -753,5 +987,57 @@ public class EventsControllerTests : EndToEndTestBase
     private class ErrorResponse
     {
         public string Message { get; set; } = string.Empty;
+    }
+
+    private class DryRunResponseDto
+    {
+        public string TriggerEventId { get; set; } = string.Empty;
+        public string UserId { get; set; } = string.Empty;
+        public string EventType { get; set; } = string.Empty;
+        public IEnumerable<RuleTrace> Rules { get; set; } = new List<RuleTrace>();
+        public DryRunSummary Summary { get; set; } = new DryRunSummary();
+        public DateTimeOffset EvaluatedAt { get; set; }
+    }
+
+    private class RuleTrace
+    {
+        public string RuleId { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public bool TriggerMatched { get; set; }
+        public IEnumerable<ConditionTrace> Conditions { get; set; } = new List<ConditionTrace>();
+        public IEnumerable<PredictedReward> PredictedRewards { get; set; } = new List<PredictedReward>();
+        public bool WouldExecute { get; set; }
+        public long EvaluationTimeMs { get; set; }
+    }
+
+    private class ConditionTrace
+    {
+        public string ConditionId { get; set; } = string.Empty;
+        public string Type { get; set; } = string.Empty;
+        public Dictionary<string, object> Parameters { get; set; } = new Dictionary<string, object>();
+        public bool Result { get; set; }
+        public string Details { get; set; } = string.Empty;
+        public long EvaluationTimeMs { get; set; }
+    }
+
+    private class PredictedReward
+    {
+        public string Type { get; set; } = string.Empty;
+        public string TargetId { get; set; } = string.Empty;
+        public long? Amount { get; set; }
+        public Dictionary<string, object> Parameters { get; set; } = new Dictionary<string, object>();
+        public string Name { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+    }
+
+    private class DryRunSummary
+    {
+        public int TotalRulesEvaluated { get; set; }
+        public int RulesThatWouldExecute { get; set; }
+        public int TotalPredictedRewards { get; set; }
+        public long TotalEvaluationTimeMs { get; set; }
+        public bool EventValid { get; set; }
+        public IEnumerable<string> ValidationErrors { get; set; } = new List<string>();
     }
 }

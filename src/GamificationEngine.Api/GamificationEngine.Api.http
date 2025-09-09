@@ -115,6 +115,107 @@ GET {{baseUrl}}/api/events/type/USER_COMMENTED?limit=10&offset=5
 #### Get a specific event by ID (not implemented yet)
 GET {{baseUrl}}/api/events/test-comment-1
 
+### 2.1. Sandbox Dry-Run Tests
+
+#### Dry-run evaluation with valid event
+POST {{baseUrl}}/api/events/sandbox/dry-run
+Content-Type: {{contentType}}
+
+{
+  "eventId": "dry-run-test-1",
+  "eventType": "USER_COMMENTED",
+  "userId": "user-123",
+  "occurredAt": "2024-01-15T10:30:00Z",
+  "attributes": {
+    "commentId": "comment-456",
+    "postId": "post-789",
+    "text": "Great post!"
+  }
+}
+
+#### Dry-run evaluation without eventId (should generate one)
+POST {{baseUrl}}/api/events/sandbox/dry-run
+Content-Type: {{contentType}}
+
+{
+  "eventType": "PROFILE_COMPLETED",
+  "userId": "user-456",
+  "attributes": {
+    "completenessPercent": 95.0
+  }
+}
+
+#### Dry-run evaluation without occurredAt (should use current time)
+POST {{baseUrl}}/api/events/sandbox/dry-run
+Content-Type: {{contentType}}
+
+{
+  "eventType": "USER_PURCHASED_PRODUCT",
+  "userId": "user-789",
+  "attributes": {
+    "productId": "prod-123",
+    "amount": 29.99
+  }
+}
+
+#### Dry-run evaluation with complex attributes
+POST {{baseUrl}}/api/events/sandbox/dry-run
+Content-Type: {{contentType}}
+
+{
+  "eventId": "dry-run-complex-1",
+  "eventType": "USER_PURCHASED_PRODUCT",
+  "userId": "complex-user-123",
+  "occurredAt": "2024-01-15T10:30:00Z",
+  "attributes": {
+    "productId": "prod-456",
+    "amount": 99.99,
+    "currency": "USD",
+    "tags": ["electronics", "gaming"],
+    "metadata": {
+      "source": "recommendation_engine",
+      "confidence": 0.95
+    },
+    "isFirstPurchase": true,
+    "discountApplied": 15.0
+  }
+}
+
+#### Dry-run evaluation test validation - missing required fields
+POST {{baseUrl}}/api/events/sandbox/dry-run
+Content-Type: {{contentType}}
+
+{
+  "eventId": "dry-run-invalid-1"
+}
+
+#### Dry-run evaluation test validation - empty event type
+POST {{baseUrl}}/api/events/sandbox/dry-run
+Content-Type: {{contentType}}
+
+{
+  "eventType": "",
+  "userId": "user-123"
+}
+
+#### Dry-run evaluation test validation - empty user ID
+POST {{baseUrl}}/api/events/sandbox/dry-run
+Content-Type: {{contentType}}
+
+{
+  "eventType": "TEST_EVENT",
+  "userId": ""
+}
+
+#### Dry-run evaluation with malformed JSON
+POST {{baseUrl}}/api/events/sandbox/dry-run
+Content-Type: {{contentType}}
+
+{
+  "eventType": "USER_COMMENTED",
+  "userId": "user-123",
+}
+
 ### 3. Error Handling Tests
 
 #### Test invalid user ID (empty string)

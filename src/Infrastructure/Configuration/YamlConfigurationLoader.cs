@@ -14,6 +14,7 @@ public sealed class YamlConfigurationLoader : IConfigurationLoader
     {
         _deserializer = new DeserializerBuilder()
             .WithNamingConvention(UnderscoredNamingConvention.Instance)
+            .WithTypeMapping<SimulationSettings, SimulationSettings>()
             .IgnoreUnmatchedProperties()
             .Build();
     }
@@ -41,6 +42,10 @@ public sealed class YamlConfigurationLoader : IConfigurationLoader
             {
                 return Result.Failure<EngineConfiguration, string>("Failed to deserialize configuration");
             }
+
+            // Debug logging
+            Console.WriteLine($"YAML Config loaded - Engine.Id: {config.Engine?.Id}");
+            Console.WriteLine($"YAML Config loaded - Simulation.Enabled: {config.Simulation?.Enabled}");
 
             return Result.Success<EngineConfiguration, string>(config);
         }
