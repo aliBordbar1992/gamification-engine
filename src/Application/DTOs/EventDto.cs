@@ -11,7 +11,7 @@ public class EventDto
     /// Unique identifier for the event
     /// </summary>
     [JsonPropertyName("eventId")]
-    public string EventId { get; set; } = string.Empty;
+    public string EventId { get; set; } = Guid.NewGuid().ToString().Replace("-", "");
 
     /// <summary>
     /// Type of the event (e.g., "USER_COMMENTED", "PRODUCT_PURCHASED")
