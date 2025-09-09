@@ -1,4 +1,4 @@
-namespace GamificationEngine.Infrastructure.Storage.InMemory;
+namespace GamificationEngine.Domain.Users;
 
 /// <summary>
 /// Represents aggregated user data for a specific time range

@@ -69,6 +69,11 @@ public sealed class DatabaseSeederService : IDatabaseSeederService
 
             var config = configResult.Value;
 
+            if (config == null)
+            {
+                throw new ArgumentNullException(nameof(config), "Configuration not found.");
+            }
+
             // Seed point categories
             await SeedPointCategoriesAsync(config.PointCategories, cancellationToken);
 

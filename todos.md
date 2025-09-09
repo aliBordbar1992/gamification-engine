@@ -268,3 +268,144 @@ Organized into **phases** with clear, testable boundaries so that AI coding tool
 * [x] **Stress tests** for high event volume.
 
 **Deliverable:** Engine is production-ready, scalable, and easy to extend.
+
+---
+
+### **Phase 11 – Configuration Enforcement & Operationalization**
+
+* [ ] Implement rule cooldowns and one-time enforcement
+  * Add `ICooldownService` and storage (per-user, per-rule) to track last award timestamp and counts
+  * Enforce `cooldowns` from config (`minMinutesBetweenAwards`, `one_time`) before executing rewards
+  * Respect `RuleMetadata.OneTime` and `RuleMetadata.Repeatable` during evaluation
+  * Add unit tests covering daily, once-only, and edge-cases
+
+* [ ] Wire notifications and webhooks to reward lifecycle
+  * Load `notifications.templates` from config and implement simple token templating (e.g., `{{amount}}`, `{{badgeName}}`)
+  * Publish a `RewardAwarded` domain event after successful reward execution
+  * Handle `RuleMetadata.NotifyPlatform` and `RuleMetadata.WebhookOnAward` to send notifications via `IWebhookService`
+  * Add retry/backoff for webhook failures and capture delivery results
+  * Add unit tests for template rendering and webhook dispatch paths
+
+* [ ] Add API key authentication and role-based authorization
+  * Implement API key middleware reading `engine.security.admin_api_keys` and `engine.security.sdk_api_keys`
+  * Map keys to roles (Admin/Operator/SDK) and apply policy-based `[Authorize]` on controllers/actions
+  * Protect management endpoints (rules/entities) for Admin, allow event ingestion for SDK
+  * Add authentication/authorization unit tests for all protected endpoints
+
+* [ ] Support processing modes: sync, async, hybrid
+  * Read `engine.processing.mode` from config
+  * Sync: evaluate rules inline in `EventIngestionService`
+  * Async: process in `EventQueueBackgroundService` (store event + evaluate rules)
+  * Hybrid: execute lightweight rewards synchronously, queue heavy work (e.g., leaderboard rebuilds)
+  * Add unit tests verifying each mode behavior and idempotency
+
+* [ ] Implement event replay capability
+  * Create `IEventReplayService` to re-evaluate rules for a user and/or time range
+  * Add API endpoint `POST /api/events/replay` with filters (userId, from, to, eventTypes)
+  * Ensure replay respects cooldowns/one-time semantics with an override flag option
+  * Add unit tests for replay correctness and safety
+
+* [ ] Add audit logging and retention based on config
+  * Implement audit entries (reuse `RewardHistory` or add dedicated `RewardAudit`) controlled by `engine.audit.enable`
+  * Add retention job honoring `engine.audit.audit_retention_days`
+  * Record rule evaluations and reward outcomes with correlation IDs
+  * Add unit tests validating retention and audit toggling
+
+* [ ] Extend configuration model and loader
+  * Project missing config sections: `engine.security`, `engine.audit`, `engine.processing`, `cooldowns`, `notifications`, `extensions`
+  * Validate configuration at startup with actionable errors
+  * Update `DatabaseSeederService` to apply full configuration consistently across repositories
+  * Map YAML to C# models explicitly:
+    * `engine.processing`: `mode`, `async_queue`, `workers` (points/badge/trophy/leaderboard), `replay_enabled`
+    * `engine.security`: `admin_api_keys`, `sdk_api_keys`, `role_based_access` (roles → permissions)
+    * `engine.audit`: `enable`, `audit_table`, `audit_retention_days`
+    * `events[].payload_schema`: capture as `Dictionary<string,string>`
+    * `penalties[]`: definition model for penalty triggers and actions
+    * `leaderboards[]`: `id`, `name`, `category`, `scope`, `update_strategy`, `top_n`, `time_window_days`, `cache{type,key_prefix}`
+    * `cooldowns[]`: `id`, `rule_id`, `minMinutesBetweenAwards`, `one_time`
+    * `notifications`: `templates{}`, `webhook.on_reward_award{enabled,url,method,auth,token,payload_template}`
+    * `extensions`: `custom_functions[]` and `webhook_conditions[]`
+    * `simulation`: `enabled`, `sandbox_user_id`, `default_event_batch[]`
+    * `monitoring`: `metrics[]` and `alerts[]`
+  * Add tests for configuration binding and validation failures
+
+* [ ] Enforce and expose event catalog
+  * Persist configured `events` into a repository (e.g., `IEventDefinitionRepository`)
+  * Validate incoming events against catalog: reject unknown with 400, or accept+warn (configurable)
+  * Add `GET /api/events/catalog` endpoint to return configured events (including `payload_schema` when available)
+  * Add unit tests for ingestion validation and catalog retrieval
+
+* [ ] Expose metrics and health endpoints
+  * Emit counters/histograms named in `monitoring.metrics` (e.g., `rewards_awarded_total`, `rules_evaluated_total`)
+  * Add `/health` and `/metrics` endpoints and basic alerts scaffolding hooks
+  * Add tests verifying metrics emission on key code paths
+
+* [ ] Add simulation endpoint (optional enable)
+  * If `simulation.enabled`, add `POST /api/simulation/run` to process `simulation.default_event_batch`
+  * Ensure execution honors processing mode and cooldown settings
+  * Add tests for simulation flows
+
+**Deliverable:** Configuration-defined behaviors (cooldowns, notifications/webhooks, RBAC, processing modes, replay, audit, and metrics) are enforced end-to-end, validated by tests, and controllable solely via configuration without code changes.
+
+---
+
+### **Phase 12 – Testing Platform Consolidation and Quality Gates**
+
+* [ ] Establish test suite baseline and triage
+  * Run all test projects with detailed logging and collect failures/flaky tests
+  * Produce a test inventory (unit/integration/e2e/perf/stress) with owners and gaps
+  * Create a stabilization backlog for flaky tests and mark with `[Trait("Flaky", "true")]`
+
+* [ ] Unify testing conventions and structure
+  * Standardize on xUnit + Shouldly for assertions and Moq for mocks
+  * Move integration-style tests from `tests/Application.Tests` into `tests/Integration.Tests`
+  * Introduce `[Trait]` categories: `Unit`, `Integration`, `E2E`, `Performance`, `Stress`
+  * Align `TargetFramework` and package versions across test projects (optionally via `Directory.Packages.props`)
+
+* [ ] Unit testing improvements
+  * Add time abstraction (e.g., `ISystemClock`) to remove `DateTime.UtcNow` dependencies
+  * Replace sleeps with deterministic `ITestTimer`; remove nondeterminism and race conditions
+  * Increase coverage for complex services (rewards, rule evaluation, leaderboards)
+  * Use `AutoFixture`/`Bogus` for stable data generation with fixed seeds
+
+* [ ] Integration testing hardening
+  * Adopt `WebApplicationFactory<Program>` as the single entry for API integration tests
+  * Use Testcontainers for PostgreSQL; parameterize provider (InMemory vs PostgreSQL) via `appsettings.Testing.json`
+  * Ensure schema/migrations run for PostgreSQL containers prior to tests
+  * Reset DB state between tests (`TestDataIsolationManager` or `Respawn` equivalent)
+  * Provide helpers to seed YAML configuration on startup for integration runs
+
+* [ ] End-to-end (API → DB) scenarios
+  * Add `tests/Integration.Tests/Tests/E2E` validating ingestion → evaluation → reward history → leaderboards (time windows)
+  * Use PostgreSQL via Testcontainers; assert `RewardHistory`, `UserState`, ranking outputs
+  * Cover error handling, cooldowns, and one-time rule behavior once implemented
+
+* [ ] Performance testing
+  * Add `BenchmarkDotNet` micro-benchmarks for hot paths (rule evaluation, repositories)
+  * Define performance baselines/thresholds and export reports (Markdown/CSV) in CI
+  * Keep `Performance.Tests`; convert targeted scenarios into benchmarks where suitable
+
+* [ ] Stress and load testing
+  * Add `NBomber` scenarios: sustained and spike loads for ingestion and evaluation
+  * Define SLOs (p95 latency, error rate) and fail tests if thresholds are exceeded
+  * Publish HTML/CSV reports as CI artifacts
+
+* [ ] Tooling, reporting, and CI gates
+  * Enforce coverage via Coverlet (Cobertura): Unit ≥ 80%, Integration ≥ 60%
+  * CI: run `Unit` on PRs; `Integration` + `E2E` nightly; `Performance` + `Stress` scheduled
+  * Publish test results, coverage, and perf/stress reports; annotate PRs on failures
+
+* [ ] Evaluate and consolidate Integration test infrastructure
+  * Keep: DB factories (InMemory/PostgreSQL), config manager, HTTP client factory, data builders, monitoring utilities
+  * Improve: ensure tests actually use these helpers; remove dead/duplicate utilities; enhance `Infrastructure/README.md`
+  * Deprecate: redundant base classes; merge `IntegrationTestBase` and `EndToEndTestBase` if overlapping
+
+* [ ] External dependency mocking
+  * Add `WireMock.Net` or HttpMessageHandler-based fakes for webhook/external HTTP
+  * Provide helpers to assert outgoing webhook requests and payloads
+
+* [ ] Flaky test stabilization policy
+  * Quarantine `[Trait("Flaky", "true")]` in separate CI job; auto-open tracking issues with logs
+  * Remove `Random` nondeterminism; isolate concurrency via `ITestTimingUtilities`
+
+**Deliverable:** A stable, maintainable testing platform with unified conventions, green unit/integration/E2E suites, reproducible performance and stress testing with thresholds and reports, and CI quality gates enforcing coverage and reliability.
