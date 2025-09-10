@@ -1,3 +1,5 @@
+using GamificationEngine.Shared;
+
 namespace GamificationEngine.Application.DTOs;
 
 /// <summary>

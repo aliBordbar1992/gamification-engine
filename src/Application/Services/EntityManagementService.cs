@@ -74,7 +74,7 @@ public sealed class EntityManagementService : IEntityManagementService
             if (exists)
                 return Result.Failure<PointCategoryDto, string>($"Point category with ID '{dto.Id}' already exists");
 
-            var category = new PointCategory(dto.Id, dto.Name, dto.Description, dto.Aggregation);
+            var category = new PointCategory(dto.Id, dto.Name, dto.Description, dto.Aggregation.ToPointCategoryAggregation());
             if (!category.IsValid())
                 return Result.Failure<PointCategoryDto, string>("Invalid point category data");
 
@@ -100,7 +100,7 @@ public sealed class EntityManagementService : IEntityManagementService
             if (category == null)
                 return Result.Failure<PointCategoryDto, string>($"Point category with ID '{id}' not found");
 
-            category.UpdateInfo(dto.Name, dto.Description, dto.Aggregation);
+            category.UpdateInfo(dto.Name, dto.Description, dto.Aggregation.ToPointCategoryAggregation());
             if (!category.IsValid())
                 return Result.Failure<PointCategoryDto, string>("Invalid point category data");
 
@@ -440,6 +440,8 @@ public sealed class EntityManagementService : IEntityManagementService
             if (exists)
                 return Result.Failure<LevelDto, string>($"Level with ID '{dto.Id}' already exists");
 
+            //TODO: dto.category should exist as a  point category
+
             var level = new Level(dto.Id, dto.Name, dto.Category, dto.MinPoints);
             if (!level.IsValid())
                 return Result.Failure<LevelDto, string>("Invalid level data");
@@ -465,6 +467,8 @@ public sealed class EntityManagementService : IEntityManagementService
             var level = await _levelRepository.GetByIdAsync(id, cancellationToken);
             if (level == null)
                 return Result.Failure<LevelDto, string>($"Level with ID '{id}' not found");
+
+            //TODO: dto.category should exist as a  point category
 
             level.UpdateInfo(dto.Name, dto.Category, dto.MinPoints);
             if (!level.IsValid())
@@ -508,7 +512,7 @@ public sealed class EntityManagementService : IEntityManagementService
         Id = category.Id,
         Name = category.Name,
         Description = category.Description,
-        Aggregation = category.Aggregation
+        Aggregation = category.Aggregation.ToAggregationString()
     };
 
     private static BadgeDto MapToDto(Badge badge) => new()

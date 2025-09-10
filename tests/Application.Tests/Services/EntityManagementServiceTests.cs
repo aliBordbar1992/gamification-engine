@@ -3,6 +3,7 @@ using GamificationEngine.Application.DTOs;
 using GamificationEngine.Application.Services;
 using GamificationEngine.Domain.Entities;
 using GamificationEngine.Domain.Repositories;
+using GamificationEngine.Shared;
 using Moq;
 using Shouldly;
 
@@ -41,8 +42,8 @@ public class EntityManagementServiceTests
         // Arrange
         var categories = new List<PointCategory>
         {
-            new("xp", "Experience", "XP points", "sum"),
-            new("score", "Score", "Score points", "max")
+            new("xp", "Experience", "XP points", PointCategoryAggregation.Sum),
+            new("score", "Score", "Score points", PointCategoryAggregation.Max)
         };
         _mockPointCategoryRepository.Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(categories);
@@ -62,7 +63,7 @@ public class EntityManagementServiceTests
     public async Task GetPointCategoryByIdAsync_WithValidId_ShouldReturnCategory()
     {
         // Arrange
-        var category = new PointCategory("xp", "Experience", "XP points", "sum");
+        var category = new PointCategory("xp", "Experience", "XP points", PointCategoryAggregation.Sum);
         _mockPointCategoryRepository.Setup(x => x.GetByIdAsync("xp", It.IsAny<CancellationToken>()))
             .ReturnsAsync(category);
 
@@ -110,7 +111,7 @@ public class EntityManagementServiceTests
             Id = "xp",
             Name = "Experience",
             Description = "XP points",
-            Aggregation = "sum"
+            Aggregation = PointCategoryAggregation.Sum
         };
         _mockPointCategoryRepository.Setup(x => x.ExistsAsync("xp", It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
@@ -134,7 +135,7 @@ public class EntityManagementServiceTests
             Id = "xp",
             Name = "Experience",
             Description = "XP points",
-            Aggregation = "sum"
+            Aggregation = PointCategoryAggregation.Sum
         };
         _mockPointCategoryRepository.Setup(x => x.ExistsAsync("xp", It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
@@ -162,12 +163,12 @@ public class EntityManagementServiceTests
     public async Task UpdatePointCategoryAsync_WithValidData_ShouldUpdateCategory()
     {
         // Arrange
-        var category = new PointCategory("xp", "Old Name", "Old description", "sum");
+        var category = new PointCategory("xp", "Old Name", "Old description", PointCategoryAggregation.Sum);
         var dto = new UpdatePointCategoryDto
         {
             Name = "New Name",
             Description = "New description",
-            Aggregation = "max"
+            Aggregation = PointCategoryAggregation.Max
         };
         _mockPointCategoryRepository.Setup(x => x.GetByIdAsync("xp", It.IsAny<CancellationToken>()))
             .ReturnsAsync(category);

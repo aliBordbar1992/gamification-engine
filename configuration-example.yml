@@ -87,6 +87,8 @@ point_categories:
     name: "Credits"
     description: "Spendable in-app currency"
     aggregation: "sum"
+    is_spendable: true
+    negative_balance_allowed: true
 
 # 3. Badges definitions
 badges:
@@ -154,7 +156,7 @@ penalties:
     description: "Lose points after receiving a threshold of dislikes"
     trigger:
       type: "eventCountNegative" # engine-defined condition type
-      eventType: "USER_RECEIVED_DISLIKE"
+      event: "USER_RECEIVED_DISLIKE"
       minCount: 100
     action:
       type: "points"
@@ -309,6 +311,33 @@ rules:
           amount: -10
     metadata:
       repeatable: false
+
+  # spending points example 1: simple spending
+  - id: "rule-spend-points"
+    name: "Spend points"
+    triggers:
+      - event: "DISPUTE_CREATED"
+    conditions:
+      - type: "alwaysTrue"
+    spendings:
+      - category: "credits"
+        type: "transaction"
+        attributes: { source_attribute: "userId", amount: "amount" }
+    metadata: ["matchId", "userId"]
+
+  # spending points example 2: transfer points to another user
+  - id: "rule-transfer-points"
+    name: "Transfer points"
+    triggers:
+      - event: "DISPUTE_RESOLVED"
+    conditions:
+      - type: "alwaysTrue"
+    spendings:
+      - category: "credits"
+        type: "transfer"
+        attributes:
+          { source: "fromUserId", destination: "toUserId", amount: "amount" }
+    metadata: ["matchId", "userId"]
 
 # 8. Leaderboards configuration
 leaderboards:

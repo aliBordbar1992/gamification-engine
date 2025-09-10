@@ -1,3 +1,5 @@
+using GamificationEngine.Shared;
+
 namespace GamificationEngine.Domain.Entities;
 
 /// <summary>
@@ -8,12 +10,12 @@ public sealed class PointCategory
     // EF Core requires a parameterless constructor
     private PointCategory() { }
 
-    public PointCategory(string id, string name, string description, string aggregation)
+    public PointCategory(string id, string name, string description, PointCategoryAggregation aggregation)
     {
         if (string.IsNullOrWhiteSpace(id)) throw new ArgumentException("ID cannot be empty", nameof(id));
         if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Name cannot be empty", nameof(name));
         if (string.IsNullOrWhiteSpace(description)) throw new ArgumentException("Description cannot be empty", nameof(description));
-        if (string.IsNullOrWhiteSpace(aggregation)) throw new ArgumentException("Aggregation cannot be empty", nameof(aggregation));
+        if (!IsValidAggregation(aggregation)) throw new ArgumentException("Aggregation is invalid", nameof(aggregation));
 
         Id = id;
         Name = name;
@@ -24,16 +26,16 @@ public sealed class PointCategory
     public string Id { get; private set; } = string.Empty;
     public string Name { get; private set; } = string.Empty;
     public string Description { get; private set; } = string.Empty;
-    public string Aggregation { get; private set; } = string.Empty;
+    public PointCategoryAggregation Aggregation { get; private set; } = PointCategoryAggregation.Sum;
 
     /// <summary>
     /// Updates the point category information
     /// </summary>
-    public void UpdateInfo(string name, string description, string aggregation)
+    public void UpdateInfo(string name, string description, PointCategoryAggregation aggregation)
     {
         if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Name cannot be empty", nameof(name));
         if (string.IsNullOrWhiteSpace(description)) throw new ArgumentException("Description cannot be empty", nameof(description));
-        if (string.IsNullOrWhiteSpace(aggregation)) throw new ArgumentException("Aggregation cannot be empty", nameof(aggregation));
+        if (!IsValidAggregation(aggregation)) throw new ArgumentException("Aggregation is invalid", nameof(aggregation));
 
         Name = name;
         Description = description;
@@ -48,19 +50,18 @@ public sealed class PointCategory
         return !string.IsNullOrWhiteSpace(Id) &&
                !string.IsNullOrWhiteSpace(Name) &&
                !string.IsNullOrWhiteSpace(Description) &&
-               !string.IsNullOrWhiteSpace(Aggregation) &&
                IsValidAggregation(Aggregation);
     }
 
-    private static bool IsValidAggregation(string aggregation)
+    private static bool IsValidAggregation(PointCategoryAggregation aggregation)
     {
-        return aggregation.ToLowerInvariant() switch
+        return aggregation switch
         {
-            "sum" => true,
-            "max" => true,
-            "min" => true,
-            "avg" => true,
-            "count" => true,
+            PointCategoryAggregation.Sum => true,
+            PointCategoryAggregation.Max => true,
+            PointCategoryAggregation.Min => true,
+            PointCategoryAggregation.Avg => true,
+            PointCategoryAggregation.Count => true,
             _ => false
         };
     }

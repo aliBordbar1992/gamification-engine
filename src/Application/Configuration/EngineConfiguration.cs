@@ -88,7 +88,7 @@ public sealed class RuleDefinition
     public List<RuleTrigger> Triggers { get; set; } = new();
     public List<RuleCondition> Conditions { get; set; } = new();
     public List<RuleReward> Rewards { get; set; } = new();
-    public RuleMetadata? Metadata { get; set; }
+    public Dictionary<string, object>? Metadata { get; set; }
 }
 
 public sealed class RuleTrigger
@@ -106,15 +106,6 @@ public sealed class RuleReward
 {
     public string Type { get; set; } = string.Empty;
     public Dictionary<string, object> Parameters { get; set; } = new();
-}
-
-public sealed class RuleMetadata
-{
-    public bool? OneTime { get; set; }
-    public bool? Repeatable { get; set; }
-    public bool? NotifyPlatform { get; set; }
-    public string? NotifyTemplate { get; set; }
-    public bool? WebhookOnAward { get; set; }
 }
 
 public sealed class SimulationSettings

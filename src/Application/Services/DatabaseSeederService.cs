@@ -130,7 +130,7 @@ public sealed class DatabaseSeederService : IDatabaseSeederService
                     categoryConfig.Id,
                     categoryConfig.Name,
                     categoryConfig.Description,
-                    categoryConfig.Aggregation);
+                    categoryConfig.Aggregation.ToPointCategoryAggregation());
 
                 await _pointCategoryRepository.AddAsync(category, cancellationToken);
             }
@@ -352,4 +352,6 @@ public sealed class DatabaseSeederService : IDatabaseSeederService
             return Result.Failure<bool, string>($"Error seeding UserState data: {ex.Message}");
         }
     }
+
+
 }
