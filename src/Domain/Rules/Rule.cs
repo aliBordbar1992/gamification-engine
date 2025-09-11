@@ -12,7 +12,8 @@ public class Rule
     protected Rule() { }
 
     public Rule(string ruleId, string name, string[] triggers, IReadOnlyCollection<Condition> conditions, IReadOnlyCollection<Reward> rewards,
-        bool isActive = true, string? description = null, DateTimeOffset? createdAt = null, DateTimeOffset? updatedAt = null)
+        bool isActive = true, string? description = null, DateTimeOffset? createdAt = null, DateTimeOffset? updatedAt = null,
+        IReadOnlyCollection<RuleSpending>? spendings = null)
     {
         if (string.IsNullOrWhiteSpace(ruleId)) throw new ArgumentException("ruleId cannot be empty", nameof(ruleId));
         if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("name cannot be empty", nameof(name));
@@ -25,6 +26,7 @@ public class Rule
         Triggers = triggers;
         Conditions = conditions;
         Rewards = rewards;
+        Spendings = spendings ?? new List<RuleSpending>();
         IsActive = isActive;
         Description = description;
         CreatedAt = createdAt ?? DateTimeOffset.UtcNow;
@@ -37,6 +39,7 @@ public class Rule
     public string[] Triggers { get; set; } = Array.Empty<string>();
     public IReadOnlyCollection<Condition> Conditions { get; set; } = new List<Condition>();
     public IReadOnlyCollection<Reward> Rewards { get; set; } = new List<Reward>();
+    public IReadOnlyCollection<RuleSpending> Spendings { get; set; } = new List<RuleSpending>();
     public bool IsActive { get; set; } = true;
     public DateTimeOffset CreatedAt { get; set; }
     public DateTimeOffset UpdatedAt { get; set; }
@@ -99,6 +102,6 @@ public class Rule
     public string GetSummary()
     {
         return $"Rule '{Name}' (ID: {RuleId}) - Triggers: [{string.Join(", ", Triggers)}], " +
-               $"Conditions: {Conditions.Count}, Rewards: {Rewards.Count}, Active: {IsActive}";
+               $"Conditions: {Conditions.Count}, Rewards: {Rewards.Count}, Spendings: {Spendings.Count}, Active: {IsActive}";
     }
 }

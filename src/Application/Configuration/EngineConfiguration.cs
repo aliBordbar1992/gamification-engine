@@ -90,6 +90,7 @@ public sealed class RuleDefinition
     public List<RuleTrigger> Triggers { get; set; } = new();
     public List<RuleCondition> Conditions { get; set; } = new();
     public List<RuleReward> Rewards { get; set; } = new();
+    public List<RuleSpendingDefinition>? Spendings { get; set; }
     public Dictionary<string, object>? Metadata { get; set; }
 }
 
@@ -108,6 +109,13 @@ public sealed class RuleReward
 {
     public string Type { get; set; } = string.Empty;
     public Dictionary<string, object> Parameters { get; set; } = new();
+}
+
+public sealed class RuleSpendingDefinition
+{
+    public string Category { get; set; } = string.Empty;
+    public string Type { get; set; } = string.Empty;
+    public Dictionary<string, string> Attributes { get; set; } = new();
 }
 
 public sealed class SimulationSettings

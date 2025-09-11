@@ -21,12 +21,13 @@ public interface IRuleEvaluationService
 }
 
 /// <summary>
-/// Result of a rule evaluation containing executed rewards
+/// Result of a rule evaluation containing executed rewards and spendings
 /// </summary>
 public record RuleEvaluationResult(
     string TriggerEventId,
     string UserId,
-    IReadOnlyCollection<RewardExecutionResult> ExecutedRewards);
+    IReadOnlyCollection<RewardExecutionResult> ExecutedRewards,
+    IReadOnlyCollection<SpendingExecutionResult> ExecutedSpendings);
 
 /// <summary>
 /// Result of executing a single reward

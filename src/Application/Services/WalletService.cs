@@ -396,4 +396,120 @@ public class WalletService : IWalletService
             return Result<IEnumerable<WalletTransactionDto>, string>.Failure($"Failed to get transaction history: {ex.Message}");
         }
     }
+
+    public async Task<Result<bool, string>> AddTransactionAsync(WalletTransaction transaction, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            if (transaction == null)
+                return Result<bool, string>.Failure("Transaction cannot be null");
+
+            // Get or create wallet
+            var wallet = await _walletRepository.GetByUserAndCategoryAsync(transaction.UserId, transaction.PointCategoryId, cancellationToken);
+            if (wallet == null)
+            {
+                wallet = new WalletEntity(transaction.UserId, transaction.PointCategoryId);
+                await _walletRepository.AddAsync(wallet, cancellationToken);
+            }
+
+            // Get point category for validation
+            var pointCategory = await _pointCategoryRepository.GetByIdAsync(transaction.PointCategoryId);
+            if (pointCategory == null)
+                return Result<bool, string>.Failure($"Point category not found: {transaction.PointCategoryId}");
+
+            // Add transaction to wallet
+            wallet.AddTransaction(transaction, pointCategory);
+
+            // Update wallet in repository
+            await _walletRepository.UpdateAsync(wallet, cancellationToken);
+
+            // Store transaction separately for history
+            await _transactionRepository.AddAsync(transaction, cancellationToken);
+
+            return Result<bool, string>.Success(true);
+        }
+        catch (Exception ex)
+        {
+            return Result<bool, string>.Failure($"Error adding transaction: {ex.Message}");
+        }
+    }
+
+    public async Task<Result<bool, string>> TransferAsync(WalletTransfer transfer, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            if (transfer == null)
+                return Result<bool, string>.Failure("Transfer cannot be null");
+
+            // Get or create wallets for both users
+            var fromWallet = await _walletRepository.GetByUserAndCategoryAsync(transfer.FromUserId, transfer.PointCategoryId, cancellationToken);
+            if (fromWallet == null)
+            {
+                fromWallet = new WalletEntity(transfer.FromUserId, transfer.PointCategoryId);
+                await _walletRepository.AddAsync(fromWallet, cancellationToken);
+            }
+
+            var toWallet = await _walletRepository.GetByUserAndCategoryAsync(transfer.ToUserId, transfer.PointCategoryId, cancellationToken);
+            if (toWallet == null)
+            {
+                toWallet = new WalletEntity(transfer.ToUserId, transfer.PointCategoryId);
+                await _walletRepository.AddAsync(toWallet, cancellationToken);
+            }
+
+            // Get point category for validation
+            var pointCategory = await _pointCategoryRepository.GetByIdAsync(transfer.PointCategoryId);
+            if (pointCategory == null)
+                return Result<bool, string>.Failure($"Point category not found: {transfer.PointCategoryId}");
+
+            // Check if source wallet has sufficient balance
+            if (!fromWallet.CanAfford(-transfer.Amount, pointCategory))
+            {
+                transfer.MarkFailed("Insufficient balance");
+                await _transferRepository.AddAsync(transfer, cancellationToken);
+                return Result<bool, string>.Failure("Insufficient balance for transfer");
+            }
+
+            // Create outgoing transaction for source wallet
+            var outgoingTransaction = new WalletTransaction(
+                Guid.NewGuid().ToString(),
+                transfer.FromUserId,
+                transfer.PointCategoryId,
+                -transfer.Amount,
+                WalletTransactionType.TransferOut,
+                transfer.Description,
+                transfer.Id,
+                transfer.Metadata);
+
+            // Create incoming transaction for destination wallet
+            var incomingTransaction = new WalletTransaction(
+                Guid.NewGuid().ToString(),
+                transfer.ToUserId,
+                transfer.PointCategoryId,
+                transfer.Amount,
+                WalletTransactionType.TransferIn,
+                transfer.Description,
+                transfer.Id,
+                transfer.Metadata);
+
+            // Add transactions to wallets
+            fromWallet.AddTransaction(outgoingTransaction, pointCategory);
+            toWallet.AddTransaction(incomingTransaction, pointCategory);
+
+            // Mark transfer as completed
+            transfer.MarkCompleted();
+
+            // Update wallets and store transfer
+            await _walletRepository.UpdateAsync(fromWallet, cancellationToken);
+            await _walletRepository.UpdateAsync(toWallet, cancellationToken);
+            await _transferRepository.AddAsync(transfer, cancellationToken);
+            await _transactionRepository.AddAsync(outgoingTransaction, cancellationToken);
+            await _transactionRepository.AddAsync(incomingTransaction, cancellationToken);
+
+            return Result<bool, string>.Success(true);
+        }
+        catch (Exception ex)
+        {
+            return Result<bool, string>.Failure($"Error executing transfer: {ex.Message}");
+        }
+    }
 }

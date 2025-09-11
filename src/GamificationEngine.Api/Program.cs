@@ -164,6 +164,7 @@ builder.Services.AddScoped<IRuleManagementService, RuleManagementService>();
 builder.Services.AddScoped<IEntityManagementService, EntityManagementService>();
 builder.Services.AddScoped<IWebhookService, WebhookService>();
 builder.Services.AddScoped<IDatabaseSeederService, DatabaseSeederService>();
+builder.Services.AddScoped<ISpendingExecutionService, SpendingExecutionService>();
 builder.Services.AddScoped<IUserStateSeederService, UserStateSeederService>();
 builder.Services.AddScoped<RewardHistorySeederService>();
 builder.Services.AddScoped<IWalletService, WalletService>();

@@ -68,10 +68,21 @@ events:
     description: "A dispute was created for the user"
     payload_schema:
       disputeId: "string"
+      matchId: "string"
+      userId: "string"
+      amount: "number"
   - id: "BADGE_GRANTED" # events for internal processes may also exist
     description: "Badge granted to user"
     payload_schema:
       badgeId: "string"
+  - id: "DISPUTE_RESOLVED"
+    description: "A dispute was resolved for the user"
+    payload_schema:
+      disputeId: "string"
+      matchId: "string"
+      fromUserId: "string"
+      toUserId: "string"
+      amount: "number"
 
 # 2. Point categories
 point_categories:
@@ -324,7 +335,7 @@ rules:
          type: "transaction"
          attributes: { source_attribute: "userId", amount: "amount" }
      metadata: ["matchId", "userId"]
-     
+
   # spending points example 2: transfer points to another user (commented out until spendings are implemented)
    - id: "rule-transfer-points"
      name: "Transfer points"

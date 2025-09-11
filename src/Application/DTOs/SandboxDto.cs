@@ -88,6 +88,42 @@ public sealed class PredictedReward
 }
 
 /// <summary>
+/// Data transfer object for predicted spending
+/// </summary>
+public sealed class PredictedSpending
+{
+    /// <summary>
+    /// Type of the spending (e.g., "transaction", "transfer")
+    /// </summary>
+    [JsonPropertyName("type")]
+    public string Type { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Point category for the spending
+    /// </summary>
+    [JsonPropertyName("category")]
+    public string Category { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Amount to be spent (if applicable)
+    /// </summary>
+    [JsonPropertyName("amount")]
+    public long? Amount { get; set; }
+
+    /// <summary>
+    /// Destination user ID for transfers (if applicable)
+    /// </summary>
+    [JsonPropertyName("destinationUserId")]
+    public string? DestinationUserId { get; set; }
+
+    /// <summary>
+    /// Additional attributes for the spending
+    /// </summary>
+    [JsonPropertyName("attributes")]
+    public Dictionary<string, string> Attributes { get; set; } = new Dictionary<string, string>();
+}
+
+/// <summary>
 /// Data transfer object for rule evaluation trace
 /// </summary>
 public sealed class RuleTrace
@@ -127,6 +163,12 @@ public sealed class RuleTrace
     /// </summary>
     [JsonPropertyName("predictedRewards")]
     public IEnumerable<PredictedReward> PredictedRewards { get; set; } = new List<PredictedReward>();
+
+    /// <summary>
+    /// List of predicted spendings that would be executed if this rule executes
+    /// </summary>
+    [JsonPropertyName("predictedSpendings")]
+    public IEnumerable<PredictedSpending> PredictedSpendings { get; set; } = new List<PredictedSpending>();
 
     /// <summary>
     /// Whether all conditions passed (rule would execute)

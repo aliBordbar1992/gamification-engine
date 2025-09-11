@@ -1,4 +1,5 @@
 using GamificationEngine.Application.DTOs;
+using GamificationEngine.Domain.Wallet;
 using GamificationEngine.Shared;
 
 namespace GamificationEngine.Application.Abstractions;
@@ -71,4 +72,20 @@ public interface IWalletService
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Collection of transactions</returns>
     Task<Result<IEnumerable<WalletTransactionDto>, string>> GetTransactionHistoryAsync(string userId, string pointCategoryId, DateTime? from = null, DateTime? to = null, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Adds a transaction to a user's wallet
+    /// </summary>
+    /// <param name="transaction">The transaction to add</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Result indicating success or failure</returns>
+    Task<Result<bool, string>> AddTransactionAsync(WalletTransaction transaction, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Executes a wallet transfer
+    /// </summary>
+    /// <param name="transfer">The transfer to execute</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Result indicating success or failure</returns>
+    Task<Result<bool, string>> TransferAsync(WalletTransfer transfer, CancellationToken cancellationToken = default);
 }

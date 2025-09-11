@@ -17,17 +17,20 @@ public class RuleEvaluationService : IRuleEvaluationService
     private readonly IRuleRepository _ruleRepository;
     private readonly IEventRepository _eventRepository;
     private readonly IRewardExecutionService _rewardExecutionService;
+    private readonly ISpendingExecutionService _spendingExecutionService;
     private readonly ILogger<RuleEvaluationService> _logger;
 
     public RuleEvaluationService(
         IRuleRepository ruleRepository,
         IEventRepository eventRepository,
         IRewardExecutionService rewardExecutionService,
+        ISpendingExecutionService spendingExecutionService,
         ILogger<RuleEvaluationService> logger)
     {
         _ruleRepository = ruleRepository ?? throw new ArgumentNullException(nameof(ruleRepository));
         _eventRepository = eventRepository ?? throw new ArgumentNullException(nameof(eventRepository));
         _rewardExecutionService = rewardExecutionService ?? throw new ArgumentNullException(nameof(rewardExecutionService));
+        _spendingExecutionService = spendingExecutionService ?? throw new ArgumentNullException(nameof(spendingExecutionService));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
@@ -56,13 +59,15 @@ public class RuleEvaluationService : IRuleEvaluationService
                 return Result<RuleEvaluationResult, DomainError>.Success(new RuleEvaluationResult(
                     triggerEvent.EventId,
                     triggerEvent.UserId,
-                    new List<RewardExecutionResult>()));
+                    new List<RewardExecutionResult>(),
+                    new List<SpendingExecutionResult>()));
             }
 
             _logger.LogDebug("Found {RuleCount} active rules for event type {EventType}",
                 activeRules.Count, triggerEvent.EventType);
 
             var executedRewards = new List<RewardExecutionResult>();
+            var executedSpendings = new List<SpendingExecutionResult>();
 
             // Evaluate each rule
             foreach (var rule in activeRules)
@@ -71,6 +76,7 @@ public class RuleEvaluationService : IRuleEvaluationService
                 if (ruleResult.IsSuccess)
                 {
                     executedRewards.AddRange(ruleResult.Value?.ExecutedRewards ?? new List<RewardExecutionResult>());
+                    executedSpendings.AddRange(ruleResult.Value?.ExecutedSpendings ?? new List<SpendingExecutionResult>());
                 }
                 else
                 {
@@ -88,10 +94,11 @@ public class RuleEvaluationService : IRuleEvaluationService
             var evaluationResult = new RuleEvaluationResult(
                 triggerEvent.EventId,
                 triggerEvent.UserId,
-                executedRewards);
+                executedRewards,
+                executedSpendings);
 
-            _logger.LogInformation("Rule evaluation completed for event {EventId}. Executed {RewardCount} rewards",
-                triggerEvent.EventId, executedRewards.Count);
+            _logger.LogInformation("Rule evaluation completed for event {EventId}. Executed {RewardCount} rewards and {SpendingCount} spendings",
+                triggerEvent.EventId, executedRewards.Count, executedSpendings.Count);
 
             return Result<RuleEvaluationResult, DomainError>.Success(evaluationResult);
         }
@@ -132,10 +139,11 @@ public class RuleEvaluationService : IRuleEvaluationService
                 return Result<RuleEvaluationResult, DomainError>.Success(new RuleEvaluationResult(
                     triggerEvent.EventId,
                     triggerEvent.UserId,
-                    new List<RewardExecutionResult>()));
+                    new List<RewardExecutionResult>(),
+                    new List<SpendingExecutionResult>()));
             }
 
-            _logger.LogInformation("Rule {RuleId} conditions met, executing rewards", rule.RuleId);
+            _logger.LogInformation("Rule {RuleId} conditions met, executing rewards and spendings", rule.RuleId);
 
             // Execute rewards
             var executedRewards = new List<RewardExecutionResult>();
@@ -161,10 +169,37 @@ public class RuleEvaluationService : IRuleEvaluationService
                 }
             }
 
+            // Execute spendings
+            var executedSpendings = new List<SpendingExecutionResult>();
+            foreach (var spending in rule.Spendings)
+            {
+                var spendingResult = await _spendingExecutionService.ExecuteSpendingAsync(spending, triggerEvent.UserId, triggerEvent, cancellationToken);
+                if (spendingResult.IsSuccess && spendingResult.Value != null)
+                {
+                    executedSpendings.Add(spendingResult.Value);
+                }
+                else
+                {
+                    _logger.LogWarning("Failed to execute spending {SpendingType} for category {Category}: {Error}",
+                        spending.Type, spending.Category, spendingResult.Error?.Message ?? "Unknown error");
+                    // Still add a failed execution result for tracking
+                    executedSpendings.Add(new SpendingExecutionResult(
+                        Guid.NewGuid().ToString(),
+                        spending.Category,
+                        spending.Type.ToString(),
+                        triggerEvent.UserId,
+                        triggerEvent.EventId,
+                        DateTimeOffset.UtcNow,
+                        false,
+                        spendingResult.Error?.Message));
+                }
+            }
+
             return Result<RuleEvaluationResult, DomainError>.Success(new RuleEvaluationResult(
                 triggerEvent.EventId,
                 triggerEvent.UserId,
-                executedRewards));
+                executedRewards,
+                executedSpendings));
         }
         catch (Exception ex)
         {

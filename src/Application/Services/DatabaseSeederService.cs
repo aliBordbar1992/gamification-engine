@@ -240,6 +240,7 @@ public sealed class DatabaseSeederService : IDatabaseSeederService
                     var triggers = ruleConfig.Triggers.Select(t => t.Event).ToArray();
                     var conditions = ConvertConditions(ruleConfig.Conditions);
                     var rewards = ConvertRewards(ruleConfig.Rewards);
+                    var spendings = ConvertSpendings(ruleConfig.Spendings);
 
                     var rule = new Rule(
                         ruleConfig.Id,
@@ -248,7 +249,8 @@ public sealed class DatabaseSeederService : IDatabaseSeederService
                         conditions,
                         rewards,
                         isActive: true,
-                        ruleConfig.Description);
+                        ruleConfig.Description,
+                        spendings: spendings);
 
                     await _ruleRepository.StoreAsync(rule);
                     Console.WriteLine($"✅ Successfully seeded rule: {ruleConfig.Id}");
@@ -281,6 +283,44 @@ public sealed class DatabaseSeederService : IDatabaseSeederService
                 ConvertParameters(conditionConfig.Parameters));
 
             result.Add(condition);
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Converts configuration spendings to domain spendings
+    /// </summary>
+    private IReadOnlyCollection<RuleSpending> ConvertSpendings(IEnumerable<RuleSpendingDefinition>? spendings)
+    {
+        if (spendings == null)
+            return new List<RuleSpending>();
+
+        var result = new List<RuleSpending>();
+
+        foreach (var spendingConfig in spendings)
+        {
+            if (string.IsNullOrWhiteSpace(spendingConfig.Category) ||
+                string.IsNullOrWhiteSpace(spendingConfig.Type) ||
+                spendingConfig.Attributes == null)
+            {
+                continue; // Skip invalid spendings
+            }
+
+            if (!Enum.TryParse<RuleSpendingType>(spendingConfig.Type, true, out var spendingType))
+            {
+                continue; // Skip invalid spending types
+            }
+
+            var spending = new RuleSpending(
+                spendingConfig.Category,
+                spendingType,
+                spendingConfig.Attributes);
+
+            if (spending.IsValid())
+            {
+                result.Add(spending);
+            }
         }
 
         return result;

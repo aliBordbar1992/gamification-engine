@@ -19,7 +19,7 @@ public class PointCategoryTests
         var aggregation = PointCategoryAggregation.Sum;
 
         // Act
-        var pointCategory = new PointCategory(id, name, description, aggregation);
+        var pointCategory = new PointCategory(id, name, description, aggregation, false, false);
 
         // Assert
         pointCategory.Id.ShouldBe(id);
@@ -38,7 +38,7 @@ public class PointCategoryTests
         string id, string name, string description, PointCategoryAggregation aggregation, string expectedParam)
     {
         // Act & Assert
-        var exception = Should.Throw<ArgumentException>(() => new PointCategory(id, name, description, aggregation));
+        var exception = Should.Throw<ArgumentException>(() => new PointCategory(id, name, description, aggregation, false, false));
         exception.ParamName.ShouldBe(expectedParam.ToLowerInvariant());
     }
 
@@ -46,7 +46,7 @@ public class PointCategoryTests
     public void UpdateInfo_WithValidParameters_ShouldUpdateProperties()
     {
         // Arrange
-        var pointCategory = new PointCategory("xp", "Experience", "Old description", PointCategoryAggregation.Sum);
+        var pointCategory = new PointCategory("xp", "Experience", "Old description", PointCategoryAggregation.Sum, false, false);
         var newName = "Experience Points";
         var newDescription = "New description";
         var newAggregation = PointCategoryAggregation.Max;
@@ -69,7 +69,7 @@ public class PointCategoryTests
         string name, string description, PointCategoryAggregation aggregation, string expectedParam)
     {
         // Arrange
-        var pointCategory = new PointCategory("xp", "Experience", "Description", aggregation);
+        var pointCategory = new PointCategory("xp", "Experience", "Description", aggregation, false, false);
 
         // Act & Assert
         var exception = Should.Throw<ArgumentException>(() => pointCategory.UpdateInfo(name, description, aggregation));
@@ -81,7 +81,7 @@ public class PointCategoryTests
     public void IsValid_WithEmptyAggregation_ShouldReturnFalse()
     {
         // Arrange
-        var pointCategory = new PointCategory("xp", "Experience", "Description", PointCategoryAggregation.Sum);
+        var pointCategory = new PointCategory("xp", "Experience", "Description", PointCategoryAggregation.Sum, false, false);
         // Use reflection to set invalid aggregation
         var aggregationProperty = typeof(PointCategory).GetProperty("Aggregation");
         aggregationProperty!.SetValue(pointCategory, "");
@@ -97,7 +97,7 @@ public class PointCategoryTests
     public void IsValid_WithEmptyId_ShouldReturnFalse()
     {
         // Arrange
-        var pointCategory = new PointCategory("xp", "Experience", "Description", PointCategoryAggregation.Sum);
+        var pointCategory = new PointCategory("xp", "Experience", "Description", PointCategoryAggregation.Sum, false, false);
         // Use reflection to set invalid ID
         var idProperty = typeof(PointCategory).GetProperty("Id");
         idProperty!.SetValue(pointCategory, "");
@@ -113,7 +113,7 @@ public class PointCategoryTests
     public void IsValid_WithEmptyName_ShouldReturnFalse()
     {
         // Arrange
-        var pointCategory = new PointCategory("xp", "Experience", "Description", PointCategoryAggregation.Sum);
+        var pointCategory = new PointCategory("xp", "Experience", "Description", PointCategoryAggregation.Sum, false, false);
         // Use reflection to set invalid name
         var nameProperty = typeof(PointCategory).GetProperty("Name");
         nameProperty!.SetValue(pointCategory, "");
@@ -129,7 +129,7 @@ public class PointCategoryTests
     public void IsValid_WithEmptyDescription_ShouldReturnFalse()
     {
         // Arrange
-        var pointCategory = new PointCategory("xp", "Experience", "Description", PointCategoryAggregation.Sum);
+        var pointCategory = new PointCategory("xp", "Experience", "Description", PointCategoryAggregation.Sum, false, false);
         // Use reflection to set invalid description
         var descriptionProperty = typeof(PointCategory).GetProperty("Description");
         descriptionProperty!.SetValue(pointCategory, "");

@@ -147,6 +147,7 @@ public class DryRunEvaluationService : IDryRunEvaluationService
                     TriggerMatched = false,
                     Conditions = new List<ConditionTrace>(),
                     PredictedRewards = new List<PredictedReward>(),
+                    PredictedSpendings = new List<PredictedSpending>(),
                     WouldExecute = false,
                     EvaluationTimeMs = ruleStopwatch.ElapsedMilliseconds
                 };
@@ -171,11 +172,13 @@ public class DryRunEvaluationService : IDryRunEvaluationService
                 }
             }
 
-            // Predict rewards if conditions are met
+            // Predict rewards and spendings if conditions are met
             var predictedRewards = new List<PredictedReward>();
+            var predictedSpendings = new List<PredictedSpending>();
             if (allConditionsMet)
             {
                 predictedRewards = rule.Rewards.Select(reward => PredictReward(reward)).ToList();
+                predictedSpendings = rule.Spendings.Select(spending => PredictSpending(spending, triggerEvent)).ToList();
             }
 
             ruleStopwatch.Stop();
@@ -188,6 +191,7 @@ public class DryRunEvaluationService : IDryRunEvaluationService
                 TriggerMatched = true,
                 Conditions = conditionTraces,
                 PredictedRewards = predictedRewards,
+                PredictedSpendings = predictedSpendings,
                 WouldExecute = allConditionsMet,
                 EvaluationTimeMs = ruleStopwatch.ElapsedMilliseconds
             };
@@ -406,5 +410,44 @@ public class DryRunEvaluationService : IDryRunEvaluationService
             Name = $"Penalty: {reward.PenaltyType}",
             Description = $"Apply penalty '{reward.PenaltyType}' to '{reward.TargetId}' with amount {reward.Amount}"
         };
+    }
+
+    /// <summary>
+    /// Predicts what a spending would do based on the spending configuration and trigger event
+    /// </summary>
+    private PredictedSpending PredictSpending(RuleSpending spending, Event triggerEvent)
+    {
+        var predictedSpending = new PredictedSpending
+        {
+            Type = spending.Type.ToString().ToLower(),
+            Category = spending.Category,
+            Attributes = spending.Attributes.ToDictionary(kvp => kvp.Key, kvp => kvp.Value)
+        };
+
+        // Try to extract amount from event payload
+        var amountStr = spending.GetAmountAttribute();
+        if (long.TryParse(amountStr, out var amount))
+        {
+            predictedSpending.Amount = amount;
+        }
+        else if (triggerEvent.Attributes?.TryGetValue(amountStr, out var amountValue) == true)
+        {
+            if (long.TryParse(amountValue?.ToString(), out amount))
+            {
+                predictedSpending.Amount = amount;
+            }
+        }
+
+        // For transfers, try to extract destination user
+        if (spending.Type == RuleSpendingType.Transfer)
+        {
+            var destinationAttr = spending.GetDestinationAttribute();
+            if (triggerEvent.Attributes?.TryGetValue(destinationAttr, out var destinationValue) == true)
+            {
+                predictedSpending.DestinationUserId = destinationValue?.ToString();
+            }
+        }
+
+        return predictedSpending;
     }
 }
