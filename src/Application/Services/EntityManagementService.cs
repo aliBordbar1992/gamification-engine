@@ -74,7 +74,7 @@ public sealed class EntityManagementService : IEntityManagementService
             if (exists)
                 return Result.Failure<PointCategoryDto, string>($"Point category with ID '{dto.Id}' already exists");
 
-            var category = new PointCategory(dto.Id, dto.Name, dto.Description, dto.Aggregation.ToPointCategoryAggregation());
+            var category = new PointCategory(dto.Id, dto.Name, dto.Description, dto.Aggregation.ToPointCategoryAggregation(), dto.IsSpendable, dto.NegativeBalanceAllowed);
             if (!category.IsValid())
                 return Result.Failure<PointCategoryDto, string>("Invalid point category data");
 
@@ -100,7 +100,7 @@ public sealed class EntityManagementService : IEntityManagementService
             if (category == null)
                 return Result.Failure<PointCategoryDto, string>($"Point category with ID '{id}' not found");
 
-            category.UpdateInfo(dto.Name, dto.Description, dto.Aggregation.ToPointCategoryAggregation());
+            category.UpdateInfo(dto.Name, dto.Description, dto.Aggregation.ToPointCategoryAggregation(), dto.IsSpendable, dto.NegativeBalanceAllowed);
             if (!category.IsValid())
                 return Result.Failure<PointCategoryDto, string>("Invalid point category data");
 
@@ -512,7 +512,9 @@ public sealed class EntityManagementService : IEntityManagementService
         Id = category.Id,
         Name = category.Name,
         Description = category.Description,
-        Aggregation = category.Aggregation.ToAggregationString()
+        Aggregation = category.Aggregation.ToAggregationString(),
+        IsSpendable = category.IsSpendable,
+        NegativeBalanceAllowed = category.NegativeBalanceAllowed
     };
 
     private static BadgeDto MapToDto(Badge badge) => new()

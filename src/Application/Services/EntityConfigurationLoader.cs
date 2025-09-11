@@ -110,7 +110,9 @@ public sealed class EntityConfigurationLoader : IEntityConfigurationLoader
                         configCategory.Id,
                         configCategory.Name,
                         configCategory.Description,
-                        configCategory.Aggregation.ToPointCategoryAggregation());
+                        configCategory.Aggregation.ToPointCategoryAggregation(),
+                        configCategory.IsSpendable,
+                        configCategory.NegativeBalanceAllowed);
 
                     if (!domainCategory.IsValid())
                         return Result.Failure<bool, string>($"Invalid point category data: {configCategory.Id}");

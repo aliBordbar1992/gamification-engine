@@ -3,6 +3,7 @@ using GamificationEngine.Domain.Events;
 using GamificationEngine.Domain.Rewards;
 using GamificationEngine.Domain.Users;
 using GamificationEngine.Domain.Entities;
+using GamificationEngine.Domain.Wallet;
 
 namespace GamificationEngine.Infrastructure.Storage.EntityFramework;
 
@@ -19,6 +20,9 @@ public class GamificationEngineDbContext : DbContext
     public DbSet<UserState> UserStates { get; set; }
     public DbSet<RewardHistory> RewardHistories { get; set; }
     public DbSet<EventDefinition> EventDefinitions { get; set; }
+    public DbSet<Wallet> Wallets { get; set; }
+    public DbSet<WalletTransaction> WalletTransactions { get; set; }
+    public DbSet<WalletTransfer> WalletTransfers { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -118,6 +122,75 @@ public class GamificationEngineDbContext : DbContext
 
             // Index for performance
             entity.HasIndex(e => e.Id);
+        });
+
+        // Configure Wallet entity
+        modelBuilder.Entity<Wallet>(entity =>
+        {
+            entity.HasKey(e => new { e.UserId, e.PointCategoryId });
+            entity.Property(e => e.UserId).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.PointCategoryId).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.Balance).IsRequired();
+
+            // Configure one-to-many relationship with transactions
+            entity.HasMany<WalletTransaction>()
+                .WithOne()
+                .HasForeignKey(t => new { t.UserId, t.PointCategoryId })
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Indexes for performance
+            entity.HasIndex(e => e.UserId);
+            entity.HasIndex(e => e.PointCategoryId);
+            entity.HasIndex(e => e.Balance);
+        });
+
+        // Configure WalletTransaction entity
+        modelBuilder.Entity<WalletTransaction>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.UserId).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.PointCategoryId).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.Amount).IsRequired();
+            entity.Property(e => e.Type).IsRequired();
+            entity.Property(e => e.Description).HasMaxLength(500).IsRequired();
+            entity.Property(e => e.ReferenceId).HasMaxLength(50);
+            entity.Property(e => e.Metadata).HasMaxLength(1000);
+            entity.Property(e => e.Timestamp).IsRequired();
+
+            // Indexes for performance
+            entity.HasIndex(e => e.UserId);
+            entity.HasIndex(e => e.PointCategoryId);
+            entity.HasIndex(e => e.Type);
+            entity.HasIndex(e => e.Timestamp);
+            entity.HasIndex(e => e.ReferenceId);
+            entity.HasIndex(e => new { e.UserId, e.PointCategoryId });
+            entity.HasIndex(e => new { e.UserId, e.PointCategoryId, e.Timestamp });
+        });
+
+        // Configure WalletTransfer entity
+        modelBuilder.Entity<WalletTransfer>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.FromUserId).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.ToUserId).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.PointCategoryId).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.Amount).IsRequired();
+            entity.Property(e => e.Description).HasMaxLength(500).IsRequired();
+            entity.Property(e => e.ReferenceId).HasMaxLength(50);
+            entity.Property(e => e.Metadata).HasMaxLength(1000);
+            entity.Property(e => e.Status).IsRequired();
+            entity.Property(e => e.Timestamp).IsRequired();
+            entity.Property(e => e.FailureReason).HasMaxLength(500);
+
+            // Indexes for performance
+            entity.HasIndex(e => e.FromUserId);
+            entity.HasIndex(e => e.ToUserId);
+            entity.HasIndex(e => e.PointCategoryId);
+            entity.HasIndex(e => e.Status);
+            entity.HasIndex(e => e.Timestamp);
+            entity.HasIndex(e => e.ReferenceId);
         });
     }
 }

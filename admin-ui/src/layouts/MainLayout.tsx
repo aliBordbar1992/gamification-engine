@@ -13,6 +13,7 @@ import {
   ExperimentOutlined,
   FileTextOutlined,
   ThunderboltOutlined,
+  WalletOutlined,
 } from '@ant-design/icons'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '@/hooks/useAuth'
@@ -73,6 +74,11 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       key: '/users',
       icon: <UserOutlined />,
       label: 'Users',
+    },
+    {
+      key: '/wallets',
+      icon: <WalletOutlined />,
+      label: 'Wallets',
     },
     {
       key: '/leaderboards',

@@ -19,6 +19,7 @@ import {
   Levels,
   PointCategories,
   Users,
+  Wallets,
   Leaderboards,
   Sandbox,
   Settings,
@@ -201,6 +202,16 @@ function App() {
                   <RouteGuard>
                     <MainLayout>
                       <Users />
+                    </MainLayout>
+                  </RouteGuard>
+                }
+              />
+              <Route
+                path="/wallets"
+                element={
+                  <RouteGuard>
+                    <MainLayout>
+                      <Wallets />
                     </MainLayout>
                   </RouteGuard>
                 }

@@ -130,7 +130,9 @@ public sealed class DatabaseSeederService : IDatabaseSeederService
                     categoryConfig.Id,
                     categoryConfig.Name,
                     categoryConfig.Description,
-                    categoryConfig.Aggregation.ToPointCategoryAggregation());
+                    categoryConfig.Aggregation.ToPointCategoryAggregation(),
+                    categoryConfig.IsSpendable,
+                    categoryConfig.NegativeBalanceAllowed);
 
                 await _pointCategoryRepository.AddAsync(category, cancellationToken);
             }

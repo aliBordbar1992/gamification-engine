@@ -11,6 +11,8 @@ public sealed class PointCategoryDto
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public string Aggregation { get; set; } = string.Empty;
+    public bool IsSpendable { get; set; } = false;
+    public bool NegativeBalanceAllowed { get; set; } = false;
 }
 
 /// <summary>
@@ -22,6 +24,8 @@ public sealed class CreatePointCategoryDto
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public string Aggregation { get; set; } = string.Empty;
+    public bool IsSpendable { get; set; } = false;
+    public bool NegativeBalanceAllowed { get; set; } = false;
 }
 
 /// <summary>
@@ -32,4 +36,6 @@ public sealed class UpdatePointCategoryDto
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public string Aggregation { get; set; } = string.Empty;
+    public bool IsSpendable { get; set; } = false;
+    public bool NegativeBalanceAllowed { get; set; } = false;
 }

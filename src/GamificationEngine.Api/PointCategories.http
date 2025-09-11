@@ -1,0 +1,112 @@
+### Point Categories API Tests
+### This file contains HTTP requests for testing the point categories functionality
+
+@baseUrl = https://localhost:7001
+@pointCategoryId = credits
+
+### 1. Get all point categories
+GET {{baseUrl}}/api/pointcategories
+Accept: application/json
+
+### 2. Get point category by ID
+GET {{baseUrl}}/api/pointcategories/{{pointCategoryId}}
+Accept: application/json
+
+### 3. Get non-existent point category
+GET {{baseUrl}}/api/pointcategories/non-existent-category
+Accept: application/json
+
+### 4. Create a new spendable point category
+POST {{baseUrl}}/api/pointcategories
+Content-Type: application/json
+
+{
+  "id": "coins",
+  "name": "Coins",
+  "description": "Spendable currency for in-game purchases",
+  "aggregation": "sum",
+  "isSpendable": true,
+  "negativeBalanceAllowed": false
+}
+
+### 5. Create a point category with negative balance allowed
+POST {{baseUrl}}/api/pointcategories
+Content-Type: application/json
+
+{
+  "id": "tokens",
+  "name": "Tokens",
+  "description": "Premium currency with overdraft capability",
+  "aggregation": "sum",
+  "isSpendable": true,
+  "negativeBalanceAllowed": true
+}
+
+### 6. Create a non-spendable point category
+POST {{baseUrl}}/api/pointcategories
+Content-Type: application/json
+
+{
+  "id": "reputation",
+  "name": "Reputation",
+  "description": "Non-spendable reputation points",
+  "aggregation": "sum",
+  "isSpendable": false,
+  "negativeBalanceAllowed": false
+}
+
+### 7. Update point category to make it spendable
+PUT {{baseUrl}}/api/pointcategories/{{pointCategoryId}}
+Content-Type: application/json
+
+{
+  "name": "Credits",
+  "description": "Updated spendable in-app currency",
+  "aggregation": "sum",
+  "isSpendable": true,
+  "negativeBalanceAllowed": true
+}
+
+### 8. Update point category to disable negative balance
+PUT {{baseUrl}}/api/pointcategories/{{pointCategoryId}}
+Content-Type: application/json
+
+{
+  "name": "Credits",
+  "description": "Spendable in-app currency (no overdraft)",
+  "aggregation": "sum",
+  "isSpendable": true,
+  "negativeBalanceAllowed": false
+}
+
+### 9. Test invalid point category creation (missing required fields)
+POST {{baseUrl}}/api/pointcategories
+Content-Type: application/json
+
+{
+  "id": "invalid",
+  "name": "",
+  "description": "Invalid category",
+  "aggregation": "sum"
+}
+
+### 10. Test invalid aggregation type
+POST {{baseUrl}}/api/pointcategories
+Content-Type: application/json
+
+{
+  "id": "invalid-agg",
+  "name": "Invalid Aggregation",
+  "description": "Category with invalid aggregation",
+  "aggregation": "invalid",
+  "isSpendable": false,
+  "negativeBalanceAllowed": false
+}
+
+### 11. Delete a point category
+DELETE {{baseUrl}}/api/pointcategories/coins
+Accept: application/json
+
+### 12. Delete non-existent point category
+DELETE {{baseUrl}}/api/pointcategories/non-existent-category
+Accept: application/json

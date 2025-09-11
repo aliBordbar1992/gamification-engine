@@ -10,7 +10,7 @@ public sealed class PointCategory
     // EF Core requires a parameterless constructor
     private PointCategory() { }
 
-    public PointCategory(string id, string name, string description, PointCategoryAggregation aggregation)
+    public PointCategory(string id, string name, string description, PointCategoryAggregation aggregation, bool isSpendable, bool negativeBalanceAllowed)
     {
         if (string.IsNullOrWhiteSpace(id)) throw new ArgumentException("ID cannot be empty", nameof(id));
         if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Name cannot be empty", nameof(name));
@@ -21,17 +21,21 @@ public sealed class PointCategory
         Name = name;
         Description = description;
         Aggregation = aggregation;
+        IsSpendable = isSpendable;
+        NegativeBalanceAllowed = negativeBalanceAllowed;
     }
 
     public string Id { get; private set; } = string.Empty;
     public string Name { get; private set; } = string.Empty;
     public string Description { get; private set; } = string.Empty;
     public PointCategoryAggregation Aggregation { get; private set; } = PointCategoryAggregation.Sum;
+    public bool IsSpendable { get; private set; } = false;
+    public bool NegativeBalanceAllowed { get; private set; } = false;
 
     /// <summary>
     /// Updates the point category information
     /// </summary>
-    public void UpdateInfo(string name, string description, PointCategoryAggregation aggregation)
+    public void UpdateInfo(string name, string description, PointCategoryAggregation aggregation, bool isSpendable = false, bool negativeBalanceAllowed = false)
     {
         if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Name cannot be empty", nameof(name));
         if (string.IsNullOrWhiteSpace(description)) throw new ArgumentException("Description cannot be empty", nameof(description));
@@ -40,6 +44,8 @@ public sealed class PointCategory
         Name = name;
         Description = description;
         Aggregation = aggregation;
+        IsSpendable = isSpendable;
+        NegativeBalanceAllowed = negativeBalanceAllowed;
     }
 
     /// <summary>

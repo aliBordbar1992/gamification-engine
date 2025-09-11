@@ -21,9 +21,11 @@ import {
   TrophyOutlined,
   CrownOutlined,
   StarOutlined,
+  WalletOutlined,
 } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
 import { useUserState } from '@/hooks/useUsers'
+import { useUserWallets } from '@/hooks/useWallet'
 import type { UserStateDto } from '@/api/generated/models'
 
 const { Title, Text, Paragraph } = Typography
@@ -36,6 +38,7 @@ interface UserDetailsProps {
 const UserDetails: React.FC<UserDetailsProps> = ({ userId }) => {
   const navigate = useNavigate()
   const { data: userState, isLoading, error } = useUserState(userId)
+  const { data: wallets, isLoading: walletsLoading } = useUserWallets(userId)
   const [activeTab, setActiveTab] = useState('overview')
 
   const handleBack = () => {
@@ -291,6 +294,58 @@ const UserDetails: React.FC<UserDetailsProps> = ({ userId }) => {
               </Row>
             ) : (
               <Text type="secondary">No trophies earned yet</Text>
+            )}
+          </TabPane>
+
+          <TabPane tab="Wallets" key="wallets">
+            <Title level={4}>
+              <WalletOutlined style={{ marginRight: 8 }} />
+              User Wallets ({wallets?.length || 0})
+            </Title>
+            {walletsLoading ? (
+              <Spin
+                size="large"
+                style={{
+                  display: 'block',
+                  textAlign: 'center',
+                  padding: '50px',
+                }}
+              />
+            ) : wallets && wallets.length > 0 ? (
+              <Row gutter={16}>
+                {wallets.map((wallet, index) => (
+                  <Col span={8} key={index} style={{ marginBottom: 16 }}>
+                    <Card size="small">
+                      <Space direction="vertical" style={{ width: '100%' }}>
+                        <Text strong>{wallet.pointCategoryId}</Text>
+                        <Text
+                          strong
+                          style={{
+                            color:
+                              wallet.balance && wallet.balance >= 0
+                                ? '#52c41a'
+                                : '#ff4d4f',
+                            fontSize: '16px',
+                          }}
+                        >
+                          {wallet.balance?.toLocaleString() || 0} points
+                        </Text>
+                        <Tag
+                          color={
+                            wallet.balance && wallet.balance >= 0
+                              ? 'green'
+                              : 'red'
+                          }
+                        >
+                          Wallet
+                        </Tag>
+                      </Space>
+                    </Card>
+                  </Col>
+                ))}
+              </Row>
+            ) : (
+              <Text type="secondary">No wallets found for this user</Text>
             )}
           </TabPane>
 

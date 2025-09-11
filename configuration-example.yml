@@ -312,32 +312,32 @@ rules:
     metadata:
       repeatable: false
 
-  # spending points example 1: simple spending
-  - id: "rule-spend-points"
-    name: "Spend points"
-    triggers:
-      - event: "DISPUTE_CREATED"
-    conditions:
-      - type: "alwaysTrue"
-    spendings:
-      - category: "credits"
-        type: "transaction"
-        attributes: { source_attribute: "userId", amount: "amount" }
-    metadata: ["matchId", "userId"]
-
-  # spending points example 2: transfer points to another user
-  - id: "rule-transfer-points"
-    name: "Transfer points"
-    triggers:
-      - event: "DISPUTE_RESOLVED"
-    conditions:
-      - type: "alwaysTrue"
-    spendings:
-      - category: "credits"
-        type: "transfer"
-        attributes:
-          { source: "fromUserId", destination: "toUserId", amount: "amount" }
-    metadata: ["matchId", "userId"]
+  # spending points example 1: simple spending (commented out until spendings are implemented)
+   - id: "rule-spend-points"
+     name: "Spend points"
+     triggers:
+       - event: "DISPUTE_CREATED"
+     conditions:
+       - type: "alwaysTrue"
+     spendings:
+       - category: "credits"
+         type: "transaction"
+         attributes: { source_attribute: "userId", amount: "amount" }
+     metadata: ["matchId", "userId"]
+     
+  # spending points example 2: transfer points to another user (commented out until spendings are implemented)
+   - id: "rule-transfer-points"
+     name: "Transfer points"
+     triggers:
+       - event: "DISPUTE_RESOLVED"
+     conditions:
+       - type: "alwaysTrue"
+     spendings:
+       - category: "credits"
+         type: "transfer"
+         attributes:
+           { source: "fromUserId", destination: "toUserId", amount: "amount" }
+     metadata: ["matchId", "userId"]
 
 # 8. Leaderboards configuration
 leaderboards:

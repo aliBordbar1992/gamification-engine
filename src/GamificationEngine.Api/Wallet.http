@@ -1,0 +1,142 @@
+### Wallet API Tests
+### This file contains HTTP requests for testing the wallet functionality
+
+@baseUrl = https://localhost:7001
+@userId = user-alice-newcomer
+@pointCategoryId = credits
+@toUserId = user-bob-commenter
+
+### 1. Get wallet for a specific user and point category
+GET {{baseUrl}}/api/wallet/users/{{userId}}/categories/{{pointCategoryId}}
+Accept: application/json
+
+### 2. Get all wallets for a specific user
+GET {{baseUrl}}/api/wallet/users/{{userId}}
+Accept: application/json
+
+### 3. Get balance for a specific user and point category
+GET {{baseUrl}}/api/wallet/users/{{userId}}/categories/{{pointCategoryId}}/balance
+Accept: application/json
+
+### 4. Spend points from user's wallet
+POST {{baseUrl}}/api/wallet/users/{{userId}}/spend
+Content-Type: application/json
+
+{
+  "pointCategoryId": "{{pointCategoryId}}",
+  "amount": 50,
+  "description": "Purchase premium feature",
+  "referenceId": "purchase-123",
+  "metadata": "{\"feature\": \"premium\", \"source\": \"web\"}"
+}
+
+### 5. Transfer points to another user
+POST {{baseUrl}}/api/wallet/users/{{userId}}/transfer
+Content-Type: application/json
+
+{
+  "toUserId": "{{toUserId}}",
+  "pointCategoryId": "{{pointCategoryId}}",
+  "amount": 25,
+  "description": "Gift credits to friend",
+  "referenceId": "gift-456",
+  "metadata": "{\"reason\": \"gift\", \"occasion\": \"birthday\"}"
+}
+
+### 6. Get transaction history for a user's wallet
+GET {{baseUrl}}/api/wallet/users/{{userId}}/categories/{{pointCategoryId}}/transactions
+Accept: application/json
+
+### 7. Get transaction history with date range
+GET {{baseUrl}}/api/wallet/users/{{userId}}/categories/{{pointCategoryId}}/transactions?from=2024-01-01T00:00:00Z&to=2024-12-31T23:59:59Z
+Accept: application/json
+
+### 8. Test spending with insufficient balance (should fail)
+POST {{baseUrl}}/api/wallet/users/{{userId}}/spend
+Content-Type: application/json
+
+{
+  "pointCategoryId": "{{pointCategoryId}}",
+  "amount": 10000,
+  "description": "Expensive purchase",
+  "referenceId": "expensive-789"
+}
+
+### 9. Test transfer to same user (should fail)
+POST {{baseUrl}}/api/wallet/users/{{userId}}/transfer
+Content-Type: application/json
+
+{
+  "toUserId": "{{userId}}",
+  "pointCategoryId": "{{pointCategoryId}}",
+  "amount": 10,
+  "description": "Self transfer test"
+}
+
+### 10. Test spending on non-spendable point category (should fail)
+POST {{baseUrl}}/api/wallet/users/{{userId}}/spend
+Content-Type: application/json
+
+{
+  "pointCategoryId": "xp",
+  "amount": 10,
+  "description": "Spending XP (should fail)"
+}
+
+### 11. Test transfer on non-spendable point category (should fail)
+POST {{baseUrl}}/api/wallet/users/{{userId}}/transfer
+Content-Type: application/json
+
+{
+  "toUserId": "{{toUserId}}",
+  "pointCategoryId": "xp",
+  "amount": 10,
+  "description": "Transfer XP (should fail)"
+}
+
+### 12. Test negative balance with negative_balance_allowed = true
+POST {{baseUrl}}/api/wallet/users/{{userId}}/spend
+Content-Type: application/json
+
+{
+  "pointCategoryId": "{{pointCategoryId}}",
+  "amount": 200,
+  "description": "Overdraft test",
+  "referenceId": "overdraft-999"
+}
+
+### 13. Test negative balance with negative_balance_allowed = false (should fail)
+POST {{baseUrl}}/api/wallet/users/{{userId}}/spend
+Content-Type: application/json
+
+{
+  "pointCategoryId": "score",
+  "amount": 1000,
+  "description": "Overdraft on non-negative balance category"
+}
+
+### 14. Get wallet for non-existent user
+GET {{baseUrl}}/api/wallet/users/non-existent-user/categories/{{pointCategoryId}}
+Accept: application/json
+
+### 15. Get wallet for non-existent point category
+GET {{baseUrl}}/api/wallet/users/{{userId}}/categories/non-existent-category
+Accept: application/json
+
+### 16. Test invalid spending request (missing required fields)
+POST {{baseUrl}}/api/wallet/users/{{userId}}/spend
+Content-Type: application/json
+
+{
+  "pointCategoryId": "{{pointCategoryId}}",
+  "amount": -10
+}
+
+### 17. Test invalid transfer request (missing required fields)
+POST {{baseUrl}}/api/wallet/users/{{userId}}/transfer
+Content-Type: application/json
+
+{
+  "toUserId": "{{toUserId}}",
+  "pointCategoryId": "{{pointCategoryId}}"
+}

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Tag } from 'antd'
+import { Tag, Switch } from 'antd'
 import EntityDetails from '../EntityDetails'
 import { usePointCategory } from '@/hooks/useEntities'
 import type { EntityDetailsItem } from '../EntityDetails'
@@ -40,6 +40,30 @@ const PointCategoryDetails: React.FC<PointCategoryDetailsProps> = ({
           label: 'Aggregation Method',
           value: <Tag color="purple">{pointCategory.aggregation}</Tag>,
           span: 3,
+        },
+        {
+          label: 'Is Spendable',
+          value: (
+            <Switch
+              checked={pointCategory.isSpendable}
+              disabled
+              checkedChildren="Yes"
+              unCheckedChildren="No"
+            />
+          ),
+          span: 1,
+        },
+        {
+          label: 'Negative Balance Allowed',
+          value: (
+            <Switch
+              checked={pointCategory.negativeBalanceAllowed}
+              disabled
+              checkedChildren="Yes"
+              unCheckedChildren="No"
+            />
+          ),
+          span: 2,
         },
       ]
     : []
