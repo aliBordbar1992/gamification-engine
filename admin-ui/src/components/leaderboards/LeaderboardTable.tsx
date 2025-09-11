@@ -5,6 +5,7 @@ import {
   CrownOutlined,
   NumberOutlined,
 } from '@ant-design/icons'
+import { useNavigate } from 'react-router-dom'
 import type {
   LeaderboardDto,
   LeaderboardEntryDto,
@@ -24,6 +25,7 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({
   type,
   loading = false,
 }) => {
+  const navigate = useNavigate()
   const getRankIcon = (rank: number) => {
     if (rank === 1) return <CrownOutlined style={{ color: '#FFD700' }} />
     if (rank === 2) return <TrophyOutlined style={{ color: '#C0C0C0' }} />
@@ -73,13 +75,18 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({
       dataIndex: 'userId',
       key: 'userId',
       render: (userId: string, record: LeaderboardEntryDto) => (
-        <Space>
+        <Space
+          style={{ cursor: 'pointer' }}
+          onClick={() => navigate(`/users/${userId}`)}
+        >
           <Avatar size="small" style={{ backgroundColor: '#1890ff' }}>
             {record.displayName?.charAt(0).toUpperCase() ||
               userId.charAt(0).toUpperCase()}
           </Avatar>
           <div>
-            <div>{record.displayName || userId}</div>
+            <div style={{ color: '#1890ff' }}>
+              {record.displayName || userId}
+            </div>
             <Text type="secondary" style={{ fontSize: '12px' }}>
               {userId}
             </Text>

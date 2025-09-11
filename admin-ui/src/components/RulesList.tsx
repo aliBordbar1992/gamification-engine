@@ -103,7 +103,12 @@ const RulesList: React.FC<RulesListProps> = ({ onViewRule }) => {
       render: (triggers: string[]) => (
         <Space wrap>
           {triggers.slice(0, 2).map((trigger) => (
-            <Tag key={trigger} color="blue">
+            <Tag
+              key={trigger}
+              color="blue"
+              style={{ cursor: 'pointer' }}
+              onClick={() => navigate(`/events/${trigger}`)}
+            >
               {trigger}
             </Tag>
           ))}

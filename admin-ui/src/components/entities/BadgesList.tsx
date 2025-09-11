@@ -56,6 +56,7 @@ const BadgesList: React.FC<BadgesListProps> = ({ onViewDetails }) => {
       columns={columns}
       onViewDetails={onViewDetails}
       emptyMessage="No badges found"
+      entityType="badges"
     />
   )
 }

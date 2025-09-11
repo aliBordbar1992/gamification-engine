@@ -33,13 +33,17 @@ const { TabPane } = Tabs
 
 interface UserDetailsProps {
   userId: string
+  activeTab?: string
 }
 
-const UserDetails: React.FC<UserDetailsProps> = ({ userId }) => {
+const UserDetails: React.FC<UserDetailsProps> = ({
+  userId,
+  activeTab: initialTab = 'overview',
+}) => {
   const navigate = useNavigate()
   const { data: userState, isLoading, error } = useUserState(userId)
   const { data: wallets, isLoading: walletsLoading } = useUserWallets(userId)
-  const [activeTab, setActiveTab] = useState('overview')
+  const [activeTab, setActiveTab] = useState(initialTab)
 
   const handleBack = () => {
     navigate('/users')
@@ -228,7 +232,14 @@ const UserDetails: React.FC<UserDetailsProps> = ({ userId }) => {
                   <Space wrap>
                     {Object.entries(userState.pointsByCategory).map(
                       ([category, points]) => (
-                        <Tag key={category} color="blue">
+                        <Tag
+                          key={category}
+                          color="blue"
+                          style={{ cursor: 'pointer' }}
+                          onClick={() =>
+                            navigate(`/point-categories/${category}`)
+                          }
+                        >
                           {category}: {points?.toLocaleString() || 0}
                         </Tag>
                       )
@@ -250,9 +261,15 @@ const UserDetails: React.FC<UserDetailsProps> = ({ userId }) => {
               <Row gutter={16}>
                 {userState.badges.map((badge, index) => (
                   <Col span={8} key={index} style={{ marginBottom: 16 }}>
-                    <Card size="small">
+                    <Card
+                      size="small"
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => navigate(`/badges/${badge.id}`)}
+                    >
                       <Space direction="vertical" style={{ width: '100%' }}>
-                        <Text strong>{badge.name || badge.id}</Text>
+                        <Text strong style={{ color: '#1890ff' }}>
+                          {badge.name || badge.id}
+                        </Text>
                         {badge.description && (
                           <Text type="secondary" style={{ fontSize: '12px' }}>
                             {badge.description}
@@ -278,9 +295,15 @@ const UserDetails: React.FC<UserDetailsProps> = ({ userId }) => {
               <Row gutter={16}>
                 {userState.trophies.map((trophy, index) => (
                   <Col span={8} key={index} style={{ marginBottom: 16 }}>
-                    <Card size="small">
+                    <Card
+                      size="small"
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => navigate(`/trophies/${trophy.id}`)}
+                    >
                       <Space direction="vertical" style={{ width: '100%' }}>
-                        <Text strong>{trophy.name || trophy.id}</Text>
+                        <Text strong style={{ color: '#1890ff' }}>
+                          {trophy.name || trophy.id}
+                        </Text>
                         {trophy.description && (
                           <Text type="secondary" style={{ fontSize: '12px' }}>
                             {trophy.description}
@@ -315,9 +338,17 @@ const UserDetails: React.FC<UserDetailsProps> = ({ userId }) => {
               <Row gutter={16}>
                 {wallets.map((wallet, index) => (
                   <Col span={8} key={index} style={{ marginBottom: 16 }}>
-                    <Card size="small">
+                    <Card
+                      size="small"
+                      style={{ cursor: 'pointer' }}
+                      onClick={() =>
+                        navigate(`/point-categories/${wallet.pointCategoryId}`)
+                      }
+                    >
                       <Space direction="vertical" style={{ width: '100%' }}>
-                        <Text strong>{wallet.pointCategoryId}</Text>
+                        <Text strong style={{ color: '#1890ff' }}>
+                          {wallet.pointCategoryId}
+                        </Text>
                         <Text
                           strong
                           style={{

@@ -53,6 +53,7 @@ const TrophiesList: React.FC<TrophiesListProps> = ({ onViewDetails }) => {
       columns={columns}
       onViewDetails={onViewDetails}
       emptyMessage="No trophies found"
+      entityType="trophies"
     />
   )
 }

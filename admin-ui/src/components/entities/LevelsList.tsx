@@ -56,6 +56,7 @@ const LevelsList: React.FC<LevelsListProps> = ({ onViewDetails }) => {
       columns={columns}
       onViewDetails={onViewDetails}
       emptyMessage="No levels found"
+      entityType="levels"
     />
   )
 }

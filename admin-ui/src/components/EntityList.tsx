@@ -1,6 +1,7 @@
 import React from 'react'
 import { Card, Table, Button, Space, Typography, Alert } from 'antd'
 import { EyeOutlined } from '@ant-design/icons'
+import { useNavigate } from 'react-router-dom'
 import type { ColumnsType } from 'antd/es/table'
 
 const { Title, Text } = Typography
@@ -20,6 +21,7 @@ interface EntityListProps {
   columns: ColumnsType<EntityListItem>
   onViewDetails: (id: string) => void
   emptyMessage?: string
+  entityType?: string // e.g., 'badges', 'trophies', 'levels', 'point-categories'
 }
 
 const EntityList: React.FC<EntityListProps> = ({
@@ -30,9 +32,28 @@ const EntityList: React.FC<EntityListProps> = ({
   columns,
   onViewDetails,
   emptyMessage = 'No items found',
+  entityType,
 }) => {
+  const navigate = useNavigate()
   const enhancedColumns: ColumnsType<EntityListItem> = [
-    ...columns,
+    ...columns.map((col) => {
+      // Make the name column clickable if entityType is provided
+      if (col.dataIndex === 'name' && entityType) {
+        return {
+          ...col,
+          render: (name: string, record: EntityListItem) => (
+            <Text
+              strong
+              style={{ cursor: 'pointer', color: '#1890ff' }}
+              onClick={() => navigate(`/${entityType}/${record.id}`)}
+            >
+              {name}
+            </Text>
+          ),
+        }
+      }
+      return col
+    }),
     {
       title: 'Actions',
       key: 'actions',

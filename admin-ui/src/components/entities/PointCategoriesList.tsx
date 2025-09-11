@@ -48,6 +48,7 @@ const PointCategoriesList: React.FC<PointCategoriesListProps> = ({
       columns={columns}
       onViewDetails={onViewDetails}
       emptyMessage="No point categories found"
+      entityType="point-categories"
     />
   )
 }

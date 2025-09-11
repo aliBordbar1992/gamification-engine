@@ -1,6 +1,7 @@
 import React from 'react'
 import { Card, List, Typography, Tag, Button, Space, Spin, Alert } from 'antd'
 import { WalletOutlined, EyeOutlined, DollarOutlined } from '@ant-design/icons'
+import { useNavigate } from 'react-router-dom'
 import { useUserWallets } from '@/hooks/useWallet'
 import type { WalletDto } from '@/api/wallet'
 
@@ -19,6 +20,7 @@ const WalletList: React.FC<WalletListProps> = ({
   onSpendPoints,
   onTransferPoints,
 }) => {
+  const navigate = useNavigate()
   const { data: wallets, isLoading, error } = useUserWallets(userId)
 
   if (isLoading) {
@@ -66,7 +68,14 @@ const WalletList: React.FC<WalletListProps> = ({
               title={
                 <Space>
                   <WalletOutlined />
-                  <span>{wallet.pointCategoryId}</span>
+                  <span
+                    style={{ cursor: 'pointer', color: '#1890ff' }}
+                    onClick={() =>
+                      navigate(`/point-categories/${wallet.pointCategoryId}`)
+                    }
+                  >
+                    {wallet.pointCategoryId}
+                  </span>
                 </Space>
               }
               extra={

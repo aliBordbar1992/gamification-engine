@@ -14,6 +14,7 @@ import {
   DollarOutlined,
   SwapOutlined,
 } from '@ant-design/icons'
+import { useNavigate } from 'react-router-dom'
 import { useWallet } from '@/hooks/useWallet'
 import type { WalletDto } from '@/api/wallet'
 
@@ -34,6 +35,7 @@ const WalletDetails: React.FC<WalletDetailsProps> = ({
   onSpendPoints,
   onTransferPoints,
 }) => {
+  const navigate = useNavigate()
   const { data: wallet, isLoading, error } = useWallet(userId, pointCategoryId)
 
   if (isLoading) {
@@ -79,16 +81,47 @@ const WalletDetails: React.FC<WalletDetailsProps> = ({
 
       <Card>
         <div style={{ marginBottom: '24px' }}>
-          <Title level={3}>Wallet: {wallet.pointCategoryId}</Title>
-          <Text type="secondary">User: {wallet.userId}</Text>
+          <Title level={3}>
+            Wallet:
+            <span
+              style={{ cursor: 'pointer', color: '#1890ff', marginLeft: '8px' }}
+              onClick={() =>
+                navigate(`/point-categories/${wallet.pointCategoryId}`)
+              }
+            >
+              {wallet.pointCategoryId}
+            </span>
+          </Title>
+          <Text type="secondary">
+            User:
+            <span
+              style={{ cursor: 'pointer', color: '#1890ff', marginLeft: '4px' }}
+              onClick={() => navigate(`/users/${wallet.userId}`)}
+            >
+              {wallet.userId}
+            </span>
+          </Text>
         </div>
 
         <Descriptions bordered column={2}>
           <Descriptions.Item label="User ID" span={1}>
-            {wallet.userId}
+            <Text
+              style={{ cursor: 'pointer', color: '#1890ff' }}
+              onClick={() => navigate(`/users/${wallet.userId}`)}
+            >
+              {wallet.userId}
+            </Text>
           </Descriptions.Item>
           <Descriptions.Item label="Point Category" span={1}>
-            <Tag color="blue">{wallet.pointCategoryId}</Tag>
+            <Tag
+              color="blue"
+              style={{ cursor: 'pointer' }}
+              onClick={() =>
+                navigate(`/point-categories/${wallet.pointCategoryId}`)
+              }
+            >
+              {wallet.pointCategoryId}
+            </Tag>
           </Descriptions.Item>
           <Descriptions.Item label="Current Balance" span={2}>
             <Text

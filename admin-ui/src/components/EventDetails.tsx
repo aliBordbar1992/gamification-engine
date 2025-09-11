@@ -78,7 +78,13 @@ const EventDetails: React.FC<EventDetailsProps> = ({ eventId }) => {
           </Descriptions.Item>
 
           <Descriptions.Item label="User ID">
-            <Text code>{event.userId}</Text>
+            <Text
+              code
+              style={{ cursor: 'pointer', color: '#1890ff' }}
+              onClick={() => navigate(`/users/${event.userId}`)}
+            >
+              {event.userId}
+            </Text>
           </Descriptions.Item>
 
           <Descriptions.Item label="Timestamp">

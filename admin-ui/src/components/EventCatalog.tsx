@@ -14,6 +14,7 @@ import {
   Badge,
 } from 'antd'
 import { SearchOutlined, InfoCircleOutlined } from '@ant-design/icons'
+import { useNavigate } from 'react-router-dom'
 import { useEventCatalog } from '@/hooks/useEvents'
 import type { EventDefinitionDto } from '@/api/generated/models'
 
@@ -26,6 +27,7 @@ interface EventCatalogProps {
 }
 
 const EventCatalog: React.FC<EventCatalogProps> = ({ onViewEvent }) => {
+  const navigate = useNavigate()
   const [searchText, setSearchText] = useState('')
   const { data: eventDefinitions = [], isLoading, error } = useEventCatalog()
 
@@ -58,7 +60,12 @@ const EventCatalog: React.FC<EventCatalogProps> = ({ onViewEvent }) => {
       width: 200,
       render: (id: string, record: EventDefinitionDto) => (
         <div>
-          <Text strong code>
+          <Text
+            strong
+            code
+            style={{ cursor: 'pointer', color: '#1890ff' }}
+            onClick={() => navigate(`/events/${id}`)}
+          >
             {id}
           </Text>
           {onViewEvent && (

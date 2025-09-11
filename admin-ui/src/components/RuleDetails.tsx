@@ -197,7 +197,12 @@ const RuleDetails: React.FC<RuleDetailsProps> = ({ ruleId, onEdit }) => {
                 <Card title="Triggers" size="small">
                   <Space wrap>
                     {rule.triggers?.map((trigger: string) => (
-                      <Tag key={trigger} color="blue">
+                      <Tag
+                        key={trigger}
+                        color="blue"
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => navigate(`/events/${trigger}`)}
+                      >
                         {trigger}
                       </Tag>
                     ))}
@@ -262,7 +267,23 @@ const RuleDetails: React.FC<RuleDetailsProps> = ({ ruleId, onEdit }) => {
                         >
                           <Space>
                             <Tag color="green">{reward.type}</Tag>
-                            <Text strong>{reward.targetId}</Text>
+                            <Text
+                              strong
+                              style={{ cursor: 'pointer', color: '#1890ff' }}
+                              onClick={() => {
+                                const route =
+                                  reward.type === 'badge'
+                                    ? 'badges'
+                                    : reward.type === 'trophy'
+                                    ? 'trophies'
+                                    : reward.type === 'level'
+                                    ? 'levels'
+                                    : 'point-categories'
+                                navigate(`/${route}/${reward.targetId}`)
+                              }}
+                            >
+                              {reward.targetId}
+                            </Text>
                             {reward.amount && (
                               <Text type="secondary">({reward.amount})</Text>
                             )}
@@ -314,7 +335,17 @@ const RuleDetails: React.FC<RuleDetailsProps> = ({ ruleId, onEdit }) => {
                               >
                                 {spending.type}
                               </Tag>
-                              <Text strong>{spending.category}</Text>
+                              <Text
+                                strong
+                                style={{ cursor: 'pointer', color: '#1890ff' }}
+                                onClick={() =>
+                                  navigate(
+                                    `/point-categories/${spending.category}`
+                                  )
+                                }
+                              >
+                                {spending.category}
+                              </Text>
                             </Space>
                             {spending.attributes &&
                               Object.keys(spending.attributes).length > 0 && (

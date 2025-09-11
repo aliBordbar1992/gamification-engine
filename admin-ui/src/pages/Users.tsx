@@ -1,6 +1,6 @@
 import React from 'react'
 import { Typography } from 'antd'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
 import UsersList from '@/components/users/UsersList'
 import UserDetails from '@/components/users/UserDetails'
 import UserRewardHistory from '@/components/users/UserRewardHistory'
@@ -11,6 +11,7 @@ const { Title } = Typography
 const Users: React.FC = () => {
   const { id, action } = useParams<{ id: string; action?: string }>()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
 
   const handleViewRewardHistory = (user: UserSummaryDto) => {
     // Navigate to reward history route
@@ -24,7 +25,8 @@ const Users: React.FC = () => {
 
   // Handle user details route
   if (id) {
-    return <UserDetails userId={id} />
+    const activeTab = searchParams.get('tab') || 'overview'
+    return <UserDetails userId={id} activeTab={activeTab} />
   }
 
   // Default users list

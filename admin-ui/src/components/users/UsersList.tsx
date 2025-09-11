@@ -1,16 +1,5 @@
 import React, { useState, useMemo } from 'react'
-import {
-  Table,
-  Input,
-  Button,
-  Space,
-  Tag,
-  Typography,
-  Card,
-  Row,
-  Col,
-  Tooltip,
-} from 'antd'
+import { Table, Input, Button, Space, Typography, Card, Row, Col } from 'antd'
 import {
   FilterOutlined,
   EyeOutlined,
@@ -74,7 +63,13 @@ const UsersList: React.FC<UsersListProps> = ({
       key: 'userId',
       render: (userId: string) => (
         <div>
-          <Text strong>{userId}</Text>
+          <Text
+            strong
+            style={{ cursor: 'pointer', color: '#1890ff' }}
+            onClick={() => navigate(`/users/${userId}`)}
+          >
+            {userId}
+          </Text>
           <br />
           <Text type="secondary" style={{ fontSize: '12px' }}>
             <UserOutlined style={{ marginRight: 4 }} />
@@ -100,10 +95,13 @@ const UsersList: React.FC<UsersListProps> = ({
       dataIndex: 'badgeCount',
       key: 'badgeCount',
       width: 100,
-      render: (count: number) => (
-        <Space>
+      render: (count: number, record: UserSummaryDto) => (
+        <Space
+          style={{ cursor: 'pointer' }}
+          onClick={() => navigate(`/users/${record.userId}?tab=badges`)}
+        >
           <TrophyOutlined style={{ color: '#faad14' }} />
-          <Text>{count || 0}</Text>
+          <Text style={{ color: '#1890ff' }}>{count || 0}</Text>
         </Space>
       ),
       sorter: (a: UserSummaryDto, b: UserSummaryDto) =>
@@ -114,47 +112,17 @@ const UsersList: React.FC<UsersListProps> = ({
       dataIndex: 'trophyCount',
       key: 'trophyCount',
       width: 100,
-      render: (count: number) => (
-        <Space>
+      render: (count: number, record: UserSummaryDto) => (
+        <Space
+          style={{ cursor: 'pointer' }}
+          onClick={() => navigate(`/users/${record.userId}?tab=trophies`)}
+        >
           <CrownOutlined style={{ color: '#722ed1' }} />
-          <Text>{count || 0}</Text>
+          <Text style={{ color: '#1890ff' }}>{count || 0}</Text>
         </Space>
       ),
       sorter: (a: UserSummaryDto, b: UserSummaryDto) =>
         (a.trophyCount || 0) - (b.trophyCount || 0),
-    },
-    {
-      title: 'Categories',
-      dataIndex: 'pointsByCategory',
-      key: 'categories',
-      render: (pointsByCategory: { [key: string]: number } | null) => {
-        if (!pointsByCategory)
-          return <Text type="secondary">No categories</Text>
-
-        const categories = Object.keys(pointsByCategory)
-        return (
-          <Space wrap>
-            {categories.slice(0, 2).map((category) => (
-              <Tag key={category} color="blue">
-                {category}: {pointsByCategory[category]?.toLocaleString() || 0}
-              </Tag>
-            ))}
-            {categories.length > 2 && (
-              <Tooltip
-                title={categories
-                  .slice(2)
-                  .map(
-                    (cat) =>
-                      `${cat}: ${pointsByCategory[cat]?.toLocaleString() || 0}`
-                  )
-                  .join(', ')}
-              >
-                <Tag color="default">+{categories.length - 2}</Tag>
-              </Tooltip>
-            )}
-          </Space>
-        )
-      },
     },
     {
       title: 'Actions',
