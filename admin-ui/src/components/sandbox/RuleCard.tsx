@@ -28,6 +28,14 @@ interface PredictedReward {
   description: string
 }
 
+interface PredictedSpending {
+  type: string
+  category: string
+  amount?: number
+  destinationUserId?: string
+  attributes: Record<string, string>
+}
+
 interface RuleCardProps {
   rule: {
     ruleId: string
@@ -36,6 +44,7 @@ interface RuleCardProps {
     triggerMatched: boolean
     conditions: Condition[]
     predictedRewards: PredictedReward[]
+    predictedSpendings?: PredictedSpending[]
     wouldExecute: boolean
     evaluationTimeMs: number
   }
@@ -50,6 +59,7 @@ const RuleCard: React.FC<RuleCardProps> = ({ rule, index }) => {
     triggerMatched,
     conditions = [],
     predictedRewards = [],
+    predictedSpendings = [],
     wouldExecute,
     evaluationTimeMs,
   } = rule
@@ -92,6 +102,17 @@ const RuleCard: React.FC<RuleCardProps> = ({ rule, index }) => {
         return '📈'
       default:
         return '🎁'
+    }
+  }
+
+  const getSpendingIcon = (type: string) => {
+    switch (type?.toLowerCase()) {
+      case 'transaction':
+        return '💸'
+      case 'transfer':
+        return '🔄'
+      default:
+        return '💰'
     }
   }
 
@@ -233,6 +254,71 @@ const RuleCard: React.FC<RuleCardProps> = ({ rule, index }) => {
                       }}
                     >
                       {reward.description}
+                    </Text>
+                  )}
+                </Space>
+              </Card>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Predicted Spendings Section */}
+      {predictedSpendings.length > 0 && (
+        <div>
+          <Text
+            strong
+            style={{ fontSize: '13px', marginBottom: '8px', display: 'block' }}
+          >
+            Predicted Spendings ({predictedSpendings.length})
+          </Text>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+            {predictedSpendings.map((spending, idx) => (
+              <Card
+                key={idx}
+                size="small"
+                style={{
+                  background:
+                    'linear-gradient(135deg, #fff2e8 0%, #ffd591 100%)',
+                  border: '1px solid #ffb366',
+                  borderRadius: '6px',
+                  minWidth: '140px',
+                }}
+              >
+                <Space
+                  direction="vertical"
+                  align="center"
+                  style={{ width: '100%' }}
+                >
+                  <div style={{ fontSize: '18px' }}>
+                    {getSpendingIcon(spending.type)}
+                  </div>
+                  <Text
+                    strong
+                    style={{ fontSize: '11px', textAlign: 'center' }}
+                  >
+                    {spending.type}: {spending.category}
+                  </Text>
+                  {spending.amount && (
+                    <Text
+                      style={{
+                        fontSize: '10px',
+                        color: '#666',
+                        textAlign: 'center',
+                      }}
+                    >
+                      Amount: {spending.amount}
+                    </Text>
+                  )}
+                  {spending.destinationUserId && (
+                    <Text
+                      style={{
+                        fontSize: '9px',
+                        color: '#999',
+                        textAlign: 'center',
+                      }}
+                    >
+                      To: {spending.destinationUserId}
                     </Text>
                   )}
                 </Space>

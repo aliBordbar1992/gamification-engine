@@ -16,7 +16,7 @@ import {
 import { FilterOutlined, EyeOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
 import { useRules } from '@/hooks/useRules'
-import type { RewardDto, RuleDto } from '@/api/generated/models'
+import type { RuleDto } from '@/api/generated/models'
 
 // Filter and search types
 export interface RulesFilters {
@@ -115,26 +115,7 @@ const RulesList: React.FC<RulesListProps> = ({ onViewRule }) => {
         </Space>
       ),
     },
-    {
-      title: 'Rewards',
-      dataIndex: 'rewards',
-      key: 'rewards',
-      render: (rewards: RewardDto[]) => (
-        <Space wrap>
-          {rewards.slice(0, 2).map((reward, index) => (
-            <Tag key={index} color="green">
-              {reward.type}: {reward.targetId}
-              {reward.amount && ` (${reward.amount})`}
-            </Tag>
-          ))}
-          {rewards.length > 2 && (
-            <Tooltip title={`${rewards.length - 2} more rewards`}>
-              <Tag color="default">+{rewards.length - 2}</Tag>
-            </Tooltip>
-          )}
-        </Space>
-      ),
-    },
+
     {
       title: 'Created',
       dataIndex: 'createdAt',
@@ -166,7 +147,10 @@ const RulesList: React.FC<RulesListProps> = ({ onViewRule }) => {
     const total = rules.length
     const active = rules.filter((rule: RuleDto) => rule.isActive).length
     const inactive = total - active
-    return { total, active, inactive }
+    const withSpendings = rules.filter(
+      (rule: RuleDto) => rule.spendings && rule.spendings.length > 0
+    ).length
+    return { total, active, inactive, withSpendings }
   }, [rules])
 
   if (error) {
@@ -181,7 +165,7 @@ const RulesList: React.FC<RulesListProps> = ({ onViewRule }) => {
     <div>
       {/* Stats Cards */}
       <Row gutter={16} style={{ marginBottom: 24 }}>
-        <Col span={8}>
+        <Col span={6}>
           <Card>
             <div style={{ textAlign: 'center' }}>
               <Title level={3} style={{ margin: 0, color: '#1890ff' }}>
@@ -191,7 +175,7 @@ const RulesList: React.FC<RulesListProps> = ({ onViewRule }) => {
             </div>
           </Card>
         </Col>
-        <Col span={8}>
+        <Col span={6}>
           <Card>
             <div style={{ textAlign: 'center' }}>
               <Title level={3} style={{ margin: 0, color: '#52c41a' }}>
@@ -201,13 +185,23 @@ const RulesList: React.FC<RulesListProps> = ({ onViewRule }) => {
             </div>
           </Card>
         </Col>
-        <Col span={8}>
+        <Col span={6}>
           <Card>
             <div style={{ textAlign: 'center' }}>
               <Title level={3} style={{ margin: 0, color: '#d9d9d9' }}>
                 {stats.inactive}
               </Title>
               <Text type="secondary">Inactive Rules</Text>
+            </div>
+          </Card>
+        </Col>
+        <Col span={6}>
+          <Card>
+            <div style={{ textAlign: 'center' }}>
+              <Title level={3} style={{ margin: 0, color: '#fa8c16' }}>
+                {stats.withSpendings}
+              </Title>
+              <Text type="secondary">With Spendings</Text>
             </div>
           </Card>
         </Col>

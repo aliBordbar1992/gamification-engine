@@ -19,8 +19,12 @@ import {
 } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
 import { useRule } from '@/hooks/useRules'
-import type { RuleDto, ConditionDto } from '@/api/generated/models'
-import type { RewardDto } from '@/api/generated/models'
+import type {
+  RuleDto,
+  ConditionDto,
+  RewardDto,
+  SpendingDto,
+} from '@/api/generated/models'
 
 const { Title, Text, Paragraph } = Typography
 const { TabPane } = Tabs
@@ -203,7 +207,7 @@ const RuleDetails: React.FC<RuleDetailsProps> = ({ ruleId, onEdit }) => {
             </Row>
 
             <Row gutter={24} style={{ marginTop: 16 }}>
-              <Col span={12}>
+              <Col span={8}>
                 <Card title="Conditions" size="small">
                   {rule.conditions && rule.conditions.length > 0 ? (
                     <Space direction="vertical" style={{ width: '100%' }}>
@@ -246,7 +250,7 @@ const RuleDetails: React.FC<RuleDetailsProps> = ({ ruleId, onEdit }) => {
                   )}
                 </Card>
               </Col>
-              <Col span={12}>
+              <Col span={8}>
                 <Card title="Rewards" size="small">
                   {rule.rewards && rule.rewards.length > 0 ? (
                     <Space direction="vertical" style={{ width: '100%' }}>
@@ -286,6 +290,60 @@ const RuleDetails: React.FC<RuleDetailsProps> = ({ ruleId, onEdit }) => {
                     </Space>
                   ) : (
                     <Text type="secondary">No rewards defined</Text>
+                  )}
+                </Card>
+              </Col>
+              <Col span={8}>
+                <Card title="Spendings" size="small">
+                  {rule.spendings && rule.spendings.length > 0 ? (
+                    <Space direction="vertical" style={{ width: '100%' }}>
+                      {rule.spendings.map(
+                        (spending: SpendingDto, index: number) => (
+                          <Card
+                            key={index}
+                            size="small"
+                            style={{ backgroundColor: '#fff2e8' }}
+                          >
+                            <Space>
+                              <Tag
+                                color={
+                                  spending.type === 'transaction'
+                                    ? 'orange'
+                                    : 'purple'
+                                }
+                              >
+                                {spending.type}
+                              </Tag>
+                              <Text strong>{spending.category}</Text>
+                            </Space>
+                            {spending.attributes &&
+                              Object.keys(spending.attributes).length > 0 && (
+                                <div style={{ marginTop: 8 }}>
+                                  <Text type="secondary">Attributes:</Text>
+                                  <pre
+                                    style={{
+                                      marginTop: 4,
+                                      fontSize: '12px',
+                                      backgroundColor: '#fff',
+                                      padding: 8,
+                                      borderRadius: 4,
+                                      border: '1px solid #d9d9d9',
+                                    }}
+                                  >
+                                    {JSON.stringify(
+                                      spending.attributes,
+                                      null,
+                                      2
+                                    )}
+                                  </pre>
+                                </div>
+                              )}
+                          </Card>
+                        )
+                      )}
+                    </Space>
+                  ) : (
+                    <Text type="secondary">No spendings defined</Text>
                   )}
                 </Card>
               </Col>
