@@ -95,8 +95,11 @@ public class RuleManagementService : IRuleManagementService
             if (!dto.Triggers.Any())
                 return Result<RuleDto, string>.Failure("Rule must have at least one trigger");
 
-            if (!dto.Rewards.Any())
-                return Result<RuleDto, string>.Failure("Rule must have at least one reward");
+            // A rule must have either rewards or spendings (or both)
+            var hasRewards = dto.Rewards != null && dto.Rewards.Any();
+            var hasSpendings = dto.Spendings != null && dto.Spendings.Any();
+            if (!hasRewards && !hasSpendings)
+                return Result<RuleDto, string>.Failure("Rule must have at least one reward or spending");
 
             // Check if rule already exists
             var exists = await _ruleRepository.ExistsAsync(dto.Id);
@@ -127,8 +130,11 @@ public class RuleManagementService : IRuleManagementService
             if (!dto.Triggers.Any())
                 return Result<RuleDto, string>.Failure("Rule must have at least one trigger");
 
-            if (!dto.Rewards.Any())
-                return Result<RuleDto, string>.Failure("Rule must have at least one reward");
+            // A rule must have either rewards or spendings (or both)
+            var hasRewards = dto.Rewards != null && dto.Rewards.Any();
+            var hasSpendings = dto.Spendings != null && dto.Spendings.Any();
+            if (!hasRewards && !hasSpendings)
+                return Result<RuleDto, string>.Failure("Rule must have at least one reward or spending");
 
             var rule = await _ruleRepository.GetByIdAsync(ruleId);
             if (rule == null)
@@ -229,6 +235,12 @@ public class RuleManagementService : IRuleManagementService
                 TargetId = r.RewardId,
                 Amount = null, // TODO: Extract amount from parameters if needed
                 Parameters = r.Parameters.ToDictionary(kvp => kvp.Key, kvp => kvp.Value)
+            }),
+            Spendings = rule.Spendings.Select(s => new SpendingDto
+            {
+                Category = s.Category,
+                Type = s.Type.ToString(),
+                Attributes = s.Attributes.ToDictionary(kvp => kvp.Key, kvp => kvp.Value)
             }),
             CreatedAt = rule.CreatedAt.DateTime,
             UpdatedAt = rule.UpdatedAt.DateTime

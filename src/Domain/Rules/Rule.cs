@@ -19,13 +19,18 @@ public class Rule
         if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("name cannot be empty", nameof(name));
         if (triggers == null || triggers.Length == 0) throw new ArgumentException("triggers cannot be null or empty", nameof(triggers));
         if (conditions == null || conditions.Count == 0) throw new ArgumentException("conditions cannot be null or empty", nameof(conditions));
-        if (rewards == null || rewards.Count == 0) throw new ArgumentException("rewards cannot be null or empty", nameof(rewards));
+
+        // A rule must have either rewards or spendings (or both)
+        var hasRewards = rewards != null && rewards.Count > 0;
+        var hasSpendings = spendings != null && spendings.Count > 0;
+        if (!hasRewards && !hasSpendings)
+            throw new ArgumentException("A rule must have either rewards or spendings (or both)", nameof(rewards));
 
         RuleId = ruleId;
         Name = name;
         Triggers = triggers;
         Conditions = conditions;
-        Rewards = rewards;
+        Rewards = rewards ?? new List<Reward>();
         Spendings = spendings ?? new List<RuleSpending>();
         IsActive = isActive;
         Description = description;
@@ -82,7 +87,11 @@ public class Rule
         if (string.IsNullOrWhiteSpace(Name)) return false;
         if (Triggers.Length == 0) return false;
         if (Conditions.Count == 0) return false;
-        if (Rewards.Count == 0) return false;
+
+        // A rule must have either rewards or spendings (or both)
+        var hasRewards = Rewards != null && Rewards.Count > 0;
+        var hasSpendings = Spendings != null && Spendings.Count > 0;
+        if (!hasRewards && !hasSpendings) return false;
 
         // Validate that all conditions have valid IDs and types
         if (Conditions.Any(c => string.IsNullOrWhiteSpace(c.ConditionId) || string.IsNullOrWhiteSpace(c.Type)))

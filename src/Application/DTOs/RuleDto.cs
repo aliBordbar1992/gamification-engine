@@ -12,6 +12,7 @@ public sealed class RuleDto
     public IEnumerable<string> Triggers { get; set; } = new List<string>();
     public IEnumerable<ConditionDto> Conditions { get; set; } = new List<ConditionDto>();
     public IEnumerable<RewardDto> Rewards { get; set; } = new List<RewardDto>();
+    public IEnumerable<SpendingDto> Spendings { get; set; } = new List<SpendingDto>();
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
 }
@@ -28,6 +29,7 @@ public sealed class CreateRuleDto
     public IEnumerable<string> Triggers { get; set; } = new List<string>();
     public IEnumerable<ConditionDto> Conditions { get; set; } = new List<ConditionDto>();
     public IEnumerable<RewardDto> Rewards { get; set; } = new List<RewardDto>();
+    public IEnumerable<SpendingDto> Spendings { get; set; } = new List<SpendingDto>();
 }
 
 /// <summary>
@@ -41,6 +43,7 @@ public sealed class UpdateRuleDto
     public IEnumerable<string> Triggers { get; set; } = new List<string>();
     public IEnumerable<ConditionDto> Conditions { get; set; } = new List<ConditionDto>();
     public IEnumerable<RewardDto> Rewards { get; set; } = new List<RewardDto>();
+    public IEnumerable<SpendingDto> Spendings { get; set; } = new List<SpendingDto>();
 }
 
 /// <summary>
@@ -61,4 +64,14 @@ public sealed class RewardDto
     public string TargetId { get; set; } = string.Empty;
     public long? Amount { get; set; }
     public Dictionary<string, object> Parameters { get; set; } = new Dictionary<string, object>();
+}
+
+/// <summary>
+/// Data transfer object for spending information
+/// </summary>
+public sealed class SpendingDto
+{
+    public string Category { get; set; } = string.Empty;
+    public string Type { get; set; } = string.Empty;
+    public Dictionary<string, string> Attributes { get; set; } = new Dictionary<string, string>();
 }
