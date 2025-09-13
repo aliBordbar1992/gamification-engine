@@ -2,7 +2,7 @@ import React from 'react'
 import { Card, Table, Button, Space, Typography, Alert } from 'antd'
 import { EyeOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
-import type { ColumnsType } from 'antd/es/table'
+import type { ColumnsType, ColumnType } from 'antd/es/table'
 
 const { Title, Text } = Typography
 
@@ -38,7 +38,10 @@ const EntityList: React.FC<EntityListProps> = ({
   const enhancedColumns: ColumnsType<EntityListItem> = [
     ...columns.map((col) => {
       // Make the name column clickable if entityType is provided
-      if (col.dataIndex === 'name' && entityType) {
+      if (
+        (col as ColumnType<EntityListItem>).dataIndex === 'name' &&
+        entityType
+      ) {
         return {
           ...col,
           render: (name: string, record: EntityListItem) => (

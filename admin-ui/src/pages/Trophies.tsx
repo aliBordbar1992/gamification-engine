@@ -1,14 +1,12 @@
 import React from 'react'
 import { Typography } from 'antd'
 import { ArrowLeftOutlined } from '@ant-design/icons'
-import { useNavigate } from 'react-router-dom'
 import TrophiesList from '@/components/entities/TrophiesList'
 import TrophyDetails from '@/components/entities/TrophyDetails'
 
 const { Title } = Typography
 
 const Trophies: React.FC = () => {
-  const navigate = useNavigate()
   const [selectedTrophyId, setSelectedTrophyId] = React.useState<string | null>(
     null
   )
@@ -40,7 +38,6 @@ const Trophies: React.FC = () => {
 
   return (
     <div>
-      <Title level={2}>Trophies</Title>
       <TrophiesList onViewDetails={handleViewDetails} />
     </div>
   )

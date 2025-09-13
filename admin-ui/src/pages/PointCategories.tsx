@@ -1,14 +1,12 @@
 import React from 'react'
 import { Typography } from 'antd'
 import { ArrowLeftOutlined } from '@ant-design/icons'
-import { useNavigate } from 'react-router-dom'
 import PointCategoriesList from '@/components/entities/PointCategoriesList'
 import PointCategoryDetails from '@/components/entities/PointCategoryDetails'
 
 const { Title } = Typography
 
 const PointCategories: React.FC = () => {
-  const navigate = useNavigate()
   const [selectedPointCategoryId, setSelectedPointCategoryId] = React.useState<
     string | null
   >(null)
@@ -43,7 +41,6 @@ const PointCategories: React.FC = () => {
 
   return (
     <div>
-      <Title level={2}>Point Categories</Title>
       <PointCategoriesList onViewDetails={handleViewDetails} />
     </div>
   )

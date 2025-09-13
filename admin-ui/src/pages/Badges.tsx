@@ -38,7 +38,6 @@ const Badges: React.FC = () => {
 
   return (
     <div>
-      <Title level={2}>Badges</Title>
       <BadgesList onViewDetails={handleViewDetails} />
     </div>
   )

@@ -13,7 +13,6 @@ import {
   Dashboard,
   Rules,
   Events,
-  Entities,
   Badges,
   Trophies,
   Levels,
@@ -122,16 +121,6 @@ function App() {
                   <RouteGuard>
                     <MainLayout>
                       <TestApi />
-                    </MainLayout>
-                  </RouteGuard>
-                }
-              />
-              <Route
-                path="/entities"
-                element={
-                  <RouteGuard>
-                    <MainLayout>
-                      <Entities />
                     </MainLayout>
                   </RouteGuard>
                 }
