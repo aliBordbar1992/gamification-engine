@@ -162,6 +162,7 @@ builder.Services.AddScoped<IUserStateService, UserStateService>();
 builder.Services.AddScoped<ILeaderboardService, LeaderboardService>();
 builder.Services.AddScoped<IRuleManagementService, RuleManagementService>();
 builder.Services.AddScoped<IEntityManagementService, EntityManagementService>();
+builder.Services.AddScoped<IEventDefinitionManagementService, EventDefinitionManagementService>();
 builder.Services.AddScoped<IWebhookService, WebhookService>();
 builder.Services.AddScoped<IDatabaseSeederService, DatabaseSeederService>();
 builder.Services.AddScoped<ISpendingExecutionService, SpendingExecutionService>();

@@ -112,8 +112,14 @@ GET {{baseUrl}}/api/events/type/USER_COMMENTED
 #### Get events by type with pagination
 GET {{baseUrl}}/api/events/type/USER_COMMENTED?limit=10&offset=5
 
-#### Get a specific event by ID (not implemented yet)
+#### Get a specific event by ID (valid event)
 GET {{baseUrl}}/api/events/test-comment-1
+
+#### Get a specific event by ID (non-existent event)
+GET {{baseUrl}}/api/events/non-existent-event-id-12345
+
+#### Get a specific event by ID (empty event ID - should return 400)
+GET {{baseUrl}}/api/events/
 
 ### 2.1. Sandbox Dry-Run Tests
 
@@ -293,7 +299,128 @@ Content-Type: {{contentType}}
 ### 7. Health Check (Future Enhancement)
 # GET {{baseUrl}}/health
 
-### 8. Metrics (Future Enhancement)
+### 8. Event Definitions CRUD Tests
+
+#### Get all event definitions
+GET {{baseUrl}}/api/EventDefinition
+
+#### Get a specific event definition by ID
+GET {{baseUrl}}/api/EventDefinition/USER_COMMENTED
+
+#### Get a non-existent event definition
+GET {{baseUrl}}/api/EventDefinition/NON_EXISTENT_EVENT_TYPE
+
+#### Create a new event definition
+POST {{baseUrl}}/api/EventDefinition
+Content-Type: {{contentType}}
+
+{
+  "id": "USER_LIKED_POST",
+  "description": "User liked a post",
+  "payloadSchema": {
+    "postId": "string",
+    "likedBy": "string",
+    "timestamp": "string"
+  }
+}
+
+#### Create an event definition with minimal data
+POST {{baseUrl}}/api/EventDefinition
+Content-Type: {{contentType}}
+
+{
+  "id": "SIMPLE_EVENT",
+  "description": "A simple event with no payload schema"
+}
+
+#### Create an event definition with complex payload schema
+POST {{baseUrl}}/api/EventDefinition
+Content-Type: {{contentType}}
+
+{
+  "id": "COMPLEX_EVENT",
+  "description": "A complex event with detailed payload schema",
+  "payloadSchema": {
+    "userId": "string",
+    "action": "string",
+    "metadata": "object",
+    "timestamp": "string",
+    "version": "number"
+  }
+}
+
+#### Try to create duplicate event definition (should return 409)
+POST {{baseUrl}}/api/EventDefinition
+Content-Type: {{contentType}}
+
+{
+  "id": "USER_COMMENTED",
+  "description": "Duplicate event definition"
+}
+
+#### Update an existing event definition
+PUT {{baseUrl}}/api/EventDefinition/USER_LIKED_POST
+Content-Type: {{contentType}}
+
+{
+  "description": "Updated: User liked a post",
+  "payloadSchema": {
+    "postId": "string",
+    "likedBy": "string",
+    "timestamp": "string",
+    "reactionType": "string"
+  }
+}
+
+#### Update event definition with minimal data
+PUT {{baseUrl}}/api/EventDefinition/SIMPLE_EVENT
+Content-Type: {{contentType}}
+
+{
+  "description": "Updated simple event description"
+}
+
+#### Try to update non-existent event definition
+PUT {{baseUrl}}/api/EventDefinition/NON_EXISTENT_EVENT_TYPE
+Content-Type: {{contentType}}
+
+{
+  "description": "This should fail"
+}
+
+#### Delete an event definition
+DELETE {{baseUrl}}/api/EventDefinition/USER_LIKED_POST
+
+#### Try to delete non-existent event definition
+DELETE {{baseUrl}}/api/EventDefinition/NON_EXISTENT_EVENT_TYPE
+
+#### Test validation - create event definition with empty ID
+POST {{baseUrl}}/api/EventDefinition
+Content-Type: {{contentType}}
+
+{
+  "id": "",
+  "description": "Invalid event definition"
+}
+
+#### Test validation - create event definition with empty description
+POST {{baseUrl}}/api/EventDefinition
+Content-Type: {{contentType}}
+
+{
+  "id": "VALID_ID",
+  "description": ""
+}
+
+#### Test validation - update event definition with empty description
+PUT {{baseUrl}}/api/EventDefinition/SIMPLE_EVENT
+Content-Type: {{contentType}}
+
+{
+  "description": ""
+}
+
+### 9. Metrics (Future Enhancement)
 # GET {{baseUrl}}/metrics
 
 ### Notes for Testing:

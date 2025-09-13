@@ -95,4 +95,20 @@ public class EventIngestionService : IEventIngestionService
             return Result<IEnumerable<Event>, DomainError>.Failure(new EventRetrievalError($"Failed to retrieve events by type: {ex.Message}"));
         }
     }
+
+    public async Task<Result<Event?, DomainError>> GetEventByIdAsync(string eventId)
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(eventId))
+                return Result<Event?, DomainError>.Failure(new InvalidParameterError("Event ID cannot be empty"));
+
+            var @event = await _eventRepository.GetByIdAsync(eventId);
+            return Result<Event?, DomainError>.Success(@event);
+        }
+        catch (Exception ex)
+        {
+            return Result<Event?, DomainError>.Failure(new EventRetrievalError($"Failed to retrieve event by ID: {ex.Message}"));
+        }
+    }
 }

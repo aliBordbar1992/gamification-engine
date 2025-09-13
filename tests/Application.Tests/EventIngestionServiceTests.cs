@@ -249,4 +249,91 @@ public class EventIngestionServiceTests
         result.Error!.Code.ShouldBe("INVALID_EVENT_TYPE");
         _mockEventRepository.Verify(r => r.GetByTypeAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>()), Times.Never);
     }
+
+    [Fact]
+    public async Task GetEventByIdAsync_WithValidEventId_ShouldReturnEvent()
+    {
+        // Arrange
+        var eventId = "test-event-123";
+        var @event = new Event(eventId, "TEST_EVENT", "user123", DateTimeOffset.UtcNow);
+
+        _mockEventRepository.Setup(r => r.GetByIdAsync(eventId))
+            .ReturnsAsync(@event);
+
+        // Act
+        var result = await _service.GetEventByIdAsync(eventId);
+
+        // Assert
+        result.IsSuccess.ShouldBeTrue();
+        result.Value.ShouldNotBeNull();
+        result.Value!.EventId.ShouldBe(eventId);
+        result.Value!.EventType.ShouldBe("TEST_EVENT");
+        result.Value!.UserId.ShouldBe("user123");
+        _mockEventRepository.Verify(r => r.GetByIdAsync(eventId), Times.Once);
+    }
+
+    [Fact]
+    public async Task GetEventByIdAsync_WithNonExistentEventId_ShouldReturnNull()
+    {
+        // Arrange
+        var eventId = "non-existent-event-123";
+
+        _mockEventRepository.Setup(r => r.GetByIdAsync(eventId))
+            .ReturnsAsync((Event?)null);
+
+        // Act
+        var result = await _service.GetEventByIdAsync(eventId);
+
+        // Assert
+        result.IsSuccess.ShouldBeTrue();
+        result.Value.ShouldBeNull();
+        _mockEventRepository.Verify(r => r.GetByIdAsync(eventId), Times.Once);
+    }
+
+    [Fact]
+    public async Task GetEventByIdAsync_WithEmptyEventId_ShouldReturnFailure()
+    {
+        // Act
+        var result = await _service.GetEventByIdAsync("");
+
+        // Assert
+        result.IsSuccess.ShouldBeFalse();
+        result.Error.ShouldNotBeNull();
+        result.Error!.Code.ShouldBe("INVALID_PARAMETER");
+        result.Error!.Message.ShouldContain("Event ID cannot be empty");
+        _mockEventRepository.Verify(r => r.GetByIdAsync(It.IsAny<string>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task GetEventByIdAsync_WithNullEventId_ShouldReturnFailure()
+    {
+        // Act
+        var result = await _service.GetEventByIdAsync(null!);
+
+        // Assert
+        result.IsSuccess.ShouldBeFalse();
+        result.Error.ShouldNotBeNull();
+        result.Error!.Code.ShouldBe("INVALID_PARAMETER");
+        result.Error!.Message.ShouldContain("Event ID cannot be empty");
+        _mockEventRepository.Verify(r => r.GetByIdAsync(It.IsAny<string>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task GetEventByIdAsync_WhenRepositoryThrowsException_ShouldReturnFailure()
+    {
+        // Arrange
+        var eventId = "test-event-123";
+        _mockEventRepository.Setup(r => r.GetByIdAsync(eventId))
+            .ThrowsAsync(new Exception("Database connection failed"));
+
+        // Act
+        var result = await _service.GetEventByIdAsync(eventId);
+
+        // Assert
+        result.IsSuccess.ShouldBeFalse();
+        result.Error.ShouldNotBeNull();
+        result.Error!.Code.ShouldBe("EVENT_RETRIEVAL_ERROR");
+        result.Error!.Message.ShouldContain("Failed to retrieve event by ID");
+        _mockEventRepository.Verify(r => r.GetByIdAsync(eventId), Times.Once);
+    }
 }

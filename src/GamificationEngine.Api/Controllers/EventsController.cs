@@ -147,11 +147,21 @@ public class EventsController : ControllerBase
     /// <returns>The event if found</returns>
     [HttpGet("{eventId}")]
     [ProducesResponseType(typeof(EventDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status501NotImplemented)]
-    public IActionResult GetEvent(string eventId)
+    [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetEvent(string eventId)
     {
-        // This would require adding a method to the service, but for now we'll return not implemented
-        return StatusCode(501, new { message = "Get event by ID not yet implemented" });
+        var result = await _eventIngestionService.GetEventByIdAsync(eventId);
+
+        if (result.IsSuccess)
+        {
+            if (result.Value == null)
+                return NotFound(new { message = "Event not found" });
+
+            return Ok(EventDto.FromDomain(result.Value));
+        }
+
+        return BadRequest(new { error = result.Error?.Message ?? "Failed to retrieve event" });
     }
 
     /// <summary>
@@ -201,6 +211,7 @@ public class EventsController : ControllerBase
             return StatusCode(500, new { error = $"Internal server error during dry-run evaluation: {ex.Message}" });
         }
     }
+
 }
 
 /// <summary>
@@ -236,25 +247,4 @@ public class IngestEventRequest
     /// Additional attributes for the event
     /// </summary>
     public Dictionary<string, object>? Attributes { get; set; }
-}
-
-/// <summary>
-/// DTO for event definition
-/// </summary>
-public class EventDefinitionDto
-{
-    /// <summary>
-    /// The event definition ID
-    /// </summary>
-    public string Id { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Description of the event
-    /// </summary>
-    public string Description { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Payload schema for the event
-    /// </summary>
-    public IReadOnlyDictionary<string, string> PayloadSchema { get; set; } = new Dictionary<string, string>();
 }

@@ -22,7 +22,10 @@ public class EventsControllerMultipleEventTypesTests
     {
         _mockEventIngestionService = new Mock<IEventIngestionService>();
         _mockEventDefinitionRepository = new Mock<IEventDefinitionRepository>();
-        _controller = new EventsController(_mockEventIngestionService.Object, _mockEventDefinitionRepository.Object);
+        var mockDryRunEvaluationService = new Mock<IDryRunEvaluationService>();
+        var mockConfiguration = new Mock<IOptions<EngineConfiguration>>();
+        mockConfiguration.Setup(x => x.Value).Returns(new EngineConfiguration());
+        _controller = new EventsController(_mockEventIngestionService.Object, _mockEventDefinitionRepository.Object, mockDryRunEvaluationService.Object, mockConfiguration.Object);
     }
 
     private static void AssertEventsEqual(Event expected, object? actual)

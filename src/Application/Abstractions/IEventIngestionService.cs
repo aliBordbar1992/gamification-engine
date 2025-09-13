@@ -33,4 +33,11 @@ public interface IEventIngestionService
     /// <param name="offset">Number of events to skip</param>
     /// <returns>Result containing the events or error details</returns>
     Task<Result<IEnumerable<Event>, DomainError>> GetEventsByTypeAsync(string eventType, int limit = 100, int offset = 0);
+
+    /// <summary>
+    /// Retrieves an event by its ID
+    /// </summary>
+    /// <param name="eventId">The event ID to retrieve</param>
+    /// <returns>Result containing the event or error details</returns>
+    Task<Result<Event?, DomainError>> GetEventByIdAsync(string eventId);
 }

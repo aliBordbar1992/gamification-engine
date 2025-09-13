@@ -635,17 +635,68 @@ public class EventsControllerTests : EndToEndTestBase
     }
 
     [Fact]
-    public async Task GET_ApiEventsById_ShouldReturn501NotImplemented()
+    public async Task GET_ApiEventsById_WithValidEventId_ShouldReturnEvent()
     {
-        // Arrange
-        var eventId = "test-event-id";
+        // Arrange - Create a test event first
+        var request = new
+        {
+            EventId = "test-event-by-id-1",
+            EventType = "USER_COMMENTED",
+            UserId = "user123",
+            OccurredAt = DateTimeOffset.UtcNow,
+            Attributes = new Dictionary<string, object>
+            {
+                { "commentId", "comment456" },
+                { "postId", "post789" },
+                { "text", "Test comment for Get by ID" }
+            }
+        };
+
+        var jsonContent = JsonSerializer.Serialize(request);
+        var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+        var postResponse = await HttpClient.PostAsync("/api/events", content);
+        postResponse.StatusCode.ShouldBe(HttpStatusCode.Created);
+
+        var createdEventContent = await postResponse.Content.ReadAsStringAsync();
+        var createdEvent = JsonSerializer.Deserialize<EventDto>(createdEventContent, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        });
 
         // Act
-        var response = await HttpClient.GetAsync($"/api/events/{eventId}");
+        var response = await HttpClient.GetAsync($"/api/events/{createdEvent!.EventId}");
 
         // Assert
         response.ShouldNotBeNull("HTTP response should not be null");
-        response.StatusCode.ShouldBe(HttpStatusCode.NotImplemented);
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+
+        var responseContent = await response.Content.ReadAsStringAsync();
+        var eventDto = JsonSerializer.Deserialize<EventDto>(responseContent, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        });
+
+        eventDto.ShouldNotBeNull("Event DTO should not be null");
+        eventDto.EventId.ShouldBe(createdEvent.EventId);
+        eventDto.EventType.ShouldBe("USER_COMMENTED");
+        eventDto.UserId.ShouldBe("user123");
+        eventDto.Attributes.ShouldNotBeNull();
+        eventDto.Attributes!["commentId"].ToString().ShouldBeEquivalentTo("comment456");
+        eventDto.Attributes!["text"].ToString().ShouldBeEquivalentTo("Test comment for Get by ID");
+    }
+
+    [Fact]
+    public async Task GET_ApiEventsById_WithNonExistentEventId_ShouldReturn404NotFound()
+    {
+        // Arrange
+        var nonExistentEventId = "non-existent-event-id-12345";
+
+        // Act
+        var response = await HttpClient.GetAsync($"/api/events/{nonExistentEventId}");
+
+        // Assert
+        response.ShouldNotBeNull("HTTP response should not be null");
+        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
 
         var responseContent = await response.Content.ReadAsStringAsync();
         var errorResponse = JsonSerializer.Deserialize<ErrorResponse>(responseContent, new JsonSerializerOptions
@@ -654,7 +705,30 @@ public class EventsControllerTests : EndToEndTestBase
         });
 
         errorResponse.ShouldNotBeNull("Error response should not be null");
-        errorResponse.Message.ShouldBe("Get event by ID not yet implemented");
+        errorResponse.Message.ShouldBe("Event not found");
+    }
+
+    [Fact]
+    public async Task GET_ApiEventsById_WithEmptyEventId_ShouldReturn400BadRequest()
+    {
+        // Arrange
+        var emptyEventId = "";
+
+        // Act
+        var response = await HttpClient.GetAsync($"/api/events/{emptyEventId}");
+
+        // Assert
+        response.ShouldNotBeNull("HTTP response should not be null");
+        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+
+        var responseContent = await response.Content.ReadAsStringAsync();
+        var errorResponse = JsonSerializer.Deserialize<ErrorResponse>(responseContent, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        });
+
+        errorResponse.ShouldNotBeNull("Error response should not be null");
+        errorResponse.Message.ShouldContain("Event ID cannot be empty");
     }
 
     [Fact]
