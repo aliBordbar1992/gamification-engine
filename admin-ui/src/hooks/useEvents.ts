@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import type { IngestEventRequest } from '@/api/generated/models'
-import { eventsApi } from '@/api/events'
+import { eventsApi, eventDefinitionsApi } from '@/api/events'
 
 // Query keys
 export const eventsKeys = {
@@ -12,6 +12,12 @@ export const eventsKeys = {
     [...eventsKeys.all, 'type', eventType, { limit, offset }] as const,
   byUser: (userId: string, limit?: number, offset?: number) =>
     [...eventsKeys.all, 'user', userId, { limit, offset }] as const,
+}
+
+// Event definition query keys
+export const eventDefinitionsKeys = {
+  all: ['event-definitions'] as const,
+  detail: (id: string) => [...eventDefinitionsKeys.all, 'detail', id] as const,
 }
 
 // Event catalog hooks
@@ -77,5 +83,27 @@ export const useIngestEvent = () => {
       // Invalidate all event queries since we don't know which specific ones to update
       queryClient.invalidateQueries({ queryKey: eventsKeys.all })
     },
+  })
+}
+
+// Event Definition hooks
+export const useEventDefinitions = () => {
+  return useQuery({
+    queryKey: eventDefinitionsKeys.all,
+    queryFn: async () => {
+      return await eventDefinitionsApi.getAllEventDefinitions()
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  })
+}
+
+export const useEventDefinition = (id: string) => {
+  return useQuery({
+    queryKey: eventDefinitionsKeys.detail(id),
+    queryFn: async () => {
+      return await eventDefinitionsApi.getEventDefinitionById(id)
+    },
+    enabled: !!id,
+    staleTime: 5 * 60 * 1000, // 5 minutes
   })
 }

@@ -12,6 +12,7 @@ import type {
   UsersApiInterface,
   LeaderboardsApiInterface,
   EventsApiInterface,
+  EventDefinitionApiInterface,
   WalletApiInterface,
 } from './generated/api'
 import { BadgesApi } from './generated/apis/badges-api'
@@ -22,6 +23,7 @@ import { PointCategoriesApi } from './generated/apis/point-categories-api'
 import { UsersApi } from './generated/apis/users-api'
 import { LeaderboardsApi } from './generated/apis/leaderboards-api'
 import { EventsApi } from './generated/apis/events-api'
+import { EventDefinitionApi } from './generated/apis/event-definition-api'
 import { WalletApi } from './generated/apis/wallet-api'
 import type { AxiosInstance } from 'axios'
 
@@ -80,6 +82,10 @@ export function LeaderboardsApiInstance(): LeaderboardsApiInterface {
 
 export function EventsApiInstance(): EventsApiInterface {
   return createApiInstance(EventsApi)
+}
+
+export function EventDefinitionApiInstance(): EventDefinitionApiInterface {
+  return createApiInstance(EventDefinitionApi)
 }
 
 export function WalletApiInstance(): WalletApiInterface {

@@ -15,7 +15,7 @@ import {
 } from 'antd'
 import { SearchOutlined, InfoCircleOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
-import { useEventCatalog } from '@/hooks/useEvents'
+import { useEventDefinitions } from '@/hooks/useEvents'
 import type { EventDefinitionDto } from '@/api/generated/models'
 
 const { Title, Text } = Typography
@@ -29,7 +29,11 @@ interface EventCatalogProps {
 const EventCatalog: React.FC<EventCatalogProps> = ({ onViewEvent }) => {
   const navigate = useNavigate()
   const [searchText, setSearchText] = useState('')
-  const { data: eventDefinitions = [], isLoading, error } = useEventCatalog()
+  const {
+    data: eventDefinitions = [],
+    isLoading,
+    error,
+  } = useEventDefinitions()
 
   const filteredEvents = useMemo(() => {
     if (!searchText) return eventDefinitions
@@ -71,8 +75,11 @@ const EventCatalog: React.FC<EventCatalogProps> = ({ onViewEvent }) => {
           {onViewEvent && (
             <div style={{ marginTop: 4 }}>
               <Text
-                type="link"
-                style={{ fontSize: '12px' }}
+                style={{
+                  fontSize: '12px',
+                  color: '#1890ff',
+                  cursor: 'pointer',
+                }}
                 onClick={() => onViewEvent(record)}
               >
                 View Details

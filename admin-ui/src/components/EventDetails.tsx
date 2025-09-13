@@ -11,7 +11,7 @@ import {
 } from 'antd'
 import { ArrowLeftOutlined, InfoCircleOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
-import { useEvent } from '@/hooks/useEvents'
+import { useEventDefinition } from '@/hooks/useEvents'
 
 const { Title, Text } = Typography
 
@@ -21,7 +21,11 @@ interface EventDetailsProps {
 
 const EventDetails: React.FC<EventDetailsProps> = ({ eventId }) => {
   const navigate = useNavigate()
-  const { data: event, isLoading, error } = useEvent(eventId)
+  const {
+    data: eventDefinition,
+    isLoading,
+    error,
+  } = useEventDefinition(eventId)
 
   if (isLoading) {
     return (
@@ -42,11 +46,11 @@ const EventDetails: React.FC<EventDetailsProps> = ({ eventId }) => {
     )
   }
 
-  if (!event) {
+  if (!eventDefinition) {
     return (
       <Alert
         message="Not Found"
-        description="Event not found"
+        description="Event definition not found"
         type="warning"
         showIcon
       />
@@ -66,58 +70,36 @@ const EventDetails: React.FC<EventDetailsProps> = ({ eventId }) => {
       </div>
 
       <Card>
-        <Title level={3}>Event Details</Title>
+        <Title level={3}>Event Definition Details</Title>
 
         <Descriptions column={1} bordered>
-          <Descriptions.Item label="Event ID">
-            <Text code>{event.id}</Text>
+          <Descriptions.Item label="Event Definition ID">
+            <Text code>{eventDefinition.id}</Text>
           </Descriptions.Item>
 
-          <Descriptions.Item label="Event Type">
-            <Tag color="blue">{event.eventType}</Tag>
-          </Descriptions.Item>
-
-          <Descriptions.Item label="User ID">
-            <Text
-              code
-              style={{ cursor: 'pointer', color: '#1890ff' }}
-              onClick={() => navigate(`/users/${event.userId}`)}
-            >
-              {event.userId}
+          <Descriptions.Item label="Description">
+            <Text>
+              {eventDefinition.description || 'No description available'}
             </Text>
           </Descriptions.Item>
 
-          <Descriptions.Item label="Timestamp">
-            <Text>{new Date(event.timestamp).toLocaleString()}</Text>
-          </Descriptions.Item>
-
-          <Descriptions.Item label="Payload">
-            <pre
-              style={{
-                background: '#f5f5f5',
-                padding: '8px',
-                borderRadius: '4px',
-                fontSize: '12px',
-                maxHeight: '200px',
-                overflow: 'auto',
-              }}
-            >
-              {JSON.stringify(event.payload, null, 2)}
-            </pre>
-          </Descriptions.Item>
-
-          {event.metadata && Object.keys(event.metadata).length > 0 && (
-            <Descriptions.Item label="Metadata">
+          <Descriptions.Item label="Payload Schema">
+            {eventDefinition.payloadSchema &&
+            Object.keys(eventDefinition.payloadSchema).length > 0 ? (
               <div>
-                {Object.entries(event.metadata).map(([key, value]) => (
-                  <div key={key} style={{ marginBottom: 4 }}>
-                    <Tag color="green">{key}</Tag>
-                    <Text type="secondary">: {String(value)}</Text>
-                  </div>
-                ))}
+                {Object.entries(eventDefinition.payloadSchema).map(
+                  ([key, value]) => (
+                    <div key={key} style={{ marginBottom: 4 }}>
+                      <Tag color="blue">{key}</Tag>
+                      <Text type="secondary">: {String(value)}</Text>
+                    </div>
+                  )
+                )}
               </div>
-            </Descriptions.Item>
-          )}
+            ) : (
+              <Text type="secondary">No payload schema defined</Text>
+            )}
+          </Descriptions.Item>
         </Descriptions>
       </Card>
     </div>
