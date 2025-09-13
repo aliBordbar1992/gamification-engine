@@ -1,44 +1,18 @@
 import React from 'react'
-import { Typography } from 'antd'
-import { ArrowLeftOutlined } from '@ant-design/icons'
+import { useParams } from 'react-router-dom'
 import BadgesList from '@/components/entities/BadgesList'
-import BadgeDetails from '@/components/entities/BadgeDetails'
-
-const { Title } = Typography
+import EntityDetailPage from '@/components/EntityDetailPage'
 
 const Badges: React.FC = () => {
-  const [selectedBadgeId, setSelectedBadgeId] = React.useState<string | null>(
-    null
-  )
+  const { id } = useParams<{ id: string }>()
 
-  const handleViewDetails = (id: string) => {
-    setSelectedBadgeId(id)
-  }
-
-  const handleBack = () => {
-    setSelectedBadgeId(null)
-  }
-
-  if (selectedBadgeId) {
-    return (
-      <div>
-        <div style={{ marginBottom: 16 }}>
-          <ArrowLeftOutlined
-            onClick={handleBack}
-            style={{ cursor: 'pointer', marginRight: 8 }}
-          />
-          <Title level={2} style={{ display: 'inline' }}>
-            Badge Details
-          </Title>
-        </div>
-        <BadgeDetails id={selectedBadgeId} onBack={handleBack} />
-      </div>
-    )
+  if (id) {
+    return <EntityDetailPage entityType="badges" />
   }
 
   return (
     <div>
-      <BadgesList onViewDetails={handleViewDetails} />
+      <BadgesList />
     </div>
   )
 }

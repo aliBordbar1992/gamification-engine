@@ -8,7 +8,7 @@ import type { CreatePointCategoryDto } from '@/api/generated/models'
 type PointCategory = CreatePointCategoryDto
 
 interface PointCategoriesListProps {
-  onViewDetails: (id: string) => void
+  onViewDetails?: (id: string) => void
 }
 
 const PointCategoriesList: React.FC<PointCategoriesListProps> = ({

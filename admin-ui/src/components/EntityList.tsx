@@ -19,7 +19,7 @@ interface EntityListProps {
   loading: boolean
   error: Error | null
   columns: ColumnsType<EntityListItem>
-  onViewDetails: (id: string) => void
+  onViewDetails?: (id: string) => void // Made optional since we'll use navigation
   emptyMessage?: string
   entityType?: string // e.g., 'badges', 'trophies', 'levels', 'point-categories'
 }
@@ -48,7 +48,7 @@ const EntityList: React.FC<EntityListProps> = ({
             <Text
               strong
               style={{ cursor: 'pointer', color: '#1890ff' }}
-              onClick={() => navigate(`/${entityType}/${record.id}`)}
+              onClick={() => navigate(`/entities/${entityType}/${record.id}`)}
             >
               {name}
             </Text>
@@ -66,7 +66,13 @@ const EntityList: React.FC<EntityListProps> = ({
           <Button
             type="link"
             icon={<EyeOutlined />}
-            onClick={() => onViewDetails(record.id)}
+            onClick={() => {
+              if (entityType) {
+                navigate(`/entities/${entityType}/${record.id}`)
+              } else if (onViewDetails) {
+                onViewDetails(record.id)
+              }
+            }}
             size="small"
           >
             View

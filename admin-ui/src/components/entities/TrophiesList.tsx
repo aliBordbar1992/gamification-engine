@@ -9,7 +9,7 @@ import type { CreateTrophyDto } from '@/api/generated/models'
 type Trophy = CreateTrophyDto
 
 interface TrophiesListProps {
-  onViewDetails: (id: string) => void
+  onViewDetails?: (id: string) => void
 }
 
 const TrophiesList: React.FC<TrophiesListProps> = ({ onViewDetails }) => {

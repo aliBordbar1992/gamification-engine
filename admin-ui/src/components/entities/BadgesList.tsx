@@ -6,7 +6,7 @@ import { useBadges } from '@/hooks/useEntities'
 import type { BadgeDto } from '@/api/generated/models'
 
 interface BadgesListProps {
-  onViewDetails: (id: string) => void
+  onViewDetails?: (id: string) => void
 }
 
 const BadgesList: React.FC<BadgesListProps> = ({ onViewDetails }) => {

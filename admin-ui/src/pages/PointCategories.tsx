@@ -1,47 +1,18 @@
 import React from 'react'
-import { Typography } from 'antd'
-import { ArrowLeftOutlined } from '@ant-design/icons'
+import { useParams } from 'react-router-dom'
 import PointCategoriesList from '@/components/entities/PointCategoriesList'
-import PointCategoryDetails from '@/components/entities/PointCategoryDetails'
-
-const { Title } = Typography
+import EntityDetailPage from '@/components/EntityDetailPage'
 
 const PointCategories: React.FC = () => {
-  const [selectedPointCategoryId, setSelectedPointCategoryId] = React.useState<
-    string | null
-  >(null)
+  const { id } = useParams<{ id: string }>()
 
-  const handleViewDetails = (id: string) => {
-    setSelectedPointCategoryId(id)
-  }
-
-  const handleBack = () => {
-    setSelectedPointCategoryId(null)
-  }
-
-  if (selectedPointCategoryId) {
-    return (
-      <div>
-        <div style={{ marginBottom: 16 }}>
-          <ArrowLeftOutlined
-            onClick={handleBack}
-            style={{ cursor: 'pointer', marginRight: 8 }}
-          />
-          <Title level={2} style={{ display: 'inline' }}>
-            Point Category Details
-          </Title>
-        </div>
-        <PointCategoryDetails
-          id={selectedPointCategoryId}
-          onBack={handleBack}
-        />
-      </div>
-    )
+  if (id) {
+    return <EntityDetailPage entityType="point-categories" />
   }
 
   return (
     <div>
-      <PointCategoriesList onViewDetails={handleViewDetails} />
+      <PointCategoriesList />
     </div>
   )
 }

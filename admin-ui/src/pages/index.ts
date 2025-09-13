@@ -1,7 +1,6 @@
 export { default as Dashboard } from './Dashboard'
 export { default as Rules } from './Rules'
 export { default as Events } from './Events'
-export { default as Entities } from './Entities'
 export { default as Badges } from './Badges'
 export { default as Trophies } from './Trophies'
 export { default as Levels } from './Levels'

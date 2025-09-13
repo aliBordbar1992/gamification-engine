@@ -1,30 +1,69 @@
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { BrowserRouter } from 'react-router-dom'
 import { vi } from 'vitest'
-import Entities from '@/pages/Entities'
-import * as entitiesApi from '@/api/entities'
+import Badges from '@/pages/Badges'
+import Trophies from '@/pages/Trophies'
+import Levels from '@/pages/Levels'
+import PointCategories from '@/pages/PointCategories'
 
-// Mock the entities API
-vi.mock('@/api/entities', () => ({
-  badgesApi: {
-    getAllBadges: vi.fn(),
-    getVisibleBadges: vi.fn(),
-    getBadgeById: vi.fn(),
-  },
-  trophiesApi: {
-    getAllTrophies: vi.fn(),
-    getVisibleTrophies: vi.fn(),
-    getTrophyById: vi.fn(),
-  },
-  levelsApi: {
-    getAllLevels: vi.fn(),
-    getLevelsByCategory: vi.fn(),
-    getLevelById: vi.fn(),
-  },
-  pointCategoriesApi: {
-    getAllPointCategories: vi.fn(),
-    getPointCategoryById: vi.fn(),
-  },
+// Mock the entities hooks
+vi.mock('@/hooks/useEntities', () => ({
+  useBadges: vi.fn(() => ({
+    data: [
+      {
+        id: 'badge1',
+        name: 'First Comment',
+        description: 'Awarded for first comment',
+        image: '/images/badges/default.png',
+        visible: true,
+      },
+    ],
+    isLoading: false,
+    error: null,
+  })),
+  useTrophies: vi.fn(() => ({
+    data: [
+      {
+        id: 'trophy1',
+        name: 'Champion',
+        description: 'Top performer trophy',
+        image: '/images/trophies/default.png',
+        visible: true,
+      },
+    ],
+    isLoading: false,
+    error: null,
+  })),
+  useLevels: vi.fn(() => ({
+    data: [
+      {
+        id: 'level1',
+        name: 'Beginner',
+        description: 'Starting level',
+        category: 'xp',
+        minPoints: 0,
+      },
+    ],
+    isLoading: false,
+    error: null,
+  })),
+  usePointCategories: vi.fn(() => ({
+    data: [
+      {
+        id: 'xp',
+        name: 'Experience Points',
+        description: 'Main experience currency',
+        aggregation: 'sum',
+      },
+    ],
+    isLoading: false,
+    error: null,
+  })),
+  useBadge: vi.fn(),
+  useTrophy: vi.fn(),
+  useLevel: vi.fn(),
+  usePointCategory: vi.fn(),
 }))
 
 const createWrapper = () => {
@@ -36,81 +75,42 @@ const createWrapper = () => {
     },
   })
   return ({ children }: { children: React.ReactNode }) => (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    <BrowserRouter>
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    </BrowserRouter>
   )
 }
 
-describe('Entities Page', () => {
+describe('Entity Pages', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-
-    // Mock successful API responses
-    vi.mocked(entitiesApi.badgesApi.getAllBadges).mockResolvedValue([
-      {
-        id: 'badge1',
-        name: 'First Comment',
-        description: 'Awarded for first comment',
-        image: '/images/badges/default.png',
-        visible: true,
-      },
-    ])
-
-    vi.mocked(entitiesApi.trophiesApi.getAllTrophies).mockResolvedValue([
-      {
-        id: 'trophy1',
-        name: 'Champion',
-        description: 'Top performer trophy',
-        image: '/images/trophies/default.png',
-        visible: true,
-      },
-    ])
-
-    vi.mocked(entitiesApi.levelsApi.getAllLevels).mockResolvedValue([
-      {
-        id: 'level1',
-        name: 'Beginner',
-        description: 'Starting level',
-        category: 'xp',
-        minPoints: 0,
-      },
-    ])
-
-    vi.mocked(
-      entitiesApi.pointCategoriesApi.getAllPointCategories
-    ).mockResolvedValue([
-      {
-        id: 'xp',
-        name: 'Experience Points',
-        description: 'Main experience currency',
-        aggregation: 'sum',
-      },
-    ])
   })
 
-  it('should render entities page with tabs', () => {
-    render(<Entities />, { wrapper: createWrapper() })
+  it('should render badges page', () => {
+    render(<Badges />, { wrapper: createWrapper() })
 
-    expect(screen.getByText('Entities Management')).toBeInTheDocument()
     expect(screen.getByText('Badges')).toBeInTheDocument()
+    expect(screen.getByText('First Comment')).toBeInTheDocument()
+  })
+
+  it('should render trophies page', () => {
+    render(<Trophies />, { wrapper: createWrapper() })
+
     expect(screen.getByText('Trophies')).toBeInTheDocument()
+    expect(screen.getByText('Champion')).toBeInTheDocument()
+  })
+
+  it('should render levels page', () => {
+    render(<Levels />, { wrapper: createWrapper() })
+
     expect(screen.getByText('Levels')).toBeInTheDocument()
+    expect(screen.getByText('Beginner')).toBeInTheDocument()
+  })
+
+  it('should render point categories page', () => {
+    render(<PointCategories />, { wrapper: createWrapper() })
+
     expect(screen.getByText('Point Categories')).toBeInTheDocument()
-  })
-
-  it('should switch between tabs', () => {
-    render(<Entities />, { wrapper: createWrapper() })
-
-    // Click on Trophies tab
-    fireEvent.click(screen.getByText('Trophies'))
-
-    // Should show trophies content
-    expect(screen.getByText('Trophies')).toBeInTheDocument()
-  })
-
-  it('should show badges list by default', () => {
-    render(<Entities />, { wrapper: createWrapper() })
-
-    // Should show badges tab as active
-    expect(screen.getByText('Badges')).toBeInTheDocument()
+    expect(screen.getByText('Experience Points')).toBeInTheDocument()
   })
 })

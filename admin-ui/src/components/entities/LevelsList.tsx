@@ -5,7 +5,7 @@ import { useLevels } from '@/hooks/useEntities'
 import type { LevelDto } from '@/api/generated/models'
 
 interface LevelsListProps {
-  onViewDetails: (id: string) => void
+  onViewDetails?: (id: string) => void
 }
 
 const LevelsList: React.FC<LevelsListProps> = ({ onViewDetails }) => {

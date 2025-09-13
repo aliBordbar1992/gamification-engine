@@ -136,7 +136,27 @@ function App() {
                 }
               />
               <Route
+                path="/entities/badges/:id"
+                element={
+                  <RouteGuard>
+                    <MainLayout>
+                      <Badges />
+                    </MainLayout>
+                  </RouteGuard>
+                }
+              />
+              <Route
                 path="/entities/trophies"
+                element={
+                  <RouteGuard>
+                    <MainLayout>
+                      <Trophies />
+                    </MainLayout>
+                  </RouteGuard>
+                }
+              />
+              <Route
+                path="/entities/trophies/:id"
                 element={
                   <RouteGuard>
                     <MainLayout>
@@ -156,7 +176,27 @@ function App() {
                 }
               />
               <Route
+                path="/entities/levels/:id"
+                element={
+                  <RouteGuard>
+                    <MainLayout>
+                      <Levels />
+                    </MainLayout>
+                  </RouteGuard>
+                }
+              />
+              <Route
                 path="/entities/point-categories"
+                element={
+                  <RouteGuard>
+                    <MainLayout>
+                      <PointCategories />
+                    </MainLayout>
+                  </RouteGuard>
+                }
+              />
+              <Route
+                path="/entities/point-categories/:id"
                 element={
                   <RouteGuard>
                     <MainLayout>
